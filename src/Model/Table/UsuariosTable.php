@@ -38,6 +38,11 @@ class UsuariosTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        // $this->hasMany('UsuariosRutas', [
+        //     'foreignKey' => 'usuario_id',
+        //     'joinType' => 'INNER'
+        // ]);
     }
 
     /**

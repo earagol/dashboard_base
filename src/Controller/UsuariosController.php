@@ -1,5 +1,6 @@
 <?php
 namespace App\Controller;
+use Cake\ORM\TableRegistry;
 
 use App\Controller\AppController;
 
@@ -88,6 +89,7 @@ class UsuariosController extends AppController
      */
     public function add()
     {
+        // pr($this->request->getData());
         $usuario = $this->Usuarios->newEntity();
         if ($this->request->is('post')) {
             $usuario = $this->Usuarios->patchEntity($usuario, $this->request->getData());
@@ -98,7 +100,10 @@ class UsuariosController extends AppController
             }
             $this->Flash->error(__('The usuario could not be saved. Please, try again.'));
         }
-        $this->set(compact('usuario'));
+        // exit('sisi');
+
+        $rutas = TableRegistry::get('Rutas')->find('list')->toArray();
+        $this->set(compact('usuario','rutas'));
     }
 
     /**
