@@ -26,7 +26,7 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Repetir Contraseña</label>
-                <?php echo $this->Form->control('password2',['class'=>'form-control','placeholder'=>'Repetir Contraseña','label'=>false]); ?>
+                <?php echo $this->Form->control('password2',['type'=>'password','class'=>'form-control','placeholder'=>'Repetir Contraseña','label'=>false]); ?>
             </div>
 
             <div class="form-group">

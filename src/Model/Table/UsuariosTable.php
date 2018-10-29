@@ -39,10 +39,18 @@ class UsuariosTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        // $this->hasMany('UsuariosRutas', [
-        //     'foreignKey' => 'usuario_id',
-        //     'joinType' => 'INNER'
-        // ]);
+
+        $this->addAssociations([
+            'belongsToMany' => [
+                'Rutas' => [
+                    'className' => 'Rutas',
+                    'joinTable' => 'UsuariosRutas',
+                    'foreignKey' => 'usuario_id',
+                    'targetForeignKey' => 'ruta_id'
+                ]
+            ]
+        ]);
+
     }
 
     /**
@@ -63,11 +71,11 @@ class UsuariosTable extends Table
             ->requirePresence('username', 'create')
             ->notEmpty('username');
 
-        $validator
-            ->scalar('password')
-            ->maxLength('password', 60)
-            ->requirePresence('password', 'create')
-            ->notEmpty('password');
+        // $validator
+        //     ->scalar('password')
+        //     ->maxLength('password', 60)
+        //     ->requirePresence('password', 'create')
+        //     ->notEmpty('password');
 
         $validator
             ->scalar('nombres')
@@ -82,14 +90,21 @@ class UsuariosTable extends Table
             ->notEmpty('apellidos');
 
         $validator
-            ->boolean('activo')
-            ->requirePresence('activo', 'create')
-            ->notEmpty('activo');
+            ->scalar('email')
+            ->maxLength('email', 60)
+            ->requirePresence('email', 'create')
+            ->notEmpty('email');
 
-        $validator
-            ->dateTime('deleted')
-            ->requirePresence('deleted', 'create')
-            ->notEmpty('deleted');
+         $validator
+            ->scalar('role')
+            ->maxLength('role', 20)
+            ->requirePresence('role', 'create')
+            ->notEmpty('role');
+
+        // $validator
+        //     ->dateTime('deleted')
+        //     ->requirePresence('deleted', 'create')
+        //     ->notEmpty('deleted');
 
         return $validator;
     }

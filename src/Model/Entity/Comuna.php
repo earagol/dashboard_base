@@ -4,19 +4,19 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Usuario Entity
+ * Comuna Entity
  *
  * @property int $id
- * @property string $username
- * @property string $password
- * @property string $nombres
- * @property string $apellidos
- * @property bool $activo
+ * @property int $region_id
+ * @property string $nombre
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  * @property \Cake\I18n\FrozenTime $deleted
+ *
+ * @property \App\Model\Entity\Region $region
+ * @property \App\Model\Entity\Cliente[] $clientes
  */
-class Usuario extends Entity
+class Comuna extends Entity
 {
 
     /**
@@ -29,25 +29,12 @@ class Usuario extends Entity
      * @var array
      */
     protected $_accessible = [
-        'username' => true,
-        'password' => true,
-        'nombres' => true,
-        'apellidos' => true,
-        'email' => true,
-        'activo' => true,
-        'role' => true,
-        'usuario_id' => true,
+        'region_id' => true,
+        'nombre' => true,
         'created' => true,
         'modified' => true,
-        'deleted' => true
-    ];
-
-    /**
-     * Fields that are excluded from JSON versions of the entity.
-     *
-     * @var array
-     */
-    protected $_hidden = [
-        'password'
+        'deleted' => true,
+        'region' => true,
+        'clientes' => true
     ];
 }
