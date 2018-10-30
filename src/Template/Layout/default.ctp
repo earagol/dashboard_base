@@ -25,11 +25,11 @@ $cakeDescription = 'Estrella';
 
         <?= $this->Html->meta('description',"Ela Admin - HTML5 Admin Template"); ?>
         <?= $this->Html->meta('viewport',"width=device-width, initial-scale=1"); ?>
-
         <?= $this->Html->meta('favicon.ico','img/images/favicon.png',['type' => 'icon']); ?>
 
         <?= $this->Html->css('normalize') ?>
-        <?= $this->Html->css('bootstrap.min') ?>
+        <?php echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
+        <?php echo $this->Html->css('../vendors/bootstrap/css/bootstrap-theme.min') ?>
         <?= $this->Html->css('font-awesome.min') ?>
         <?= $this->Html->css('themify-icons') ?>
         <?= $this->Html->css('pe-icon-7-filled') ?>
@@ -42,9 +42,12 @@ $cakeDescription = 'Estrella';
         <?= $this->Html->css('charts/chartist.min') ?>
         <?= $this->Html->css('lib/vector-map/jqvmap.min') ?>
 
-
         <?php echo $this->Html->script('vendor/jquery-2.1.4.min'); ?>
         <?php echo $this->Html->script('popper.min'); ?>
+
+        <?= $this->Html->script('../vendors/bootstrap/js/bootstrap.min') ?>
+        <?= $this->Html->script('lib/moment/moment') ?>
+        <?= $this->Html->script('../vendors/bootstrap-datetimepicker-master/src/js/bootstrap-datetimepicker') ?>
 
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot'); ?>
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot.pie'); ?>

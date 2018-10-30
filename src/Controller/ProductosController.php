@@ -50,6 +50,32 @@ class ProductosController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
+    // public function addPrecio()
+    // {
+    //     $precio = [
+    //         'precio' => $this->request->data('precio');
+    //         'usuario_id' => $this->Auth->user('id');
+    //     ];
+    //     $success = false;
+    //     $id = null;
+    //     $precio = $this->Productos->ProductosPrecios->newEntity();
+    //     if ($this->request->is('post')) {
+    //         $this->request->data = $precio;
+    //         $precio = $this->Productos->ProductosPrecios->patchEntity($precio, $this->request->getData());
+    //         if ($this->Productos->ProductosPrecios->save($precio)) {
+    //             $success = true;
+    //             $id = $precio->id;
+    //         }
+    //     }
+
+    //     die(json_encode(['success'=>$success,'id'=>$id]));
+    // }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
     public function add()
     {
         $producto = $this->Productos->newEntity();
