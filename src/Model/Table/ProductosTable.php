@@ -106,6 +106,11 @@ class ProductosTable extends Table
         $rules->add($rules->existsIn(['categoria_id'], 'Categorias'));
         $rules->add($rules->existsIn(['usuario_id'], 'Usuarios'));
 
+        $rules->add($rules->isUnique(
+            ['nombre'],
+            'El producto ya existe registrado.'
+        ));
+
         return $rules;
     }
 }

@@ -1,0 +1,36 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Ruta $ruta
+ */
+?>
+<?php echo $this->Form->create($clasificacione) ?>
+ <div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            <strong>Agregar Clasificación</strong>
+            <div class="pull-right">
+                <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
+            </div>
+        </div>
+        <div class="card-body card-block">
+
+            <div class="form-group">
+                <label for="company" class=" form-control-label">Nombres</label>
+                <?php echo $this->Form->control('nombres',['class'=>'form-control','placeholder'=>'Nombre','label'=>false]); ?>
+            </div>
+
+            <div class="form-group">
+                <label for="company" class=" form-control-label">Apellidos</label>
+                <?php echo $this->Form->control('descuento',['class'=>'form-control','placeholder'=>'Descuento','label'=>false]); ?>
+            </div>
+
+            <div class="form-group">
+                <?php echo $this->Form->button(__('Guardar',['class'=>'btn btn-primary'])) ?>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<?= $this->Form->end() ?>

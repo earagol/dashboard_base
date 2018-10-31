@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\I18n\Time;
 
 /**
  * Visitas Controller
@@ -12,6 +13,18 @@ use App\Controller\AppController;
  */
 class VisitasController extends AppController
 {
+
+    public function isAuthorized($user){
+
+        if(isset($user['role']) && $user['role'] === 'usuario'){
+            if(in_array($this->request->action, ['index'])){
+                return true;
+            }
+        }
+
+        return parent::isAuthorized($user);
+
+    }
 
     /**
      * Index method
@@ -26,7 +39,7 @@ class VisitasController extends AppController
         ];
 
         if($this->Auth->user('role') === 'usuario'){
-            $options = array_merge($options,['conditions'=>['usuario_id'=>$this->Auth->user('role')]]);
+            $options = array_merge($options,['conditions'=>['Visitas.usuario_id'=>$this->Auth->user('id')]]);
         }
 
         $this->paginate = $options;
@@ -64,7 +77,13 @@ class VisitasController extends AppController
             try {
 
                 $this->request->data('status','P');
-                $this->request->data('fecha_vencimiento','2018-10-30');
+                // if($this->request->data('fecha_vencimiento') === date('m/d/Y')){
+                //     $now = new Time($this->request->data('fecha_vencimiento'));
+                //     $this->request->data('fecha_vencimiento',$now->modify('+3 days'));
+                //     exit;
+                // }
+                // prx($this->request->data);
+                $this->request->data('fecha_vencimiento',date('Y-m-d'));
                 $this->request->data('user_id',$this->Auth->user('id'));
                 $visita = $this->Visitas->patchEntity($visita, $this->request->getData());
                 if ($this->Visitas->save($visita)) {

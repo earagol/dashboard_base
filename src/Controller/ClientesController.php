@@ -14,6 +14,18 @@ use Exception;
 class ClientesController extends AppController
 {
 
+    public function isAuthorized($user){
+
+        if(isset($user['role']) && $user['role'] === 'usuario'){
+            if(in_array($this->request->action, ['index','add'])){
+                return true;
+            }
+        }
+
+        return parent::isAuthorized($user);
+
+    }
+
     /**
      * Index method
      *

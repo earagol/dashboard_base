@@ -24,8 +24,6 @@ class ProductosController extends AppController
             'contain' => ['Categorias', 'Usuarios']
         ];
         $productos = $this->paginate($this->Productos);
-// pr($productos);
-// exit;
         $this->set(compact('productos'));
     }
 
@@ -50,32 +48,6 @@ class ProductosController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    // public function addPrecio()
-    // {
-    //     $precio = [
-    //         'precio' => $this->request->data('precio');
-    //         'usuario_id' => $this->Auth->user('id');
-    //     ];
-    //     $success = false;
-    //     $id = null;
-    //     $precio = $this->Productos->ProductosPrecios->newEntity();
-    //     if ($this->request->is('post')) {
-    //         $this->request->data = $precio;
-    //         $precio = $this->Productos->ProductosPrecios->patchEntity($precio, $this->request->getData());
-    //         if ($this->Productos->ProductosPrecios->save($precio)) {
-    //             $success = true;
-    //             $id = $precio->id;
-    //         }
-    //     }
-
-    //     die(json_encode(['success'=>$success,'id'=>$id]));
-    // }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
-     */
     public function add()
     {
         $producto = $this->Productos->newEntity();
@@ -83,6 +55,16 @@ class ProductosController extends AppController
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $producto = $this->Productos->patchEntity($producto, $this->request->getData());
             if ($this->Productos->save($producto)) {
+                if(!empty($this->request->data['arreglo'])){
+                    $this->request->data('arreglo',explode(',',$this->request->data['arreglo']));
+                    // $usuariosRutasTable = TableRegistry::get('UsuariosRutas');
+                    // prx($this->request->data);
+                    foreach ($this->request->data('arreglo') as $key => $value) {
+                        $precio = $this->Productos->ProductosPrecios->newEntity();
+                        $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$producto->id,'precio'=>$value]);
+                        $this->Productos->ProductosPrecios->save($precio);
+                    }
+                }
                 $this->Flash->success(__('The producto has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -103,20 +85,30 @@ class ProductosController extends AppController
      */
     public function edit($id = null)
     {
+
         $producto = $this->Productos->get($id, [
-            'contain' => []
+            'contain' => ['ProductosPrecios']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $producto = $this->Productos->patchEntity($producto, $this->request->getData());
             if ($this->Productos->save($producto)) {
+                if(!empty($this->request->data['precio'])){
+                    $precio = $this->Productos->ProductosPrecios->newEntity();
+                    $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$id,'precio'=>$this->request->data['precio']]);
+                    $this->Productos->ProductosPrecios->save($precio);
+                    $producto = $this->Productos->get($id, [
+                        'contain' => ['ProductosPrecios']
+                    ]);
+                }
                 $this->Flash->success(__('The producto has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return !isset($this->request->data['plus'])?$this->redirect(['action' => 'index']):$this->redirect(['action' => 'edit',$id]);
             }
             $this->Flash->error(__('The producto could not be saved. Please, try again.'));
         }
         $categorias = $this->Productos->Categorias->find('list', ['limit' => 200]);
-        $usuarios = $this->Productos->Usuarios->find('list', ['limit' => 200]);
+
+        // prx($producto);
         $this->set(compact('producto', 'categorias', 'usuarios'));
     }
 
@@ -138,5 +130,18 @@ class ProductosController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function deletePrecio($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $precio = $this->Productos->ProductosPrecios->get($id);
+        if ($this->Productos->ProductosPrecios->delete($precio)) {
+            $this->Flash->success(__('The producto has been deleted.'));
+        } else {
+            $this->Flash->error(__('The producto could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'edit',$precio->producto_id]);
     }
 }

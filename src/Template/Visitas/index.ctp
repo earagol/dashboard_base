@@ -29,8 +29,10 @@
                             <td><?= h($visita->fecha_vencimiento->format('Y-m-d')) ?></td>
                             <td><?= h($visita->status) ?></td>
                             <td class="text-center">
-                                <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $visita->id],['title'=>'Editar','escape' => false]) ?>
-                                <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $visita->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el registro # {0}?', $visita->id)]) ?>
+                                <?php if($currentUser['role'] === 'admin'): ?>
+                                    <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $visita->id],['title'=>'Editar','escape' => false]) ?>
+                                    <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $visita->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el registro # {0}?', $visita->id)]) ?>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -40,7 +42,6 @@
 
         <div class="paginator">
             <ul class="pagination">
-                <?php echo $this->Paginator->first('<< ' . __('first')) ?>
                 <?php echo $this->Paginator->prev('< ' . __('previous')) ?>
                 <?php echo $this->Paginator->numbers() ?>
                 <?php echo $this->Paginator->next(__('next') . ' >') ?>

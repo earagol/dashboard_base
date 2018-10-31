@@ -28,8 +28,12 @@ $cakeDescription = 'Estrella';
         <?= $this->Html->meta('favicon.ico','img/images/favicon.png',['type' => 'icon']); ?>
 
         <?= $this->Html->css('normalize') ?>
-        <?php echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
-        <?php echo $this->Html->css('../vendors/bootstrap/css/bootstrap-theme.min') ?>
+        <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
+        
+
+        <?php echo $this->Html->css('bootstrap.min') ?>
+        <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
+        <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap-theme.min') ?>
         <?= $this->Html->css('font-awesome.min') ?>
         <?= $this->Html->css('themify-icons') ?>
         <?= $this->Html->css('pe-icon-7-filled') ?>
@@ -42,12 +46,16 @@ $cakeDescription = 'Estrella';
         <?= $this->Html->css('charts/chartist.min') ?>
         <?= $this->Html->css('lib/vector-map/jqvmap.min') ?>
 
-        <?php echo $this->Html->script('vendor/jquery-2.1.4.min'); ?>
+        <?php //echo $this->Html->script('vendor/jquery-2.1.4.min'); ?>
+        <?php echo $this->Html->script('vendor/jquery-1.11.3.min'); ?>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
         <?php echo $this->Html->script('popper.min'); ?>
 
-        <?= $this->Html->script('../vendors/bootstrap/js/bootstrap.min') ?>
+        <?php  // echo $this->Html->script('../vendors/bootstrap/js/bootstrap.min') ?>
         <?= $this->Html->script('lib/moment/moment') ?>
-        <?= $this->Html->script('../vendors/bootstrap-datetimepicker-master/src/js/bootstrap-datetimepicker') ?>
+        
+        <?= $this->Html->script('../vendors/datepicker/bootstrap-datepicker') ?>
+        <? //echo $this->Html->script('../vendors/bootstrap-datetimepicker-master/src/js/bootstrap-datetimepicker') ?>
 
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot'); ?>
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot.pie'); ?>

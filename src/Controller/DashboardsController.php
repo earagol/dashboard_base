@@ -29,6 +29,18 @@ use Cake\View\Exception\MissingTemplateException;
 class DashboardsController extends AppController
 {
 
+     public function isAuthorized($user){
+
+        if(isset($user['role']) && $user['role'] === 'usuario'){
+            if(in_array($this->request->action, ['index'])){
+                return true;
+            }
+        }
+
+        return parent::isAuthorized($user);
+
+    }
+
     /**
      * Displays a view
      *

@@ -116,10 +116,8 @@ class AppController extends Controller
         if(isset($user['role']) && $user['role'] === 'admin'){
                 return true;
         }
-
+        $this->Flash->error(__('No esta autorizado para realizar esta acción.'));
         return false;
-        // return true;
-
     }
 
     public function beforeRender(Event $event)

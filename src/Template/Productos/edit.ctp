@@ -16,7 +16,7 @@
         <div class="card-body card-block">
             <div class="form-group">
                 <label for="company" class=" form-control-label">Categoria</label>
-                <?php echo $this->Form->control('categoria_id',['class'=>'form-control','label'=>false]); ?>
+                <?php echo $this->Form->control('categoria_id',['class'=>'form-control','empty'=>'--Seleccione categoria--','label'=>false]); ?>
             </div>
 
             <div class="form-group">
@@ -30,6 +30,45 @@
             </div>
 
             <div class="form-group">
+                <label for="company" class=" form-control-label">Precio</label>
+                <div class="input-group">
+                  <?php echo $this->Form->control('precio',['class'=>'form-control','placeholder'=>'Precio...','label'=>false]); ?>
+                  <span class="input-group-btn">
+                    <?php echo $this->Form->button('+',['type'=>'submit','name'=>'plus','class'=>'btn btn-primary','id' => 'plus']) ?>
+                  </span>
+                </div>
+            </div>
+
+            <div id="grilla">
+
+                 <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                            if($producto->productos_precios): ?>
+                            <?php foreach ($producto->productos_precios as $precio): ?>
+                                <tr>
+                                    <td><?= $this->Number->format($precio->id) ?></td>
+                                    <td><?= h($precio->precio) ?></td>
+                                    <td class="text-center">
+                                        <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'deletePrecio', $precio->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el precio # {0}?', $precio->id)]) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+
+                
+            </div>
+
+            <div class="form-group">
                 <?php echo $this->Form->button(__('Guardar',['class'=>'btn btn-primary'])) ?>
             </div>
 
@@ -38,3 +77,33 @@
 </div>
 
 <?= $this->Form->end() ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var url = '<?php echo $url; ?>';
+    var arreglo = new Array();
+    var arreglo2 = new Array();
+
+    function eliminar(elemento,indice){
+        arreglo.splice(indice);
+        $('#arreglo').val(arreglo)
+
+        $('#row_'+indice).remove();
+    }
+
+    (function( $ ) {
+
+            $('#plus').click(function() {
+                if($('#precio').val() == ''){
+                    alert('Agregue Precio');
+                    return;
+                }
+
+
+
+                $('#grilla').html(tabla);
+            });
+    })(jQuery);
+</script>
+
+

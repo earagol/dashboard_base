@@ -12,7 +12,7 @@ use App\Controller\AppController;
  */
 class RutasController extends AppController
 {
-
+ 
     /**
      * Index method
      *

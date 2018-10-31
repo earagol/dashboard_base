@@ -31,13 +31,14 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Precio</label>
-                <div class="col col-md-3">
-                    <?php echo $this->Form->control('precio',['class'=>'form-control','placeholder'=>'Precio...','label'=>false]); ?>
-                    <?php echo $this->Form->control('arreglo',['id'=>'arreglo','type'=>'hidden','value'=>'','class'=>'form-control','placeholder'=>'Precio...','label'=>false]); ?>
+                <div class="input-group">
+                  <?php echo $this->Form->control('precio',['class'=>'form-control','placeholder'=>'Precio...','label'=>false]); ?>
+                  <span class="input-group-btn">
+                    <?php echo $this->Form->button('+',['type'=>'button','class'=>'btn btn-primary','id' => 'plus']) ?>
+                  </span>
                 </div>
-                <div class="col col-md-1">
-                     <?php echo $this->Form->button('+',['type'=>'button','class'=>'btn btn-primary','id' => 'plus']) ?>
-                </div>
+
+                <?php echo $this->Form->control('arreglo',['id'=>'arreglo','type'=>'hidden','value'=>'','class'=>'form-control','placeholder'=>'Precio...','label'=>false]); ?>
             </div>
 
             <div id="grilla">
@@ -53,72 +54,58 @@
 </div>
 
 <?= $this->Form->end() ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-<script>
+<script type="text/javascript">
     var url = '<?php echo $url; ?>';
     var arreglo = new Array();
     var arreglo2 = new Array();
-    (function( $ ) {
-        $(document).ready(function() {
 
-             $('#plus').click(function() {
+    function eliminar(elemento,indice){
+        arreglo.splice(indice);
+        $('#arreglo').val(arreglo)
+
+        $('#row_'+indice).remove();
+    }
+
+    (function( $ ) {
+
+            $('#plus').click(function() {
                 if($('#precio').val() == ''){
                     alert('Agregue Precio');
                     return;
                 }
 
-                // arreglo = $('#arreglo').val();
-                // arreglo2 = new Array();
-
-
                 arreglo.push($('#precio').val());
 
                 arreglo3 = arreglo2.concat(arreglo);
-
                 $('#arreglo').val(arreglo3)
+
                 $('#precio').val('');
 
                 var tabla = '<table class="table table-striped">'+
                                 '<thead>'+
                                     '<tr>'+
+                                        '<th scope="col">#</th>'+
                                         '<th scope="col">Precio</th>'+
                                         '<th scope="col">Acción</th>'+
                                     '</tr>'+
                                 '</thead>'+
                                 '<tbody>';
-                console.log(arreglo3);
 
                 arreglo3.forEach( function(valor, indice, array) {
                     tabla=tabla+
-                        '<tr data-id="'+indice+'">'+
+                        '<tr id="row_'+indice+'">'+
+                            '<th scope="col">'+(indice+1)+'</th>'+
                             '<th scope="col">'+valor+'</th>'+
-                            '<th scope="col">Acción</th>'+
+                            '<th scope="col"><button onclick="eliminar(this,'+indice+');" type="button" class="btn btn-danger eliminar"><i class="fa fa-trash-o"></i></button></th>'+
                         '</tr>';
-                        // console.log("En el índice " + indice + " hay este valor: " + valor);
                 });
 
                  tabla=tabla+'</tbody>'+
                             '</table>';
 
                 $('#grilla').html(tabla);
-
-                // $.ajax({
-                // url : url+"productos/addPrecio",
-                // dataType : 'json',
-                // type : 'post',
-                // data : {
-                //     precio : $('#precio').val(),
-                // },
-                // success : function (res) {
-                //   console.log(res);
-                //   $('#grilla').html(res);
-                // },
-                // error : function() {
-                //     alert(No hubo respuesta);
-                //     // bootbox.alert({message: 'No hubo respuesta',className: 'bb-alternate-modal'});
-                // }
             });
-
-        });
     })(jQuery);
 </script>

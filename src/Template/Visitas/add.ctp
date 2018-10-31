@@ -43,12 +43,14 @@
 </div>
 
 <?= $this->Form->end() ?>
+<?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
 
 <script>
     (function( $ ) {
         $(document).ready(function() {
-            $('#fecha-vencimiento').datetimepicker({
-                format: 'YYYY-MM-DD'
+            // $('#fecha-vencimiento').datepicker();
+            $('#fecha-vencimiento').datepicker({
+                format: 'mm/dd/yyyy'
            });
 
         });
