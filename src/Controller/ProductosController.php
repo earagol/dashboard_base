@@ -61,15 +61,15 @@ class ProductosController extends AppController
                     // prx($this->request->data);
                     foreach ($this->request->data('arreglo') as $key => $value) {
                         $precio = $this->Productos->ProductosPrecios->newEntity();
-                        $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$producto->id,'precio'=>$value]);
+                        $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$producto->id,'precio'=>str_replace('.','',$value)]);
                         $this->Productos->ProductosPrecios->save($precio);
                     }
                 }
-                $this->Flash->success(__('The producto has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The producto could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $categorias = $this->Productos->Categorias->find('list', ['limit' => 200]);
         $usuarios = $this->Productos->Usuarios->find('list', ['limit' => 200]);
@@ -94,17 +94,17 @@ class ProductosController extends AppController
             if ($this->Productos->save($producto)) {
                 if(!empty($this->request->data['precio'])){
                     $precio = $this->Productos->ProductosPrecios->newEntity();
-                    $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$id,'precio'=>$this->request->data['precio']]);
+                    $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$id,'precio'=>str_replace('.','',$this->request->data['precio'])]);
                     $this->Productos->ProductosPrecios->save($precio);
                     $producto = $this->Productos->get($id, [
                         'contain' => ['ProductosPrecios']
                     ]);
                 }
-                $this->Flash->success(__('The producto has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return !isset($this->request->data['plus'])?$this->redirect(['action' => 'index']):$this->redirect(['action' => 'edit',$id]);
             }
-            $this->Flash->error(__('The producto could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $categorias = $this->Productos->Categorias->find('list', ['limit' => 200]);
 
@@ -124,9 +124,9 @@ class ProductosController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $producto = $this->Productos->get($id);
         if ($this->Productos->delete($producto)) {
-            $this->Flash->success(__('The producto has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The producto could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);
@@ -137,9 +137,9 @@ class ProductosController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $precio = $this->Productos->ProductosPrecios->get($id);
         if ($this->Productos->ProductosPrecios->delete($precio)) {
-            $this->Flash->success(__('The producto has been deleted.'));
+            $this->Flash->success(__('El precio ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The producto could not be deleted. Please, try again.'));
+             $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'edit',$precio->producto_id]);

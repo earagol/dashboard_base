@@ -1,53 +1,45 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\Regione[]|\Cake\Collection\CollectionInterface $regiones
- */
-?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New Regione'), ['action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="regiones index large-9 medium-8 columns content">
-    <h3><?= __('Regiones') ?></h3>
-    <table cellpadding="0" cellspacing="0">
-        <thead>
-            <tr>
-                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('nombre') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('created') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('deleted') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($regiones as $regione): ?>
-            <tr>
-                <td><?= $this->Number->format($regione->id) ?></td>
-                <td><?= h($regione->nombre) ?></td>
-                <td><?= h($regione->created) ?></td>
-                <td><?= h($regione->modified) ?></td>
-                <td><?= h($regione->deleted) ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $regione->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $regione->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $regione->id], ['confirm' => __('Are you sure you want to delete # {0}?', $regione->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Regiones</strong>
+            <div class="pull-right">
+                <?php echo $this->Html->link(__('Agregar',['class'=>'btn btn-default']), ['action' => 'add']) ?>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th >#</th>
+                        <th >Nombre</th>
+                        <th >Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($regiones as $regione): ?>
+                        <tr>
+                            <td><?php echo $this->Number->format($regione->id) ?></td>
+                            <td><?php echo h($regione->nombre) ?></td>
+                            <td class="text-center">
+                                <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $regione->id],['title'=>'Editar','escape' => false]) ?>
+                                <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $regione->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el registro {0}?', $regione->nombre)]) ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="paginator">
+            <ul class="pagination">
+                <?php echo $this->Paginator->first('<< ' . __('first')) ?>
+                <?php echo $this->Paginator->prev('< ' . __('previous')) ?>
+                <?php echo $this->Paginator->numbers() ?>
+                <?php echo $this->Paginator->next(__('next') . ' >') ?>
+                <?php echo $this->Paginator->last(__('last') . ' >>') ?>
+            </ul>
+            <p><?php echo $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
+        </div>
+
     </div>
 </div>

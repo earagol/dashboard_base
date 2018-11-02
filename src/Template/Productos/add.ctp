@@ -5,7 +5,7 @@
  */
 ?>
 <?php echo $this->Form->create($producto) ?>
- <div class="col-lg-12">
+<div class="col-lg-12">
     <div class="card">
         <div class="card-header">
             <strong>Agregar Producto</strong>
@@ -106,6 +106,19 @@
                             '</table>';
 
                 $('#grilla').html(tabla);
+            });
+
+            $("#precio").on({
+              "focus": function(event) {
+                $(event.target).select();
+              },
+              "keyup": function(event) {
+                $(event.target).val(function(index, value) {
+                  return value.replace(/\D/g, "")
+                    // .replace(/([0-9])([0-9]{2})$/, '$1.$2') //Agrega decimal 
+                    .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ".");
+                });
+              }
             });
     })(jQuery);
 </script>

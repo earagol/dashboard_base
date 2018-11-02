@@ -98,9 +98,9 @@ class RutasController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $ruta = $this->Rutas->get($id);
         if ($this->Rutas->delete($ruta)) {
-            $this->Flash->success(__('El registro ha sido eliminado'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('El registro no pudo eliminarse, por favor intenta nuevamente'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

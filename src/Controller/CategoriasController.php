@@ -56,11 +56,11 @@ class CategoriasController extends AppController
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $categoria = $this->Categorias->patchEntity($categoria, $this->request->getData());
             if ($this->Categorias->save($categoria)) {
-                $this->Flash->success(__('The categoria has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The categoria could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $usuarios = $this->Categorias->Usuarios->find('list', ['limit' => 200]);
         $this->set(compact('categoria', 'usuarios'));
@@ -81,11 +81,11 @@ class CategoriasController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $categoria = $this->Categorias->patchEntity($categoria, $this->request->getData());
             if ($this->Categorias->save($categoria)) {
-                $this->Flash->success(__('The categoria has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The categoria could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $usuarios = $this->Categorias->Usuarios->find('list', ['limit' => 200]);
         $this->set(compact('categoria', 'usuarios'));
@@ -103,9 +103,9 @@ class CategoriasController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $categoria = $this->Categorias->get($id);
         if ($this->Categorias->delete($categoria)) {
-            $this->Flash->success(__('The categoria has been deleted.'));
+            $this->Flash->success(__('El reistro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The categoria could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

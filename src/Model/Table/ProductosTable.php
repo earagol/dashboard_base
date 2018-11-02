@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * Productos Model
@@ -28,7 +29,7 @@ use Cake\Validation\Validator;
  */
 class ProductosTable extends Table
 {
-
+    use SoftDeleteTrait;
     /**
      * Initialize method
      *
@@ -103,7 +104,9 @@ class ProductosTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['categoria_id'], 'Categorias'));
+        $rules->add($rules->existsIn(
+            ['categoria_id'], 'Categorias')
+            );
         $rules->add($rules->existsIn(['usuario_id'], 'Usuarios'));
 
         $rules->add($rules->isUnique(

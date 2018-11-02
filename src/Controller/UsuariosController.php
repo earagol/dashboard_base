@@ -123,21 +123,14 @@ class UsuariosController extends AppController
                             $usuariosRutasTable->save($usuarioRuta);
                         }
                     }
-                    $this->Flash->success(__('The usuario has been saved.'));
+                    $this->Flash->success(__('Registro exitoso.'));
                     return $this->redirect(['action' => 'index']);
                 }
-                $this->Flash->error(__('The usuario could not be saved. Please, try again.'));
+                $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
 
             } catch (Exception $e) {
                 $message = $e->getMessage();
-                if ($alertModal)
-                {
-                    $this->Flash->error($message);
-                }
-                else
-                {
-                    echo "<script type='text/javascript'>alert('$message');</script>";
-                }
+                $this->Flash->error($message);  
             }
 
 
@@ -202,11 +195,11 @@ class UsuariosController extends AppController
                             $usuariosRutasTable->save($usuarioRuta);
                         }
                     }
-                    $this->Flash->success(__('The usuario has been saved.'));
+                    $this->Flash->success(__('Registro exitoso.'));
 
                     return $this->redirect(['action' => 'index']);
                 }
-                $this->Flash->error(__('The usuario could not be saved. Please, try again.'));
+                $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
 
             } catch (Exception $e) {
                 $message = $e->getMessage();
@@ -246,9 +239,9 @@ class UsuariosController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $usuario = $this->Usuarios->get($id);
         if ($this->Usuarios->delete($usuario)) {
-            $this->Flash->success(__('The usuario has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The usuario could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

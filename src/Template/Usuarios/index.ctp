@@ -3,7 +3,7 @@
         <div class="card-header">
             <strong class="card-title">Usuarios</strong>
             <div class="pull-right">
-                <?php echo $this->Html->link(__('Agregar',['class'=>'btn btn-default']), ['action' => 'add']) ?></li>
+                <?php echo $this->Html->link(__('Agregar',['class'=>'btn btn-default']), ['action' => 'add']) ?>
             </div>
         </div>
         <div class="card-body">

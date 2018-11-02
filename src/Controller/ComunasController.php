@@ -21,7 +21,7 @@ class ComunasController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Regions']
+            'contain' => ['Regiones']
         ];
         $comunas = $this->paginate($this->Comunas);
 
@@ -55,13 +55,13 @@ class ComunasController extends AppController
         if ($this->request->is('post')) {
             $comuna = $this->Comunas->patchEntity($comuna, $this->request->getData());
             if ($this->Comunas->save($comuna)) {
-                $this->Flash->success(__('The comuna has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The comuna could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
-        $regions = $this->Comunas->Regions->find('list', ['limit' => 200]);
+        $regions = $this->Comunas->Regiones->find('list', ['limit' => 200]);
         $this->set(compact('comuna', 'regions'));
     }
 
@@ -80,11 +80,11 @@ class ComunasController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $comuna = $this->Comunas->patchEntity($comuna, $this->request->getData());
             if ($this->Comunas->save($comuna)) {
-                $this->Flash->success(__('The comuna has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The comuna could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $regions = $this->Comunas->Regions->find('list', ['limit' => 200]);
         $this->set(compact('comuna', 'regions'));
@@ -102,9 +102,9 @@ class ComunasController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $comuna = $this->Comunas->get($id);
         if ($this->Comunas->delete($comuna)) {
-            $this->Flash->success(__('The comuna has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The comuna could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

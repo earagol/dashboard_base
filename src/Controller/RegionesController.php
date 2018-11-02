@@ -52,11 +52,11 @@ class RegionesController extends AppController
         if ($this->request->is('post')) {
             $regione = $this->Regiones->patchEntity($regione, $this->request->getData());
             if ($this->Regiones->save($regione)) {
-                $this->Flash->success(__('The regione has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The regione could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $this->set(compact('regione'));
     }
@@ -76,11 +76,11 @@ class RegionesController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $regione = $this->Regiones->patchEntity($regione, $this->request->getData());
             if ($this->Regiones->save($regione)) {
-                $this->Flash->success(__('The regione has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The regione could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $this->set(compact('regione'));
     }
@@ -97,9 +97,9 @@ class RegionesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $regione = $this->Regiones->get($id);
         if ($this->Regiones->delete($regione)) {
-            $this->Flash->success(__('The regione has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The regione could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

@@ -33,13 +33,16 @@ class VisitasController extends AppController
      */
     public function index()
     {
-         $options = [
+        $options = [
             'contain' => ['Usuarios', 'Clientes', 'Usuarios'],
             'order' => ['id' => 'DESC']
         ];
 
         if($this->Auth->user('role') === 'usuario'){
             $options = array_merge($options,['conditions'=>['Visitas.usuario_id'=>$this->Auth->user('id')]]);
+        }else{
+            // prx(date('Y-m-d'));
+            $this->vencerVisitas();
         }
 
         $this->paginate = $options;
@@ -47,6 +50,16 @@ class VisitasController extends AppController
 
         $this->set(compact('visitas'));
     }
+
+
+    private function vencerVisitas(){
+
+        // prx($this->Visitas->find()->where(['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P'])->toArray());
+        
+        $this->Visitas->updateAll(['status' => 'V'],['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P']);
+
+    }
+
 
     /**
      * View method
@@ -82,23 +95,26 @@ class VisitasController extends AppController
                 //     $this->request->data('fecha_vencimiento',$now->modify('+3 days'));
                 //     exit;
                 // }
+                $now = new Time($this->request->data('fecha_vencimiento'));
+                $this->request->data('fecha_vencimiento',$now->modify('+3 days'));
                 // prx($this->request->data);
-                $this->request->data('fecha_vencimiento',date('Y-m-d'));
+                // $this->request->data('fecha_vencimiento',date('Y-m-d'));
                 $this->request->data('user_id',$this->Auth->user('id'));
                 $visita = $this->Visitas->patchEntity($visita, $this->request->getData());
                 if ($this->Visitas->save($visita)) {
-                    $this->Flash->success(__('The visita has been saved.'));
+                    $this->Flash->success(__('Registro exitoso.'));
 
                     return $this->redirect(['action' => 'index']);
                 }
 
-                $this->Flash->error(__('The visita could not be saved. Please, try again.'));
+                $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
             } catch (Exception $e) {
                 $message = $e->getMessage();
                 $this->Flash->error($message);  
             }
         }
         $usuarios = $this->Visitas->Usuarios->find('list', ['limit' => 200]);
+        // $usuarios = $this->Visitas->Usuarios->find('list')->combine('id','full_name');
 
         $clientes = $this->Visitas->Clientes->find('list')->notMatching(
             'Visitas', function ($q) {
@@ -125,13 +141,15 @@ class VisitasController extends AppController
         ]);
         // prx($visita);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $now = new Time($this->request->data('fecha_vencimiento'));
+            $this->request->data('fecha_vencimiento',$now->format('Y-m-d'));
             $visita = $this->Visitas->patchEntity($visita, $this->request->getData());
             if ($this->Visitas->save($visita)) {
-                $this->Flash->success(__('The visita has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The visita could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
         }
         $usuarios = $this->Visitas->Usuarios->find('list', ['limit' => 200]);
         $this->set(compact('visita', 'usuarios', 'clientes'));
@@ -149,9 +167,9 @@ class VisitasController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $visita = $this->Visitas->get($id);
         if ($this->Visitas->delete($visita)) {
-            $this->Flash->success(__('The visita has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The visita could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

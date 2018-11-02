@@ -50,10 +50,12 @@
 <script>
     (function( $ ) {
         $(document).ready(function() {
-            $('#fecha-vencimiento').datetimepicker({
-                format: 'YYYY-MM-DD'
+            // $('#fecha-vencimiento').datepicker();
+            $('#fecha-vencimiento').datepicker({
+                format: 'mm/dd/yyyy'
            });
 
         });
     })(jQuery);
 </script>
+

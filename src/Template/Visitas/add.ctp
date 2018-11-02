@@ -16,7 +16,7 @@
         <div class="card-body card-block">
             <div class="form-group">
                 <label for="company" class=" form-control-label">Vendedor</label>
-                <?php echo $this->Form->control('usuario_id',['class'=>'form-control','label'=>false,'empty' => '--Selecciones al vendedor--']); ?>
+                <?php echo $this->Form->control('usuario_id',['class'=>'form-control','label'=>false,'empty' => '--Seleccione al vendedor--']); ?>
             </div>
 
             <div class="form-group">

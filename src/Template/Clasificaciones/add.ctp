@@ -16,12 +16,12 @@
         <div class="card-body card-block">
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Nombres</label>
-                <?php echo $this->Form->control('nombres',['class'=>'form-control','placeholder'=>'Nombre','label'=>false]); ?>
+                <label for="company" class=" form-control-label">Nombre</label>
+                <?php echo $this->Form->control('nombre',['class'=>'form-control','placeholder'=>'Nombre','label'=>false]); ?>
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Apellidos</label>
+                <label for="company" class=" form-control-label">Descuento</label>
                 <?php echo $this->Form->control('descuento',['class'=>'form-control','placeholder'=>'Descuento','label'=>false]); ?>
             </div>
 

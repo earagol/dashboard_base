@@ -54,8 +54,9 @@
                             if($producto->productos_precios): ?>
                             <?php foreach ($producto->productos_precios as $precio): ?>
                                 <tr>
-                                    <td><?= $this->Number->format($precio->id) ?></td>
-                                    <td><?= h($precio->precio) ?></td>
+                                    <td><?php echo $this->Number->format($precio->id) ?></td>
+                                    <td><?php echo number_format($precio->precio, 0, ",", ".");  ?> $</td>
+
                                     <td class="text-center">
                                         <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'deletePrecio', $precio->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el precio # {0}?', $precio->id)]) ?>
                                     </td>
@@ -76,7 +77,7 @@
     </div>
 </div>
 
-<?= $this->Form->end() ?>
+<?php echo $this->Form->end() ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 <script type="text/javascript">
@@ -93,16 +94,27 @@
 
     (function( $ ) {
 
-            $('#plus').click(function() {
-                if($('#precio').val() == ''){
-                    alert('Agregue Precio');
-                    return;
-                }
+        $('#plus').click(function() {
+            if($('#precio').val() == ''){
+                alert('Agregue Precio');
+                return;
+            }
+            $('#grilla').html(tabla);
+        });
 
-
-
-                $('#grilla').html(tabla);
+        $("#precio").on({
+          "focus": function(event) {
+            $(event.target).select();
+          },
+          "keyup": function(event) {
+            $(event.target).val(function(index, value) {
+              return value.replace(/\D/g, "")
+                // .replace(/([0-9])([0-9]{2})$/, '$1.$2') //Agrega decimal 
+                .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ".");
             });
+          }
+        });
+
     })(jQuery);
 </script>
 

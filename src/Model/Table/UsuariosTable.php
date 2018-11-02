@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * Usuarios Model
@@ -22,7 +23,7 @@ use Cake\Validation\Validator;
  */
 class UsuariosTable extends Table
 {
-
+    use SoftDeleteTrait;
     /**
      * Initialize method
      *
@@ -34,6 +35,7 @@ class UsuariosTable extends Table
         parent::initialize($config);
 
         $this->setTable('usuarios');
+        // $this->setDisplayField('nombres');
         $this->setDisplayField('full_name');
         $this->setPrimaryKey('id');
 

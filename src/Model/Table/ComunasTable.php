@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * Comunas Model
@@ -25,7 +26,7 @@ use Cake\Validation\Validator;
  */
 class ComunasTable extends Table
 {
-
+    use SoftDeleteTrait;
     /**
      * Initialize method
      *
@@ -42,7 +43,7 @@ class ComunasTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Regions', [
+        $this->belongsTo('Regiones', [
             'foreignKey' => 'region_id',
             'joinType' => 'INNER'
         ]);
@@ -85,7 +86,7 @@ class ComunasTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['region_id'], 'Regions'));
+        $rules->add($rules->existsIn(['region_id'], 'Regiones'));
 
         return $rules;
     }

@@ -84,10 +84,10 @@ class ClientesController extends AppController
                 $this->request->data('usuario_id',$this->Auth->user('id'));
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
                 if ($this->Clientes->save($cliente)) {
-                    $this->Flash->success(__('The cliente has been saved.'));
+                    $this->Flash->success(__('Registro exitoso.'));
                     return $this->redirect(['action' => 'index']);
                 }
-                $this->Flash->error(__('The cliente could not be saved. Please, try again.'));
+                $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
             } catch (Exception $e) {
                 $message = $e->getMessage();
                 $this->Flash->error($message);
@@ -117,11 +117,11 @@ class ClientesController extends AppController
 
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
                 if ($this->Clientes->save($cliente)) {
-                    $this->Flash->success(__('The cliente has been saved.'));
+                    $this->Flash->success(__('Registro exitoso.'));
 
                     return $this->redirect(['action' => 'index']);
                 }
-                $this->Flash->error(__('The cliente could not be saved. Please, try again.'));
+                $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
             } catch (Exception $e) {
                 $message = $e->getMessage();
                 $this->Flash->error($message);
@@ -148,9 +148,9 @@ class ClientesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $cliente = $this->Clientes->get($id);
         if ($this->Clientes->delete($cliente)) {
-            $this->Flash->success(__('The cliente has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The cliente could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);
