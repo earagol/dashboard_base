@@ -105,8 +105,11 @@ class AppController extends Controller
 
     public function beforeFilter(Event $event)
     {
+        // $this->response->header('Access-Control-Allow-Origin');
+        // $this->response->header('Access-Control-Allow-Methods');
 
         $this->set('currentUser',$this->Auth->User());
+        $this->set('token',$this->request->getParam('_csrfToken'));
     }
 
 
@@ -125,11 +128,13 @@ class AppController extends Controller
         // Note: These defaults are just to get started quickly with development
         // and should not be used in production. You should instead set "_serialize"
         // in each action as required.
-        // if (!array_key_exists('_serialize', $this->viewVars) &&
-        //     in_array($this->response->type(), ['application/json', 'application/xml'])
-        // ) {
-        //     $this->set('_serialize', true);
-        // }
+        if (!array_key_exists('_serialize', $this->viewVars) &&
+            in_array($this->response->type(), ['application/json', 'application/xml'])
+        ) {
+            $this->set('_serialize', true);
+        }
+
+
 
         $this->set('url',Configure::read('relative'));
     }

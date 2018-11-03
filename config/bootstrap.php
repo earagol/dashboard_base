@@ -198,3 +198,4 @@ Type::build('timestamp')
 //Inflector::rules('uninflected', ['dontinflectme']);
 //Inflector::rules('transliteration', ['/å/' => 'aa']);
 Plugin::load('Migrations');
+Plugin::load('Cors', ['bootstrap' => true, 'routes' => false]);

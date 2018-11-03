@@ -41,7 +41,7 @@ class ProductosTable extends Table
         parent::initialize($config);
 
         $this->setTable('productos');
-        $this->setDisplayField('id');
+        $this->setDisplayField('nombre');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
