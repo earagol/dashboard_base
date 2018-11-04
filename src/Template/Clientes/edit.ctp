@@ -93,7 +93,7 @@
             <?php if($currentUser['role'] == 'admin') : ?>
                  <div class="form-group">
                     <label for="company" class=" form-control-label">Credito disponible</label>
-                    <?php echo $this->Form->control('credito_disponible',['class'=>'form-control','placeholder'=>'Credito...','label'=>false]); ?>
+                    <?php echo $this->Form->control('credito_disponible',['class'=>'form-control','placeholder'=>'Credito...','label'=>false,'value'=>number_format($cliente->credito_disponible, 0, ",", ".")]); ?>
                 </div>
             <?php endif; ?>
 
@@ -127,6 +127,19 @@
                 });
             }
 
+        });
+
+        $("#credito-disponible").on({
+          "change": function(event) {
+            $(event.target).select();
+          },
+          "keyup": function(event) {
+            $(event.target).val(function(index, value) {
+              return value.replace(/\D/g, "")
+                // .replace(/([0-9])([0-9]{2})$/, '$1.$2') //Agrega decimal 
+                .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ".");
+            });
+          }
         });
     })(jQuery);
 </script>

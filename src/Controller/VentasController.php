@@ -132,12 +132,88 @@ class VentasController extends AppController
     {
         $venta = $this->Ventas->newEntity();
         if ($this->request->is('post')) {
+            // pr($this->request->data);
+            $this->request->data('usuario_id',$this->Auth->user('id'));
+            $this->request->data('cuenta_porcobrar',str_replace('.','',$this->request->data('cuenta_porcobrar')));
+            $this->request->data('monto_total',$this->request->data('totales'));
+            $this->request->data('pago_cartera',$this->request->data('pagar_cartera'));
+            $this->request->data('credito',str_replace('.','',$this->request->data('credito')));
+            $this->request->data('monto_cartera',str_replace('.','',$this->request->data('monto_deuda')));
+            $this->request->data('monto_efectivo',str_replace('.','',$this->request->data('monto_efectivo')));
+            $this->request->data('monto_transferencia',str_replace('.','',$this->request->data('monto_transferencia')));
+            $this->request->data('ano',date('Y'));
+            $this->request->data('mes',date('m'));
+            $this->request->data('dia',date('d'));
+            if(!$this->request->data('efectivo')){
+                $this->request->data('monto_efectivo',null);
+            }
+
+            if(!$this->request->data('transferencia')){
+                $this->request->data('monto_transferencia',null);
+            }
+
+            // if($this->request->data('pago_cartera')){
+            //     $this->request->data('monto_total',$this->request->data('monto_total')-$this->request->data('monto_cartera'));
+            // }
+            $session = $this->request->session();
+            // prx($this->request->data);
+            // prx($session->read('detalles'));
             $venta = $this->Ventas->patchEntity($venta, $this->request->getData());
             if ($this->Ventas->save($venta)) {
+
+                $controlTable = TableRegistry::get('ControlDeudaPagos');
+                $client = [];
+                foreach ($session->read('detalles') as $key => $value) {
+                    $value['precio_unitario'] = $value['precio'];
+                    $value['venta_id'] = $venta->id;
+                    $detalles = $this->Ventas->VentaDetalles->newEntity();
+                    $detalles = $this->Ventas->VentaDetalles->patchEntity($detalles, $value);
+                    $this->Ventas->VentaDetalles->save($detalles);
+                }
+                // pr($this->request->data);
+                $client['credito_disponible'] = $this->request->data('credito');
+                $client['cuenta_porcobrar']= $this->request->data('cuenta_porcobrar_cliente');
+                if($this->request->data('cuenta_porcobrar') != 0){
+                    $client['credito_disponible']= $this->request->data('credito')-$this->request->data('cuenta_porcobrar');
+                    $client['cuenta_porcobrar']= $this->request->data('cuenta_porcobrar_cliente')+$this->request->data('cuenta_porcobrar');
+
+                    $control['tipo'] = 'P';
+                    $control['cliente_id'] = $this->request->data('cliente_id');
+                    $control['monto'] = $this->request->data('cuenta_porcobrar');
+                    $control['venta_id'] = $venta->id;
+                    $control['usuario_id'] = $this->Auth->user('id');
+
+                    $detallesControl = $controlTable->newEntity();
+                    $detallesControl = $controlTable->patchEntity($detallesControl, $control);
+                    $controlTable->save($detallesControl);
+                }
+
+                if($this->request->data('pago_cartera')){
+                    // $client['credito_disponible']= $this->request->data('credito')+$this->request->data('cuenta_porcobrar');
+                    $client['credito_disponible']= $client['credito_disponible']+$this->request->data('monto_cartera');
+                    // $client['cuenta_porcobrar']= $this->request->data('cuenta_porcobrar_cliente')-$this->request->data('cuenta_porcobrar');
+                    $client['cuenta_porcobrar']= $client['cuenta_porcobrar']-$this->request->data('monto_cartera');
+                    $control['tipo'] = 'A';
+                    $control['cliente_id'] = $this->request->data('cliente_id');
+                    $control['monto'] = $this->request->data('monto_cartera') * -1;
+                    $control['venta_id'] = $venta->id;
+                    $control['usuario_id'] = $this->Auth->user('id');
+                    $detallesControl = $controlTable->newEntity();
+                    $detallesControl = $controlTable->patchEntity($detallesControl, $control);
+                    $controlTable->save($detallesControl);
+                }
+                // prx($client);
+                $cliUpd = $this->Ventas->Clientes->get($this->request->data('cliente_id'), [
+                    'contain' => []
+                ]);
+                $clienteUpdate = $this->Ventas->Clientes->patchEntity($cliUpd, $client);
+                $this->Ventas->Clientes->save($clienteUpdate);
+
                 $this->Flash->success(__('The venta has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
+            prx($this->request->data);
             $this->Flash->error(__('The venta could not be saved. Please, try again.'));
         }
         $cliente = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();

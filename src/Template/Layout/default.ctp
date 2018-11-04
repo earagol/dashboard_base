@@ -50,6 +50,7 @@ $cakeDescription = 'Estrella';
         <?php echo $this->Html->script('vendor/jquery-1.11.3.min'); ?>
         <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
         <?php echo $this->Html->script('popper.min'); ?>
+        <?php echo $this->Html->script('funciones'); ?>
 
         <?php  // echo $this->Html->script('../vendors/bootstrap/js/bootstrap.min') ?>
         <?= $this->Html->script('lib/moment/moment') ?>

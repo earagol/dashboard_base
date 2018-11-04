@@ -114,7 +114,7 @@ class ClientesController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             try {
-
+                $this->request->data('credito_disponible',str_replace('.','',$this->request->data('credito_disponible')));
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
                 if ($this->Clientes->save($cliente)) {
                     $this->Flash->success(__('Registro exitoso.'));

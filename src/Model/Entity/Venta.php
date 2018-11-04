@@ -50,6 +50,7 @@ class Venta extends Entity
         'monto_transferencia' => true,
         'cuenta_porcobrar' => true,
         'pago_cartera' => true,
+        'monto_cartera' => true,
         'ano' => true,
         'mes' => true,
         'dia' => true,

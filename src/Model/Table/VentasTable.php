@@ -101,6 +101,10 @@ class VentasTable extends Table
             ->notEmpty('pago_cartera');
 
         $validator
+            ->numeric('monto_cartera')
+            ->allowEmpty('monto_cartera');
+
+        $validator
             ->integer('ano')
             ->requirePresence('ano', 'create')
             ->notEmpty('ano');
