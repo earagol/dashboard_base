@@ -135,6 +135,10 @@ $cakeDescription = 'Estrella';
                                 <li>
                                     <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Comunas'), ['controller'=>'Comunas','action' => 'index'],['title'=>'Clasificacion','escape' => false]) ?>
                                 </li>
+
+                                <li>
+                                    <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Tipos Parametros'), ['controller'=>'parametrosTipos','action' => 'index'],['title'=>'Tipos Parametros','escape' => false]) ?>
+                                </li>
                             </ul>
                         </li>
 
