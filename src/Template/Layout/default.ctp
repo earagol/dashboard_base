@@ -55,9 +55,9 @@ $cakeDescription = 'Estrella';
 
         <?php  // echo $this->Html->script('../vendors/bootstrap/js/bootstrap.min') ?>
         <?= $this->Html->script('lib/moment/moment') ?>
-        
-        <?= $this->Html->script('../vendors/datepicker/bootstrap-datepicker') ?>
-        <?php //echo $this->Html->script('../vendors/bootstrap-datetimepicker-master/src/js/bootstrap-datetimepicker') ?>
+
+        <?php echo $this->Html->script('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
+        <?= $this->Html->css('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
 
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot'); ?>
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot.pie'); ?>
@@ -106,6 +106,10 @@ $cakeDescription = 'Estrella';
 
             .card {
                 min-height: 500px;
+            }
+
+            footer{
+                margin-top: 200px;
             }
 
             .pagina{
@@ -199,7 +203,7 @@ $cakeDescription = 'Estrella';
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Parametros</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li>
+                                <!-- <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li> -->
                                 <li>
                                     <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Rutas'), ['controller'=>'Rutas','action' => 'index'],['title'=>'Rutas','escape' => false]) ?>
                                 </li>
@@ -224,7 +228,6 @@ $cakeDescription = 'Estrella';
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Productos</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li>
                                 <li>
                                     <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Categorias'), ['controller'=>'categorias','action' => 'index'],['title'=>'Categorias','escape' => false]) ?>
                                 </li>
@@ -237,7 +240,6 @@ $cakeDescription = 'Estrella';
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Usuarios</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li>
                                 <li>
                                     <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Usuarios'), ['controller'=>'usuarios','action' => 'index'],['title'=>'Usuarios','escape' => false]) ?>
                                 </li>
@@ -247,7 +249,6 @@ $cakeDescription = 'Estrella';
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Clientes</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li>
                                 <li>
                                     <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Clientes'), ['controller'=>'Clientes','action' => 'index'],['title'=>'Clientes','escape' => false]) ?>
                                 </li>
@@ -257,7 +258,6 @@ $cakeDescription = 'Estrella';
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Visitas</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li>
                                 <li>
                                     <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Visitas'), ['controller'=>'visitas','action' => 'index'],['title'=>'Visitas','escape' => false]) ?>
                                 </li>
@@ -267,7 +267,6 @@ $cakeDescription = 'Estrella';
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Ventas</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li>
                                 <li>
                                     <?php echo $this->Html->link(__('<i class="fa fa-user"></i>Ventas'), ['controller'=>'Ventas','action' => 'index'],['title'=>'Ventas','escape' => false]) ?>
                                 </li>
@@ -348,15 +347,15 @@ $cakeDescription = 'Estrella';
                 <div class="top-right"> 
                     <div class="header-menu"> 
                         <div class="header-left">
-                            <button class="search-trigger"><i class="fa fa-search"></i></button>
+                            <!-- <button class="search-trigger"><i class="fa fa-search"></i></button>
                             <div class="form-inline">
                                 <form class="search-form">
                                     <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
                                     <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
                                 </form>
-                            </div>
+                            </div> -->
 
-                            <div class="dropdown for-notification">
+                            <!-- <div class="dropdown for-notification">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-bell"></i>
                                     <span class="count bg-danger">3</span>
@@ -376,9 +375,9 @@ $cakeDescription = 'Estrella';
                                         <p>Server #3 overloaded.</p>
                                     </a>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <div class="dropdown for-message">
+                            <!-- <div class="dropdown for-message">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="message" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-envelope"></i>
                                     <span class="count bg-primary">4</span>
@@ -418,22 +417,24 @@ $cakeDescription = 'Estrella';
                                         </div>
                                     </a>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
 
                         <div class="user-area dropdown float-right">
+
                             <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?php echo $this->Html->image('images/admin.jpg',['alt' => 'User Avatar','class' => 'user-avatar rounded-circle']); ?>
+                                <?php //echo $this->Html->image('images/admin.jpg',['alt' => 'User Avatar','class' => 'user-avatar rounded-circle']); ?>
+                                <?php echo $currentUser['full_name']; ?>
                             </a>
 
                             <div class="user-menu dropdown-menu">
-                                <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a>
+                                <!-- <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a> -->
 
-                                <a class="nav-link" href="#"><i class="fa fa-bell-o"></i>Notifications <span class="count">13</span></a>
+                                <!-- <a class="nav-link" href="#"><i class="fa fa-bell-o"></i>Notifications <span class="count">13</span></a> -->
 
-                                <a class="nav-link" href="#"><i class="fa fa-cog"></i>Settings</a>
+                                <!-- <a class="nav-link" href="#"><i class="fa fa-cog"></i>Settings</a> -->
 
-                                <?php echo $this->Html->link('<i class="fa fa-power-off"></i>Logout</a>', ['controller'=>'usuarios','action'=>'logout'],['class'=>'nav-link','escape'=>false]); ?>
+                                <?php echo $this->Html->link('<i class="fa fa-power-off"></i>Salir</a>', ['controller'=>'usuarios','action'=>'logout'],['class'=>'nav-link','escape'=>false]); ?>
                             </div>
                         </div> 
                     </div>  
@@ -452,7 +453,7 @@ $cakeDescription = 'Estrella';
 
             <div class="clearfix"></div>
 
-            <footer class="site-footer">
+           <!--  <footer class="site-footer">
                 <div class="footer-inner bg-white">
                     <div class="row">
                         <div class="col-sm-6">
@@ -463,7 +464,7 @@ $cakeDescription = 'Estrella';
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
 
         </div><!-- /#right-panel -->
 

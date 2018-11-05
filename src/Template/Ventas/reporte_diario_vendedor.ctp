@@ -21,7 +21,7 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Fecha</label>
-                <?php echo $this->Form->control('fecha',['class'=>'form-control','value'=>date('Y-m-d'),'label'=>false]); ?>
+                 <?php echo $this->Form->control('fecha',['value'=>date('Y-m-d'),'type'=>'text','class'=>'form-control','placeholder'=>'Fecha','label'=>false,'data-toggle'=>'datetimepicker', 'data-target'=>'#fecha']); ?>
             </div>
 
             <div class="form-group">
@@ -35,12 +35,8 @@
 <?= $this->Form->end() ?>
 <script>
     (function( $ ) {
-        $(document).ready(function() {
-            // $('#fecha-vencimiento').datepicker();
-            $('#fecha').datepicker({
-                format: 'mm/dd/yyyy'
-           });
-
+        $('#fecha').datetimepicker({
+            format: 'YYYY-MM-DD'
         });
     })(jQuery);
 </script>

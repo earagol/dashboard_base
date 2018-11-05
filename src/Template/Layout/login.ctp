@@ -1,68 +1,67 @@
-<?php
-/**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
- */
-
-$cakeDescription = 'CakePHP: the rapid development php framework';
-?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <?= $this->Html->charset() ?>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <?= $cakeDescription ?>:
-        <?= $this->fetch('title') ?>
-    </title>
-    <?= $this->Html->meta('icon') ?>
+  <title>ESTRELLA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
 
-    <?= $this->Html->css('base.css') ?> 
-     <?= $this->Html->css('cake.css') ?> 
+  <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 
-  <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
-  <?php echo $this->Html->script('jquery-2.1.0.min.js'); ?>
-  <?php echo $this->Html->script('bootbox.min.js'); ?>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-   
-   <?php
-    echo $this->Html->css([
-      '/vendors/font-awesome/css/font-awesome',
-      '/template/plugins/bootstrap-datepicker/css/datepicker'
-    ]);
+  <link rel="stylesheet" type="text/css" href="fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
 
-    echo $this->Html->script([
-      '/template/plugins/bootstrap-datepicker/js/bootstrap-datepicker'
-    ]);
+  <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+  
+  <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
 
-  ?>
-   <?php
-      echo $this->fetch('meta');
-      echo $this->fetch('css');
-      echo $this->fetch('script');
-    ?>
+  <link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+
+  <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+  
+  <link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css"> -->
+  <?= $this->Html->css('font-awesome.min') ?>
+  <?= $this->Html->css('../vendors/login/font-awesome.min.css') ?>
+  <?= $this->Html->css('../vendors/login/util.css') ?>
+  <?= $this->Html->css('../vendors/login/main.css') ?>
+
+
+<!--   <link rel="stylesheet" type="text/css" href="css/util.css">
+  <link rel="stylesheet" type="text/css" href="css/main.css"> -->
+
+
 </head>
 <body>
+
     <?= $this->Flash->render() ?>
 
     <div class="container" style="padding-top: 10px">
         <?= $this->fetch('content') ?>
         
     </div>
-    <footer>
-    </footer>
+
+  
+<!--   <div id="dropDownSelect1"></div>
+  
+
+  <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+
+  <script src="vendor/animsition/js/animsition.min.js"></script>
+
+  <script src="vendor/bootstrap/js/popper.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+  <script src="vendor/select2/select2.min.js"></script>
+
+  <script src="vendor/daterangepicker/moment.min.js"></script>
+  <script src="vendor/daterangepicker/daterangepicker.js"></script>
+
+  <script src="vendor/countdowntime/countdowntime.js"></script>
+
+  <script src="js/main.js"></script> -->
+
 </body>
 </html>
 

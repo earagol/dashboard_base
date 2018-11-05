@@ -26,7 +26,7 @@
 
             <div class="form-group" >
                 <label for="company" class=" form-control-label">Fecha Vencimiento</label>
-                <?php echo $this->Form->control('fecha_vencimiento',['type'=>'text','class'=>'form-control','placeholder'=>'Fecha','label'=>false]); ?>
+                <?php echo $this->Form->control('fecha_vencimiento',['value'=>'','type'=>'text','class'=>'form-control','placeholder'=>'Fecha','label'=>false,'data-toggle'=>'datetimepicker', 'data-target'=>'#fecha-vencimiento']); ?>
             </div>
 
             <div class="form-group">
@@ -42,18 +42,50 @@
     </div>
 </div>
 
+<!-- <div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker1').datetimepicker();
+            });
+        </script>
+    </div>
+</div> -->
+
 <?= $this->Form->end() ?>
 <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
 
 <script>
     (function( $ ) {
-        $(document).ready(function() {
-            // $('#fecha-vencimiento').datepicker();
-            $('#fecha-vencimiento').datepicker({
-                format: 'mm/dd/yyyy'
-           });
 
+        $('#fecha-vencimiento').datetimepicker({
+            format: 'YYYY-MM-DD'
         });
+
+        // $('#fecha-vencimiento').datetimepicker({
+        //     format: 'mm/dd/yyyy'
+        // });
+        // $(document).ready(function() {
+        //     // $('#fecha-vencimiento').datepicker();
+        //     // $('#fecha-vencimiento').datepicker({
+        //     //     format: 'mm/dd/yyyy'
+        //     // });
+
+        //     $('#fecha-vencimiento').datetimepicker({
+        //         format: 'mm/dd/yyyy'
+        //     });
+
+        // });
     })(jQuery);
 </script>
 
