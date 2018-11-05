@@ -8,7 +8,7 @@
  <div class="col-lg-12">
     <div class="card">
         <div class="card-header">
-            <strong>Agregar tipo Parametro (fecha: <?php echo date('Y-m-d'); ?>)</strong>
+            <strong>Agregar Parametro Diario (fecha: <?php echo date('Y-m-d'); ?>)</strong>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
             </div>
@@ -20,6 +20,11 @@
             </div>
 
             <div id="data"></div>
+
+            <div class="form-group">
+                <label for="company" class=" form-control-label">Observación</label>
+                <?php echo $this->Form->control('observacion',['type'=> 'textarea','value'=> '','class'=>'form-control','label'=>false]); ?>
+            </div>
 
             <div class="form-group">
                 <?php echo $this->Form->button(__('Guardar',['class'=>'btn btn-primary'])) ?>

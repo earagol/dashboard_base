@@ -50,6 +50,14 @@ class ChangeFields2 extends AbstractMigration
             'default' => null,
             'null' => false,
         ])
+        ->addColumn('usuario_id', 'integer', [
+            'default' => null,
+            'null' => false
+        ])
+        ->addColumn('observacion', 'text', [
+            'default' => null,
+            'null' => true
+        ])
         ->addColumn('created', 'datetime', [
             'default' => null,
             'null' => false,
@@ -63,5 +71,18 @@ class ChangeFields2 extends AbstractMigration
             'null' => true,
         ])
         ->create();
+
+        $tableventas = $this->table('ventas')
+        ->addColumn('fecha', 'date', [
+            'default' => null,
+            'null' => true,
+            'after' => 'observacion',
+        ])
+        ->addColumn('tiene_detalles', 'boolean', [
+            'default' => true,
+            'null' => false,
+            'after' => 'observacion',
+        ])
+        ->update();
     }
 }

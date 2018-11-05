@@ -55,6 +55,8 @@ class Venta extends Entity
         'mes' => true,
         'dia' => true,
         'observacion' => true,
+        'tiene_detalles' => true,
+        'fecha' => true,
         'created' => true,
         'modified' => true,
         'deleted' => true,

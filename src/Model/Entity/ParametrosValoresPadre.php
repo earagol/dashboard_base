@@ -30,6 +30,8 @@ class ParametrosValoresPadre extends Entity
     protected $_accessible = [
         'parametros_tipo_id' => true,
         'fecha' => true,
+        'usuario_id' => true,
+        'observacion' => true,
         'created' => true,
         'modified' => true,
         'deleted' => true,

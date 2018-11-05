@@ -5,6 +5,8 @@ use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Network\Session;
 use Cake\Event\Event;
+use Robotusers\Excel\Registry;
+use Cake\I18n\Time;
 
 /**
  * Ventas Controller
@@ -49,6 +51,154 @@ class VentasController extends AppController
         $clientes = $this->paginate($clientesTable);
         $this->set(compact('clientes'));
     }
+
+    public function getVentas($usuario_id,$fecha){
+        $control = $this->Ventas->find();
+        $ventas =  $control->select([
+                                        'id',
+                                        'monto_total' => $control->func()->sum('monto_total'),
+                                        'monto_efectivo' => $control->func()->sum('monto_efectivo'),
+                                        'monto_transferencia' => $control->func()->sum('monto_transferencia'),
+                                        'cuenta_porcobrar' => $control->func()->sum('cuenta_porcobrar'),
+                                        'monto_cartera' => $control->func()->sum('monto_cartera'),
+                                    ])
+                                ->where([
+                                        'Ventas.usuario_id' => $usuario_id,
+                                        'Ventas.fecha' => $fecha
+                                    ])
+                                ->first();
+        $valores = [];
+        if($ventas){
+            $valores['monto_total'] = $ventas->monto_total; 
+            $valores['monto_efectivo'] = $ventas->monto_efectivo; 
+            $valores['monto_transferencia'] = $ventas->monto_transferencia; 
+            $valores['cuenta_porcobrar'] = $ventas->cuenta_porcobrar; 
+            $valores['monto_cartera'] = $ventas->monto_cartera; 
+        }
+        return $valores;
+    }
+
+
+    public function reporteDiarioVendedor(){
+
+        if($this->request->is('post')){
+
+            $valoresPadreTable = TableRegistry::get('ParametrosValoresPadre');
+            $paramsTipoTable = TableRegistry::get('ParametrosTipos');
+            $paramsTipoDiario = $paramsTipoTable->find('list')->where(['tipo'=>'Diario'])->toArray();
+            $paramsTipoGasto = $paramsTipoTable->find('list')->where(['tipo'=>'Gasto'])->toArray();
+            $productosTable = TableRegistry::get('Productos');
+            $productos = $productosTable->find('list')->toArray();
+
+            if($this->request->data('usuario_id') == null){
+                $this->request->data('usuario_id',$this->Auth->user('id'));
+            }
+
+            if($this->request->data('fecha') == null){
+                $this->request->data('fecha',date('Y-m-d'));
+            }
+
+            $fechaFormat = new Time($this->request->data('fecha'));
+            $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
+
+            $ventas = $this->getVentas($this->request->data('usuario_id'),$this->request->data('fecha'));
+            // prx($ventas);
+            
+            // $fecha = date('2018-11-04');
+            // prx($fecha);
+
+            $resultados = $valoresPadreTable->find('all')
+                                            ->contain(['ParametrosValores','ParametrosTipos'])
+                                            ->where([
+                                                'ParametrosValoresPadre.fecha' => $this->request->data('fecha'),
+                                                'ParametrosValoresPadre.usuario_id' => $this->request->data('usuario_id')
+                                                ]
+                                            );
+
+            $resultados = $resultados->toArray();
+            $valores = $diario = $gasto = [];
+
+            if($resultados){
+                
+                foreach ($resultados as $key => $value) {
+                    $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['nombre'] = $value->parametros_tipo->nombre;
+                    $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'] = [];
+                    // $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'] = '';
+
+                    foreach ($value->parametros_valores as $key2 => $value2) {
+                        if($value->parametros_tipo->tipo == 'Diario'){
+
+                            if(!isset($valores[$value->parametros_tipo_id]['valores'][$value2->producto_id])){
+
+                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['cantidad'] = $value2->monto_o_cantidad;
+                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['nombre'] = $productos[$value2->producto_id];
+
+                            }else{
+                                 $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['cantidad']+=$value2->monto_o_cantidad;
+                            }
+
+                        }else{
+
+                            if(!isset($valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'])){
+                                 // pr('a');
+                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'] = $value2->monto_o_cantidad;
+
+                            }else{
+                                 // pr('b');
+                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad']+=$value2->monto_o_cantidad;
+                            }
+
+                        }
+                        
+                    }
+                }
+                
+                foreach ($paramsTipoDiario as $keyT => $valueT) {
+                    $newValor = [];
+                    foreach ($productos as $keyP => $valueP) {
+
+                        if(isset($valores['Diario'][$keyT]['valores'][$keyP])){
+                            $newValor[$keyP] = $valores['Diario'][$keyT]['valores'][$keyP];
+                        }else{
+                            $newValor[$keyP] = [
+                                            'nombre' => $valueP,
+                                            'cantidad' => ''
+                                        ];
+                        }
+                    }
+                    $diario[$keyT]['nombre'] = $valueT;
+                    $diario[$keyT]['valores'] = $newValor;
+                }
+                
+                foreach ($paramsTipoGasto as $keyT => $valueT) {
+                    $newValor = [];
+
+                        if(isset($valores['Gasto'][$keyT])){
+                            $newValor = $valores['Gasto'][$keyT]['cantidad'];
+                        }else{
+                            $newValor = '';
+                        }
+                    $gasto[$keyT]['nombre'] = $valueT;
+                    $gasto[$keyT]['cantidad'] = $newValor;
+                }
+            }
+
+            // prx($valores); // Todo
+            pr($diario); //Depende de valores, ya esta ordenado
+            pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
+            prx($gasto); //Depende de valores, ya esta ordenado
+
+        }
+
+        if($this->Auth->user('role') == 'admin'){
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuario.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+        
+        $this->set(compact('usuarios'));
+
+    }//Fin reporteDiarioVendedor
 
     /**
      * View method
@@ -144,12 +294,22 @@ class VentasController extends AppController
             $this->request->data('ano',date('Y'));
             $this->request->data('mes',date('m'));
             $this->request->data('dia',date('d'));
+            $this->request->data('fecha',date('Y-m-d'));
             if(!$this->request->data('efectivo')){
                 $this->request->data('monto_efectivo',null);
             }
 
             if(!$this->request->data('transferencia')){
                 $this->request->data('monto_transferencia',null);
+            }
+
+            if(!$this->request->data('pago_cartera')){
+                $this->request->data('monto_cartera',null);
+            }
+
+            $this->request->data('monto_cartera',true);
+            if(!$session->read('detalles')){
+                $this->request->data('monto_cartera',false);
             }
 
             // if($this->request->data('pago_cartera')){
@@ -213,7 +373,7 @@ class VentasController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            prx($this->request->data);
+            // prx($this->request->data);
             $this->Flash->error(__('The venta could not be saved. Please, try again.'));
         }
         $cliente = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();

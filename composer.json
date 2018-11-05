@@ -13,7 +13,8 @@
         "josegonzalez/dotenv": "3.*",
         "mobiledetect/mobiledetectlib": "2.*",
         "ozee31/cakephp-cors": "^1.1",
-        "pgbi/cakephp3-soft-delete": "~1.0"
+        "pgbi/cakephp3-soft-delete": "~1.0",
+        "robotusers/cakephp-excel": "^0.6.0"
     },
     "require-dev": {
         "cakephp/bake": "^1.1",

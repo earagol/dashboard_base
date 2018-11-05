@@ -98,10 +98,10 @@ class ParametrosValoresController extends AppController
                         return $this->redirect(['action' => 'index']);
                     }
                 }
-                prx($this->request->data);
+                // prx($this->request->data);
                 $this->Flash->error(__('The parametros tipo could not be saved. Please, try again.'));
             }
-            prx($this->request->data);
+            // prx($this->request->data);
             $this->Flash->error(__('The parametros tipo could not be saved. Please, try again.'));
         }
 
