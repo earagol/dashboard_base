@@ -31,6 +31,7 @@ $cakeDescription = 'Estrella';
         <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
         
 
+        <!-- <?php echo $this->Html->css('base') ?> -->
         <?php echo $this->Html->css('bootstrap.min') ?>
         <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap.min') ?>
         <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap-theme.min') ?>
@@ -61,6 +62,11 @@ $cakeDescription = 'Estrella';
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot'); ?>
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot.pie'); ?>
         <?php echo $this->Html->script('lib/flot-chart/jquery.flot.spline'); ?>
+
+        <?= $this->Html->script('bootstrap') ?> 
+
+        <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script> -->
+
 
 
         <style>
@@ -100,6 +106,79 @@ $cakeDescription = 'Estrella';
 
             .card {
                 min-height: 500px;
+            }
+
+            .pagina{
+                justify-content:center;
+            }
+
+            ul.pagination {
+                display:block;
+                /*margin-left:-0.3125rem;*/
+                min-height:1.5rem
+            }
+
+            ul.pagination li {
+                color:#222;
+                font-size:0.875rem;
+                height:1.5rem;
+                margin-left:0.3125rem
+            }
+
+            ul.pagination li a,ul.pagination li button {
+                border-radius:3px;
+                transition:background-color 300ms ease-out;
+                background:none;
+                color:#999;
+                display:block;
+                font-size:1em;
+                font-weight:normal;
+                line-height:inherit;
+                padding:0.0625rem 0.625rem 0.0625rem
+            }
+
+            ul.pagination li:hover a,ul.pagination li a:focus,ul.pagination li:hover button,ul.pagination li button:focus {
+                background:#e6e6e6
+            }
+
+            ul.pagination li.unavailable a,ul.pagination li.unavailable button {
+                cursor:default;
+                color:#999
+            }
+
+            ul.pagination li.unavailable:hover a,ul.pagination li.unavailable a:focus,ul.pagination li.unavailable:hover button,ul.pagination li.unavailable button:focus {
+                background:transparent
+            }
+
+            ul.pagination li.current a,ul.pagination li.current button {
+                background:#008CBA;
+                color:#fff;
+                cursor:default;
+                font-weight:bold
+            }
+
+            ul.pagination li.current a:hover,ul.pagination li.current a:focus,ul.pagination li.current button:hover,ul.pagination li.current button:focus {
+                background:#008CBA
+            }
+
+            ul.pagination li {
+                display:block;
+                display:inline-block;
+                /*float:left*/
+            }
+
+            .pagination-centered {
+                text-align:center
+            }
+
+            .pagination-centered ul.pagination li {
+                display:inline-block;
+                float:none
+            }
+
+            ul.pagination li.active{
+                background-color: #666;
+                color: white;
             }
 
         </style>
