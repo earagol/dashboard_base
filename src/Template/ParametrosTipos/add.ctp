@@ -16,7 +16,7 @@
         <div class="card-body card-block">
             <div class="form-group">
                 <label for="company" class=" form-control-label">Usuario</label>
-                <?php echo $this->Form->control('tipo',['options'=>['Diario'=>'Diario''Gasto'=>'Gastos'],'class'=>'form-control','label'=>false]); ?>
+                <?php echo $this->Form->control('tipo',['options'=>['Diario'=>'Diario','Gasto'=>'Gastos'],'class'=>'form-control','label'=>false]); ?>
             </div>
 
             <div class="form-group">
