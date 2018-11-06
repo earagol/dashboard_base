@@ -20,6 +20,13 @@
        
             // echo $this->Form->control('deleted', ['empty' => true]);
 ?>
+<style>
+    hr {
+        height: 10px;
+        border: 0;
+        box-shadow: 0 10px 10px -10px #8c8b8b inset;
+    }
+</style>
 
 
 <?php echo $this->Form->create($venta) ?>
@@ -45,8 +52,14 @@
 
             <?php echo $this->Form->control('cuenta_porcobrar_cliente',['type'=>'hidden','class'=>'form-control','value'=>$cliente->cuenta_porcobrar,'label'=>false]); ?>
 
-            <div class="text-center col-lg-12">Productos</div>
             <hr class="my-4">
+
+            <!-- <div class="text-center col-lg-12">Productos</div> -->
+            <div class = "page-header text-center col-lg-12">
+               <h3>
+                  Productos
+               </h3>
+            </div>
 
             <div class="row col-lg-12">
                 <div class="col-lg-4 col-xs-12 col-sm-12">
@@ -73,10 +86,37 @@
                 </div>
             </div>
 
-            <div class="text-center col-lg-12">Detalles Productos</div>
             <hr class="my-4">
 
+             <div class = "page-header text-center col-lg-12">
+               <h3>
+                  Detalle de Venta
+               </h3>
+            </div>
+           
+
             <div id="grilla" style="margin-top: 5px;max-height: 300px;">
+
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Precio Unitario</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Total</th>
+                            <th >Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                    </tbody>
+                </table>
                 
             </div>
 
@@ -284,7 +324,11 @@
                         deuda = deuda.replace('.', '');
                         var deuda2 = $('#monto-deuda2').val();
                         deuda2 = deuda2.replace('.', '');
-                        if(deuda > deuda2){
+                        if(eval($('#monto-deuda').val()) <= 0){
+                            $('#monto-deuda').val($('#monto-deuda2').val());
+                            alert('Ingrese un monto valido');
+                            return;
+                        }else if(deuda > deuda2){
                             // cuenta = number_format(cuenta,0);
                             // $('#cuenta-porcobrar').val(cuenta);
                             // $('#cuentaCobrar').html(cuenta);
