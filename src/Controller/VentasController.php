@@ -83,6 +83,7 @@ class VentasController extends AppController
             $valores['monto_transferencia'] = $ventas->monto_transferencia; 
             $valores['cuenta_porcobrar'] = $ventas->cuenta_porcobrar; 
             $valores['monto_cartera'] = $ventas->monto_cartera; 
+            $valores['deuda'] = $ventas->cuenta_porcobrar-$ventas->monto_cartera; 
         }
         return $valores;
     }

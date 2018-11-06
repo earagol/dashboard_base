@@ -73,7 +73,7 @@
                 return amount_parts.join('.');
             }
 
-                 function calculo(){
+            function calculo(){
                 var cuenta = 0;
                 var total = 0;
  
@@ -97,7 +97,11 @@
                         deuda = deuda.replace('.', '');
                         var deuda2 = $('#monto-deuda2').val();
                         deuda2 = deuda2.replace('.', '');
-                        if(deuda > deuda2){
+                        if(eval($('#monto-deuda').val()) <= 0){
+                            $('#monto-deuda').val($('#monto-deuda2').val());
+                            alert('Ingrese un monto valido');
+                            return;
+                        }else if(deuda > deuda2){
                             // cuenta = number_format(cuenta,0);
                             // $('#cuenta-porcobrar').val(cuenta);
                             // $('#cuentaCobrar').html(cuenta);
@@ -156,7 +160,7 @@
                 cuenta = number_format(cuenta,0);
                 
                 $('#cuenta-porcobrar').val(cuenta);
-                $('#resta').val(cuenta);
+                $('#resta').html(cuenta);
                 // $('#cuentaCobrar').html(cuenta);
                 
 
