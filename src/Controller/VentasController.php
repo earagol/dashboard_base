@@ -7,6 +7,15 @@ use Cake\Network\Session;
 use Cake\Event\Event;
 use Robotusers\Excel\Registry;
 use Cake\I18n\Time;
+use Box\Spout\Reader\ReaderFactory;
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
+use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Style\Color;
+
+use Box\Spout\Writer\Style\Border;
+use Box\Spout\Writer\Style\BorderBuilder;
 
 /**
  * Ventas Controller
@@ -183,10 +192,52 @@ class VentasController extends AppController
                 }
             }
 
+           
             // prx($valores); // Todo
-            pr($diario); //Depende de valores, ya esta ordenado
-            pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
-            prx($gasto); //Depende de valores, ya esta ordenado
+            // pr($diario); //Depende de valores, ya esta ordenado
+            // pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
+            // prx($gasto); //Depende de valores, ya esta ordenado
+
+
+            /**
+             * Generacion de reporte EXCEL
+             */
+            $fileName = 'ventas.xlsx';
+            $writer = WriterFactory::create(Type::XLSX); // for XLSX files
+            //$writer->openToFile($fullFilePath); // write data to a file or to a PHP stream
+            $writer->openToBrowser($fileName); // stream data directly to the browser
+
+            $border = (new BorderBuilder())
+                ->setBorderTop(Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID)
+                ->setBorderBottom(Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID)
+                ->build();
+
+            $style_title = (new StyleBuilder())
+                ->setFontBold()
+                ->setFontSize(12)
+                ->setFontColor(Color::BLACK)
+                ->setShouldWrapText()
+                ->setBorder($border)
+                ->build();
+
+            $style_body = (new StyleBuilder())
+                    ->setFontSize(11)
+                    ->setFontColor(Color::BLACK)
+                    ->setShouldWrapText(false)
+                    ->build();
+
+            $writer->addRowWithStyle(['Ticket', 'Gestión', 'Fecha', 'Hora', 'Rut', 'Cliente', 'Tipo', 'Marca', 'Canal', 'Origen', 'Categoría', 'Subcateg.', 'Urgencia', 'Estado', 'Resolutor', 'Estado', 'SLA', 'Pedido', 'Monto', 'Detalles'], $style_title);
+
+            $arrSAL = [
+                '0' => 'Normal',
+                '1' => 'Escalado',
+                '2' => 'Reescalado',
+                '3' => 'Incumplido'
+            ];
+
+            //$writer->addRows($rows); // add multiple rows at a time
+            $writer->close();
+            $this->autoRender = false;
 
         }
 
