@@ -17,8 +17,11 @@
             // echo $this->Form->control('mes');
             // echo $this->Form->control('dia');
             // echo $this->Form->control('observacion');
+       
             // echo $this->Form->control('deleted', ['empty' => true]);
 ?>
+
+
 <?php echo $this->Form->create($venta) ?>
 <div class="col-lg-12">
     <div class="card">
@@ -42,75 +45,112 @@
 
             <?php echo $this->Form->control('cuenta_porcobrar_cliente',['type'=>'hidden','class'=>'form-control','value'=>$cliente->cuenta_porcobrar,'label'=>false]); ?>
 
+            <div class="text-center col-lg-12">Productos</div>
+            <hr class="my-4">
+
             <div class="row col-lg-12">
-                <div class="col-lg-3">
+                <div class="col-lg-4 col-xs-12 col-sm-12">
                      <label for="company" class=" form-control-label">Producto</label>
                       <?php echo $this->Form->control('producto_id',['class'=>'form-control','empty'=>'--Seleccione el Producto','label'=>false]); ?>
                 </div>
 
-                <div class="col-lg-3">
+                <div class="col-lg-3 col-xs-12 col-sm-12">
                      <label for="company" class=" form-control-label">Precio</label>
                       <?php echo $this->Form->control('precio_id',['empty'=>'--Seleccione el Precio','class'=>'form-control','label'=>false]); ?>
                 </div>
 
-                <div class="col-lg-4">
+                <div class="col-lg-4 col-xs-12 col-sm-12">
                      <label for="company" class=" form-control-label">Cantidad</label>
                       <?php echo $this->Form->control('cantidad',['class'=>'form-control','label'=>false]); ?>
                 </div>
 
-                <div class="col-lg-1">
-                    <label for="company" class=" form-control-label">Acción</label>
-                     <?php echo $this->Form->button('+',['type'=>'button','class'=>'btn btn-primary','id' => 'plus']) ?>
+                <div class="col-lg-1 col-xs-12 col-sm-12">
+                    <div class="form-group">
+                        <label for="company" class=" form-control-label">Acción</label><br>
+                        <?php echo $this->Form->button('+',['type'=>'button','class'=>'btn btn-primary','id' => 'plus']) ?>
+                    </div>
+                    
                 </div>
             </div>
+
+            <div class="text-center col-lg-12">Detalles Productos</div>
+            <hr class="my-4">
 
             <div id="grilla" style="margin-top: 5px;max-height: 300px;">
                 
             </div>
 
-            <?php if($carteraPendiente): ?>
 
-                <div class="form-check">
-                    <?php echo $this->Form->control('pagar_cartera', ['type'=>'checkbox','class'=>'form-check-input','label'=>false,'checked'=>false]); ?>
-                    <label for="company" class=" form-check-label">Cancela Cartera?</label>
-                </div>
+            
+            <table class="table table-bordered col-lg-6 col-lg-offset-3 col-xs-12 col-sm-12">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Acciòn</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                     <?php if($carteraPendiente): ?>
+                        <tr>
+                            <td><div class="form-check"><?php echo $this->Form->control('pagar_cartera', ['type'=>'checkbox','class'=>'form-check-input','label'=>false,'checked'=>false]); ?></div></td>
+                            <td>Cancela Cartera?</td>
+                            <td><?php echo $this->Form->control('monto_deuda', ['class'=>'form-control','value' => number_format($carteraPendiente, 0, ",", "."),'label'=>false,'readonly'=>'readonly']); ?></td>
 
-                <div class="form-group">
-                    <label for="company" class=" form-control-label">Monto a Pagar: <b><span ><?php echo number_format($carteraPendiente, 0, ",", "."); ?></span></b></label></label>
-                    <?php echo $this->Form->control('monto_deuda', ['class'=>'form-control','value' => number_format($carteraPendiente, 0, ",", "."),'label'=>false,'style'=>'width:20%','readonly'=>'readonly']); ?>
-                </div>
+                        </tr>
 
-            <?php else: ?>
-                 <?php echo $this->Form->control('pagar_cartera', ['type'=>'hidden','class'=>'form-check-input','label'=>false,'value'=>0]); ?> 
+                    <?php else: ?>
+                         <?php echo $this->Form->control('pagar_cartera', ['type'=>'hidden','class'=>'form-check-input','label'=>false,'value'=>0]); ?> 
+                    <?php endif; ?>
 
-            <?php endif; ?>
+                    <tr>
+                        <td></td>
+                        <td>Total Venta:</td>
+                        <td>
+                            <!-- <label for="company" class=" form-control-label"><b><span id="cuentaCobrar">0</span></b></label> -->
+                            <?php echo $this->Form->control('cuenta_porcobrar', ['type'=>'hidden','class'=>'form-control','value' => 0,'label'=>false,'readonly'=>'readonly']); ?>
+                            <?php echo $this->Form->control('cuenta_porcobrar2', ['type'=>'text','class'=>'form-control','value' => 0,'label'=>false,'readonly'=>'readonly']); ?>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="form-check"><?php echo $this->Form->control('efectivo', ['type'=>'checkbox','class'=>'form-check-input','label'=>false]); ?></div></td>
+                        <td>Monto Efectivo:</td>
+                        <td>
+                            <?php echo $this->Form->control('monto_efectivo', ['type'=>'text','class'=>'form-control','value' => '','label'=>false,'readonly'=>'readonly']); ?>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="form-check"><?php echo $this->Form->control('transferencia', ['type'=>'checkbox','class'=>'form-check-input','label'=>false]); ?></div></td>
+                        <td>Monto Transferencia:</td>
+                        <td>
+                            <?php echo $this->Form->control('monto_transferencia', ['type'=>'text','class'=>'form-control','value' => '','label'=>false,'readonly'=>'readonly']); ?>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td clospan="2"></td>
+                        <td>Total:</td>
+                        <td>
+                            <label for="company" class=" form-control-label"><b><span id="totalAll">0</span></b></label>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td clospan="2"></td>
+                        <td>Cuenta por Cobrar:</td>
+                        <td>
+                            <label for="company" class=" form-control-label"><b><span id="resta">0</span></b></label>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
             <?php echo $this->Form->control('monto_deuda2', ['type'=>'hidden','class'=>'form-control','value' => number_format($carteraPendiente, 0, ",", "."),'label'=>false,'style'=>'width:20%','readonly'=>'readonly']); ?>
 
-            <div class="form-group">
-                <label for="company" class=" form-control-label">Cuenta por cobrar: <b><span id="cuentaCobrar">0</span></b></label>
-                <?php echo $this->Form->control('cuenta_porcobrar', ['type'=>'hidden','class'=>'form-control','value' => 0,'label'=>false,'readonly'=>'readonly']); ?>
-                <?php echo $this->Form->control('cuenta_porcobrar2', ['type'=>'hidden','class'=>'form-control','value' => 0,'label'=>false,'readonly'=>'readonly']); ?>
-            </div>
-
-            <div class="form-check">
-                <?php echo $this->Form->control('efectivo', ['type'=>'checkbox','class'=>'form-check-input','label'=>false]); ?>
-                <label for="company" class=" form-check-label">Efectivo</label>
-            </div>
-
-            <div class="form-group">
-                <label for="company" class=" form-control-label">Monto Efectivo</label>
-                <?php echo $this->Form->control('monto_efectivo', ['type'=>'text','class'=>'form-control','value' => '','label'=>false,'readonly'=>'readonly']); ?>
-            </div>
-
-            <div class="form-check">
-                <?php echo $this->Form->control('transferencia', ['type'=>'checkbox','class'=>'form-check-input','label'=>false]); ?>
-                <label for="company" class=" form-check-label">transferencia</label>
-            </div>
-
-            <div class="form-group">
-                <label for="company" class=" form-control-label">Monto Transferencia</label>
-                <?php echo $this->Form->control('monto_transferencia', ['type'=>'text','class'=>'form-control','value' => '','label'=>false,'readonly'=>'readonly']); ?>
-            </div>
 
 
             <div class="form-group">
@@ -220,9 +260,10 @@
             }
 
 
-          function calculo(){
+            function calculo(){
                 var cuenta = 0;
-
+                var total = 0;
+ 
                 ////////////////TOTALES GRILLA//////////////////////
 
                 var totales = 0;
@@ -230,7 +271,7 @@
                     var totales = $('#totales').val();
                     var totales = totales.replace('.', '');
                     var cuenta = eval(cuenta)+eval(totales);
-                    $('#cuenta-porcobrar2').val(cuenta);
+                    $('#cuenta-porcobrar2').val(number_format(cuenta,0));
                 }
 
                 
@@ -244,9 +285,10 @@
                         var deuda2 = $('#monto-deuda2').val();
                         deuda2 = deuda2.replace('.', '');
                         if(deuda > deuda2){
-                            cuenta = number_format(cuenta,0);
-                            $('#cuenta-porcobrar').val(cuenta);
-                            $('#cuentaCobrar').html(cuenta);
+                            // cuenta = number_format(cuenta,0);
+                            // $('#cuenta-porcobrar').val(cuenta);
+                            // $('#cuentaCobrar').html(cuenta);
+                            $('#monto-deuda').val(number_format(deuda2,0));
                             alert('el monto ingresado no debe ser mayor a la deuda.');
                             return;
                         }
@@ -261,7 +303,8 @@
                     $('#monto-deuda').attr('readonly',true);
                     $('#monto-deuda').val($('#monto-deuda2').val());
                 }
-                $('#cuenta-porcobrar2').val(cuenta);
+                $('#totalAll').html(number_format(cuenta,0));
+                // $('#cuenta-porcobrar2').val(cuenta);
 
                 ////////////////EFECTIVO//////////////////////
                 var cuentaAux = cuenta;
@@ -300,12 +343,14 @@
                 cuenta = number_format(cuenta,0);
                 
                 $('#cuenta-porcobrar').val(cuenta);
-                $('#cuentaCobrar').html(cuenta);
+                $('#resta').html(cuenta);
+                // $('#cuentaCobrar').html(cuenta);
+                
 
                 if(flag){
                     $('#monto-efectivo').val('');
                     $('#monto-transferencia').val('');
-                    alert('La suma de los montos ingresados en efectivo y/o transferencia no debe ser mayor a la cuenta por cobrar');
+                    alert('La suma de los montos ingresados en efectivo y/o transferencia no debe ser mayor al total de la venta');
                 }
 
             }//fin calculo

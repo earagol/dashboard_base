@@ -185,6 +185,8 @@ $cakeDescription = 'Estrella';
                 color: white;
             }
 
+            
+
         </style>
     </head>
 
@@ -443,7 +445,7 @@ $cakeDescription = 'Estrella';
             <!-- Header-->
 
             <?= $this->Flash->render() ?>
-            <div class="content pb-0">
+            <div class="content pb-0 center" >
                
                 <?= $this->fetch('content') ?>
 

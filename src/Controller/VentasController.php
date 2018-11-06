@@ -194,9 +194,9 @@ class VentasController extends AppController
 
            
             // prx($valores); // Todo
-            // pr($diario); //Depende de valores, ya esta ordenado
-            // pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
-            // prx($gasto); //Depende de valores, ya esta ordenado
+            pr($diario); //Depende de valores, ya esta ordenado
+            pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
+            prx($gasto); //Depende de valores, ya esta ordenado
 
 
             /**
@@ -333,6 +333,7 @@ class VentasController extends AppController
     {
         $venta = $this->Ventas->newEntity();
         if ($this->request->is('post')) {
+            $session = $this->request->session();
             // pr($this->request->data);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('cuenta_porcobrar',str_replace('.','',$this->request->data('cuenta_porcobrar')));
@@ -346,11 +347,14 @@ class VentasController extends AppController
             $this->request->data('mes',date('m'));
             $this->request->data('dia',date('d'));
             $this->request->data('fecha',date('Y-m-d'));
-            if(!$this->request->data('efectivo')){
+
+            if(!$this->request->data('efectivo') || $this->request->data('monto_efectivo') == null){
+                $this->request->data('efectivo',false);
                 $this->request->data('monto_efectivo',null);
             }
 
-            if(!$this->request->data('transferencia')){
+            if(!$this->request->data('transferencia') || $this->request->data('monto_transferencia') == null){
+                $this->request->data('transferencia',false);
                 $this->request->data('monto_transferencia',null);
             }
 
@@ -358,15 +362,15 @@ class VentasController extends AppController
                 $this->request->data('monto_cartera',null);
             }
 
-            $this->request->data('monto_cartera',true);
-            if(!$session->read('detalles')){
-                $this->request->data('monto_cartera',false);
-            }
+            // $this->request->data('monto_cartera',true);
+            // if(!$session->read('detalles')){
+            //     $this->request->data('monto_cartera',false);
+            // }
 
             // if($this->request->data('pago_cartera')){
             //     $this->request->data('monto_total',$this->request->data('monto_total')-$this->request->data('monto_cartera'));
             // }
-            $session = $this->request->session();
+            
             // prx($this->request->data);
             // prx($session->read('detalles'));
             $venta = $this->Ventas->patchEntity($venta, $this->request->getData());

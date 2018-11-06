@@ -1,5 +1,5 @@
-<table class="table table-striped">
-    <thead>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
         <tr>
             <th scope="col">#</th>
             <th scope="col">Producto</th>
@@ -73,9 +73,10 @@
                 return amount_parts.join('.');
             }
 
-            function calculo(){
+                 function calculo(){
                 var cuenta = 0;
-
+                var total = 0;
+ 
                 ////////////////TOTALES GRILLA//////////////////////
 
                 var totales = 0;
@@ -83,7 +84,7 @@
                     var totales = $('#totales').val();
                     var totales = totales.replace('.', '');
                     var cuenta = eval(cuenta)+eval(totales);
-                    $('#cuenta-porcobrar2').val(cuenta);
+                    $('#cuenta-porcobrar2').val(number_format(cuenta,0));
                 }
 
                 
@@ -97,9 +98,10 @@
                         var deuda2 = $('#monto-deuda2').val();
                         deuda2 = deuda2.replace('.', '');
                         if(deuda > deuda2){
-                            cuenta = number_format(cuenta,0);
-                            $('#cuenta-porcobrar').val(cuenta);
-                            $('#cuentaCobrar').html(cuenta);
+                            // cuenta = number_format(cuenta,0);
+                            // $('#cuenta-porcobrar').val(cuenta);
+                            // $('#cuentaCobrar').html(cuenta);
+                            $('#monto-deuda').val(number_format(deuda2,0));
                             alert('el monto ingresado no debe ser mayor a la deuda.');
                             return;
                         }
@@ -114,7 +116,8 @@
                     $('#monto-deuda').attr('readonly',true);
                     $('#monto-deuda').val($('#monto-deuda2').val());
                 }
-                $('#cuenta-porcobrar2').val(cuenta);
+                $('#totalAll').html(number_format(cuenta,0));
+                // $('#cuenta-porcobrar2').val(cuenta);
 
                 ////////////////EFECTIVO//////////////////////
                 var cuentaAux = cuenta;
@@ -153,12 +156,14 @@
                 cuenta = number_format(cuenta,0);
                 
                 $('#cuenta-porcobrar').val(cuenta);
-                $('#cuentaCobrar').html(cuenta);
+                $('#resta').val(cuenta);
+                // $('#cuentaCobrar').html(cuenta);
+                
 
                 if(flag){
                     $('#monto-efectivo').val('');
                     $('#monto-transferencia').val('');
-                    alert('La suma de los montos ingresados en efectivo y/o transferencia no debe ser mayor a la cuenta por cobrar');
+                    alert('La suma de los montos ingresados en efectivo y/o transferencia no debe ser mayor al total de la venta');
                 }
 
             }//fin calculo
