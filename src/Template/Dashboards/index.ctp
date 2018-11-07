@@ -9,8 +9,8 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib"> 
-                            <div class="stat-text">$<span class="count">23569</span></div>
-                            <div class="stat-heading">Revenue</div>
+                            <div class="stat-text">$<span class="count"><?php echo $dataReal->monto_total?$dataReal->monto_total:''; ?></span></div>
+                            <div class="stat-heading">Monto Venta <small><?php echo $fecha; ?></small></div>
                         </div>
                     </div>
                 </div>
@@ -27,8 +27,8 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib">
-                            <div class="stat-text"><span class="count">3435</span></div>
-                            <div class="stat-heading">Sales</div> 
+                            <div class="stat-text"><span class="count"><?php echo $dataReal->total_ventas?$dataReal->total_ventas:''; ?></span></div>
+                            <div class="stat-heading">Ventas</div> 
                         </div>
                     </div>
                 </div>
@@ -45,32 +45,34 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib"> 
-                            <div class="stat-text"><span class="count">349</span></div>
-                            <div class="stat-heading">Templates</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                            <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:''; ?></span></div>
+                            <div class="stat-heading">N° Trans por Confirmar</div>
 
-    <div class="col-lg-3 col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <div class="stat-widget-five">
-                    <div class="stat-icon dib flat-color-4">
-                        <i class="pe-7f-users"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="text-left dib"> 
-                            <div class="stat-text"><span class="count">2986</span></div>
-                            <div class="stat-heading">Clients</div>
+                            <div class="stat-text"><span class="count"><?php echo $transferidas->monto_transferencia?$transferidas->monto_transferencia:''; ?></span></div>
+                            <div class="stat-heading">Monto Trans por Confirmar</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <?php if($currentUser['role'] == 'admin'): ?>
+        <div class="col-lg-3 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="stat-widget-five">
+                        <div class="stat-icon dib flat-color-4">
+                            <i class="pe-7f-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-text"><span class="count"><?php echo $clientes->total_clientes?$clientes->total_clientes:''; ?></span></div>
+                                <div class="stat-heading">N° Clientes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div> 
 <!-- Widgets End -->
 

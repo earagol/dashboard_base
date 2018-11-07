@@ -163,7 +163,10 @@ class VentasController extends AppController
                     }
                 }
                 
-                foreach ($paramsTipoDiario as $keyT => $valueT) {
+                
+            }
+
+            foreach ($paramsTipoDiario as $keyT => $valueT) {
                     $newValor = [];
                     foreach ($productos as $keyP => $valueP) {
 
@@ -191,15 +194,15 @@ class VentasController extends AppController
                     $gasto[$keyT]['nombre'] = $valueT;
                     $gasto[$keyT]['cantidad'] = $newValor;
                 }
-            }
 
            
             // prx($valores); // Todo
-            pr($diario); //Depende de valores, ya esta ordenado
-            pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
-            prx($gasto); //Depende de valores, ya esta ordenado
+            // pr($diario); //Depende de valores, ya esta ordenado
+            // prx($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
+            // prx($gasto); //Depende de valores, ya esta ordenado
 
-
+            // prx('ff');
+        
             /**
              * Generacion de reporte EXCEL
              */
@@ -227,14 +230,35 @@ class VentasController extends AppController
                     ->setShouldWrapText(false)
                     ->build();
 
-            $writer->addRowWithStyle(['Ticket', 'Gestión', 'Fecha', 'Hora', 'Rut', 'Cliente', 'Tipo', 'Marca', 'Canal', 'Origen', 'Categoría', 'Subcateg.', 'Urgencia', 'Estado', 'Resolutor', 'Estado', 'SLA', 'Pedido', 'Monto', 'Detalles'], $style_title);
+            $header[] = '';
+            $header = array_merge($header,$productos);
+            $writer->addRowWithStyle($header, $style_title);
 
-            $arrSAL = [
-                '0' => 'Normal',
-                '1' => 'Escalado',
-                '2' => 'Reescalado',
-                '3' => 'Incumplido'
-            ];
+            foreach ($diario as $dia => $valueDia) {
+                $arrayDia = [];
+                $arrayDia[$valueDia['nombre']] = $valueDia['nombre'];
+                foreach ($valueDia['valores'] as $diaKeyValor => $diaValor) {
+                     $arrayDia[$diaKeyValor] = $diaValor['cantidad'];
+                }
+                $writer->addRowWithStyle($arrayDia, $style_title);
+            }
+
+            $writer->addRowWithStyle(['',''], $style_title);
+
+            $writer->addRowWithStyle(['TOTAL EFECTIVO', $ventas['monto_efectivo']], $style_title);
+            $writer->addRowWithStyle(['TOTAL TRANSFERENCIAS', $ventas['monto_transferencia']], $style_title);
+            $writer->addRowWithStyle(['TOTAL CXC', '?'], $style_title);
+            $writer->addRowWithStyle(['TOTAL VENTAS', $ventas['monto_total']], $style_title);
+
+            $writer->addRowWithStyle(['',''], $style_title);
+            $writer->addRowWithStyle(['GASTO'], $style_title);
+
+            $totalGasto = 0;
+            foreach ($gasto as $keyGasto => $valueGasto) {
+                $totalGasto+=$valueGasto['cantidad'];
+                $writer->addRowWithStyle([$valueGasto['nombre'],$valueGasto['cantidad']], $style_title);
+            }
+            $writer->addRowWithStyle(['TOTAL DESCUENTO',$totalGasto], $style_title);
 
             //$writer->addRows($rows); // add multiple rows at a time
             $writer->close();
