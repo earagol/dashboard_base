@@ -27,10 +27,6 @@ use Box\Spout\Writer\Style\BorderBuilder;
 class VentasController extends AppController
 {
 
-    // public function beforeFilter(Event $event)
-    // {
-    //     $this->getEventManager()->off($this->Csrf);
-    // }
 
     /**
      * Index method
@@ -88,10 +84,27 @@ class VentasController extends AppController
         return $valores;
     }
 
+    public function confirmaTransferencia(){
+        $flag = false;
+        $venta = $this->Ventas->get($this->request->data('venta_id'), [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $venta = $this->Ventas->patchEntity($venta, ['confirma_transferencia'=>true]);
+            if ($this->Ventas->save($venta)) {
+                $flag = true;
+            }
+        }
+
+        die(json_encode(['success'=>$flag]));
+    }
+
 
     public function reporteDiarioVendedor(){
 
         if($this->request->is('post')){
+
+            $this->viewBuilder()->setLayout('excel');
 
             $valoresPadreTable = TableRegistry::get('ParametrosValoresPadre');
             $paramsTipoTable = TableRegistry::get('ParametrosTipos');
@@ -100,22 +113,26 @@ class VentasController extends AppController
             $productosTable = TableRegistry::get('Productos');
             $productos = $productosTable->find('list')->toArray();
 
+
+
             if($this->request->data('usuario_id') == null){
                 $this->request->data('usuario_id',$this->Auth->user('id'));
             }
+
+            $usuario = $this->Ventas->Usuarios->find()->where(['Usuarios.id'=>$this->request->data('usuario_id')])->first();
 
             if($this->request->data('fecha') == null){
                 $this->request->data('fecha',date('Y-m-d'));
             }
 
+            // $fechaFormat = new Time($this->request->data('fecha'));
+            // $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
+
             $fechaFormat = new Time($this->request->data('fecha'));
             $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
+            $fecha = $this->request->data('fecha');
 
             $ventas = $this->getVentas($this->request->data('usuario_id'),$this->request->data('fecha'));
-            // prx($ventas);
-            
-            // $fecha = date('2018-11-04');
-            // prx($fecha);
 
             $resultados = $valoresPadreTable->find('all')
                                             ->contain(['ParametrosValores','ParametrosTipos'])
@@ -195,74 +212,17 @@ class VentasController extends AppController
                     $gasto[$keyT]['cantidad'] = $newValor;
                 }
 
-           
-            // prx($valores); // Todo
-            // pr($diario); //Depende de valores, ya esta ordenado
-            // prx($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
-            // prx($gasto); //Depende de valores, ya esta ordenado
-
-            // prx('ff');
-        
-            /**
-             * Generacion de reporte EXCEL
-             */
-            $fileName = 'ventas.xlsx';
-            $writer = WriterFactory::create(Type::XLSX); // for XLSX files
-            //$writer->openToFile($fullFilePath); // write data to a file or to a PHP stream
-            $writer->openToBrowser($fileName); // stream data directly to the browser
-
-            $border = (new BorderBuilder())
-                ->setBorderTop(Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID)
-                ->setBorderBottom(Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID)
-                ->build();
-
-            $style_title = (new StyleBuilder())
-                ->setFontBold()
-                ->setFontSize(12)
-                ->setFontColor(Color::BLACK)
-                ->setShouldWrapText()
-                ->setBorder($border)
-                ->build();
-
-            $style_body = (new StyleBuilder())
-                    ->setFontSize(11)
-                    ->setFontColor(Color::BLACK)
-                    ->setShouldWrapText(false)
-                    ->build();
-
             $header[] = '';
             $header = array_merge($header,$productos);
-            $writer->addRowWithStyle($header, $style_title);
 
-            foreach ($diario as $dia => $valueDia) {
-                $arrayDia = [];
-                $arrayDia[$valueDia['nombre']] = $valueDia['nombre'];
-                foreach ($valueDia['valores'] as $diaKeyValor => $diaValor) {
-                     $arrayDia[$diaKeyValor] = $diaValor['cantidad'];
-                }
-                $writer->addRowWithStyle($arrayDia, $style_title);
-            }
+            // prx($valores); // Todo
+            // pr($diario); //Depende de valores, ya esta ordenado
+            // pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
+            // prx($gasto); //Depende de valores, ya esta ordenado
 
-            $writer->addRowWithStyle(['',''], $style_title);
-
-            $writer->addRowWithStyle(['TOTAL EFECTIVO', $ventas['monto_efectivo']], $style_title);
-            $writer->addRowWithStyle(['TOTAL TRANSFERENCIAS', $ventas['monto_transferencia']], $style_title);
-            $writer->addRowWithStyle(['TOTAL CXC', '?'], $style_title);
-            $writer->addRowWithStyle(['TOTAL VENTAS', $ventas['monto_total']], $style_title);
-
-            $writer->addRowWithStyle(['',''], $style_title);
-            $writer->addRowWithStyle(['GASTO'], $style_title);
-
-            $totalGasto = 0;
-            foreach ($gasto as $keyGasto => $valueGasto) {
-                $totalGasto+=$valueGasto['cantidad'];
-                $writer->addRowWithStyle([$valueGasto['nombre'],$valueGasto['cantidad']], $style_title);
-            }
-            $writer->addRowWithStyle(['TOTAL DESCUENTO',$totalGasto], $style_title);
-
-            //$writer->addRows($rows); // add multiple rows at a time
-            $writer->close();
-            $this->autoRender = false;
+            $excel = 1;
+            $name = 'Reporte_diario_'.$fecha;
+            $this->set(compact('header','diario','excel','name','ventas','gasto','usuario'));
 
         }
 
@@ -275,6 +235,104 @@ class VentasController extends AppController
         $this->set(compact('usuarios'));
 
     }//Fin reporteDiarioVendedor
+
+
+    public function reporteClientesVentas(){
+
+
+        if($this->request->is('post')){
+
+            $this->viewBuilder()->setLayout('excel');
+
+            if($this->request->data('fecha') == null){
+                $this->request->data('fecha',date('Y-m-d'));
+            }
+
+            $fechaFormat = new Time($this->request->data('fecha'));
+            $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
+            $fecha = $this->request->data('fecha');
+
+
+            $productosTable = TableRegistry::get('Productos');
+            $productos = $productosTable->find('list')->toArray();
+
+            $comunasTable = TableRegistry::get('Comunas');
+            $comunas = $comunasTable->find('list')->toArray();
+
+            $ventas = $this->Ventas->find()
+                                ->contain([
+                                        // 'VentaDetalles'=> function($q) {
+                                        //                     return $q
+                                        //                         ->select([
+                                        //                             'id',
+                                        //                             'venta_id',
+                                        //                             'total_producto' => $q->func()->sum('cantidad')
+                                        //                         ])
+                                        //                         ->group(['VentaDetalles.id']);
+                                        //                 },
+                                        'VentaDetalles',
+                                        'Clientes'
+                                     ])
+                                ->where([
+                                        'Ventas.fecha' => $fecha
+                                    ]);
+
+
+            if($this->request->data('usuario_id') == null && $this->Auth->user('role') == 'usuario'){
+                 $ventas->where([
+                                'Ventas.usuario_id' => $this->Auth->user('id')
+                            ]);
+            }
+
+            $ventas = $ventas->toArray();
+
+             // prx($ventas);
+            $header = ['Cliente',utf8_encode('Direccion')];
+            $header = array_merge($header,$productos);
+            $header[] = utf8_encode('Observacion');
+
+            $detallesVentas = [];
+            foreach ($ventas as $key => $value) {
+                $detalle = [
+                            'id' => $value->cliente->id,
+                            'nombre' => $value->cliente->nombres,
+                            'direccion' => $value->cliente->calle." ".$value->cliente->numero_calle." ".$value->cliente->dept_casa_oficina_numero." (".$comunas[$value->cliente->comuna_id].")",
+                            'observacion' => $value->cliente->observacion
+                        ];
+                $producVenta = [];
+                foreach ($productos as $keyP => $valueP) {
+                    $detail = '';
+                    foreach ($value->venta_detalles as $keyV => $valueV) {
+                        if($valueV->producto_id === $keyP){
+                            $detail = $valueV->cantidad;
+                            break;
+                        }
+                    }
+                    $producVenta[]=$detail;
+                }
+
+                $detalle['productos'] = $producVenta;
+                $detallesVentas[] = $detalle;
+            }
+
+
+            $excel = 1;
+            $name = 'Ventas_'.$fecha;
+            $this->set(compact('header','detallesVentas','excel','name'));
+
+        }
+
+        if($this->Auth->user('role') == 'admin'){
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuario.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+        
+        $this->set(compact('usuarios'));
+        
+    }
+
+    
 
     /**
      * View method

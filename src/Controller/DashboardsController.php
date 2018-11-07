@@ -72,6 +72,30 @@ class DashboardsController extends AppController
                         'credito_disponible' => $clientes->func()->sum('credito_disponible'),
                         'cuenta_cobrar' => $clientes->func()->sum('cuenta_porcobrar')
                     ])->first();
+
+
+            $clienteTransPen = TableRegistry::get('Clientes')->find();
+            $clienteTransPen = $clienteTransPen->select([
+                                    'Clientes.id',
+                                    'Clientes.nombres',
+                                    'Clientes.email',
+                                    'Clientes.telefono1',
+                                    'Clientes.telefono2',
+                                    'Ventas.id',
+                                    'Ventas.monto_total',
+                                    'Ventas.monto_transferencia',
+                                    // 'total' => $clienteTransPen->func()->count('Ventas.id')
+                                ])
+                       ->innerJoinWith('Ventas', function ($q) {
+                                            return $q
+                                            ->where([
+                                                    'Ventas.confirma_transferencia IS NULL',
+                                                    'Ventas.monto_transferencia IS NOT NULL'
+                                                ]);
+                                            }
+                                        )
+                        ->toArray();
+
         }
                 
         $dataReal =  $control->first();
@@ -83,9 +107,12 @@ class DashboardsController extends AppController
                     'total_transferencia' => $transferidas->func()->count('id'),
                     'monto_transferencia' => $transferidas->func()->sum('monto_transferencia')
                 ])
-                ->where(['Ventas.confirma_transferencia IS NULL'])->first();
+                ->where([
+                    'Ventas.confirma_transferencia IS NULL',
+                    'Ventas.monto_transferencia IS NOT NULL'
+                ])->first();
 
-        $this->set(compact('dataReal','clientes','transferidas','fecha'));
+        $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen'));
 
         // prx($transferidas);
     }

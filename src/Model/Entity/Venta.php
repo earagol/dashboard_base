@@ -48,7 +48,7 @@ class Venta extends Entity
         'monto_efectivo' => true,
         'transferencia' => true,
         'monto_transferencia' => true,
-        'confirmar_transferencia' => true,
+        'confirma_transferencia' => true,
         'fecha_transferencia' => true,
         'cuenta_porcobrar' => true,
         'pago_cartera' => true,
