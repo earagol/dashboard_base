@@ -20,3 +20,39 @@ if($tipo == 'Diario' ){
 }
 ?>
 
+<script type="text/javascript">
+
+    (function( $ ) {
+
+    		<?php foreach ($productos as $key => $value): ?>
+
+					 $("#producto-id-<?php echo $key; ?>").on({
+			              "change": function(event) {
+			                $(event.target).select();
+			              },
+			              "keyup": function(event) {
+			                $(event.target).val(function(index, value) {
+			                  return value.replace(/\D/g, "")
+			                    // .replace(/([0-9])([0-9]{2})$/, '$1.$2') //Agrega decimal 
+			                    .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ".");
+			                });
+			              }
+			            });
+
+			<?php 	endforeach; ?>
+
+			$("#monto-o-cantidad").on({
+              "change": function(event) {
+                $(event.target).select();
+              },
+              "keyup": function(event) {
+                $(event.target).val(function(index, value) {
+                  return value.replace(/\D/g, "")
+                    // .replace(/([0-9])([0-9]{2})$/, '$1.$2') //Agrega decimal 
+                    .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ".");
+                });
+              }
+            });
+
+    })(jQuery);
+</script>

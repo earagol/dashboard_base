@@ -114,7 +114,7 @@
                 
                     var cuentaDeuda = $('#monto-deuda').val();
                     var cuentaDeuda = cuentaDeuda.replace('.', '');
-                    var cuenta = cuenta + eval(cuentaDeuda);
+                    // var cuenta = cuenta + eval(cuentaDeuda);
                     $('#monto-deuda').attr('readonly',false);
                 }else{
                     $('#monto-deuda').attr('readonly',true);

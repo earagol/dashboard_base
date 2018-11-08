@@ -1,7 +1,7 @@
 <div class="col-lg-12">
     <div class="card">
         <div class="card-header">
-            <strong class="card-title">Productos</strong>
+            <strong class="card-title">Visitas</strong>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Agregar',['class'=>'btn btn-default']), ['action' => 'add']) ?></li>
             </div>

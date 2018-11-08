@@ -507,6 +507,19 @@ class VentasController extends AppController
                 $clienteUpdate = $this->Ventas->Clientes->patchEntity($cliUpd, $client);
                 $this->Ventas->Clientes->save($clienteUpdate);
 
+                $visitalTable = TableRegistry::get('Visitas');
+                $visitalTable->updateAll(
+                    ['Visitas.status ' => 'R' ],
+                    ['id' => $this->request->data('cliente_id')]
+                );
+
+                // $visita = $$visitalTable->get($this->request->data('cliente_id'), [
+                //     'contain' => [],
+                //     'conditions' => ['Visitas.cliente_id'=>$this->request->data('cliente_id'),'Visitas.status'=>'P']
+                // ]);
+                // $visita = $$visitalTable->patchEntity($visita, ['Visitas.status'=>'R']);
+                // $visitalTable->save($visita);
+
                 $this->Flash->success(__('The venta has been saved.'));
 
                 return $this->redirect(['action' => 'index']);

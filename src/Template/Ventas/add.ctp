@@ -3,22 +3,6 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Ruta $ruta
  */
-
-            // echo $this->Form->control('cliente_id', ['options' => $clientes]);
-            // echo $this->Form->control('usuario_id', ['options' => $usuarios]);
-            // echo $this->Form->control('monto_total');
-            // echo $this->Form->control('efectivo');
-            // echo $this->Form->control('monto_efectivo');
-            // echo $this->Form->control('transferencia');
-            // echo $this->Form->control('monto_transferencia');
-            // echo $this->Form->control('cuenta_porcobrar');
-            // echo $this->Form->control('pago_cartera');
-            // echo $this->Form->control('ano');
-            // echo $this->Form->control('mes');
-            // echo $this->Form->control('dia');
-            // echo $this->Form->control('observacion');
-       
-            // echo $this->Form->control('deleted', ['empty' => true]);
 ?>
 <style>
     hr {
@@ -131,18 +115,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                     <?php if($carteraPendiente): ?>
-                        <tr>
-                            <td><div class="form-check"><?php echo $this->Form->control('pagar_cartera', ['type'=>'checkbox','class'=>'form-check-input','label'=>false,'checked'=>false]); ?></div></td>
-                            <td>Cancela Cartera?</td>
-                            <td><?php echo $this->Form->control('monto_deuda', ['class'=>'form-control','value' => number_format($carteraPendiente, 0, ",", "."),'label'=>false,'readonly'=>'readonly']); ?></td>
-
-                        </tr>
-
-                    <?php else: ?>
-                         <?php echo $this->Form->control('pagar_cartera', ['type'=>'hidden','class'=>'form-check-input','label'=>false,'value'=>0]); ?> 
-                    <?php endif; ?>
-
                     <tr>
                         <td></td>
                         <td>Total Venta:</td>
@@ -185,6 +157,22 @@
                         </td>
                     </tr>
 
+                    <tr>
+                        <td clospan="4"></td>
+                    </tr>
+
+                    <?php if($carteraPendiente): ?>
+                        <tr>
+                            <td><div class="form-check"><?php echo $this->Form->control('pagar_cartera', ['type'=>'checkbox','class'=>'form-check-input','label'=>false,'checked'=>false]); ?></div></td>
+                            <td>Cancela Cartera?</td>
+                            <td><?php echo $this->Form->control('monto_deuda', ['class'=>'form-control','value' => number_format($carteraPendiente, 0, ",", "."),'label'=>false,'readonly'=>'readonly']); ?></td>
+
+                        </tr>
+
+                    <?php else: ?>
+                         <?php echo $this->Form->control('pagar_cartera', ['type'=>'hidden','class'=>'form-check-input','label'=>false,'value'=>0]); ?> 
+                    <?php endif; ?>
+
                 </tbody>
             </table>
 
@@ -211,7 +199,13 @@
 <?php $precios = json_encode($productosPrecios); ?>
 
 
+
 <script type="text/javascript">
+    /*
+
+    Para incorporar la cartera a las cuanta por cobrar se debe descomentar las lineas que digan descomentar
+
+    */
     var url1 = '<?php echo $url; ?>';
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
@@ -341,7 +335,7 @@
                 
                     var cuentaDeuda = $('#monto-deuda').val();
                     var cuentaDeuda = cuentaDeuda.replace('.', '');
-                    var cuenta = cuenta + eval(cuentaDeuda);
+                    // var cuenta = cuenta + eval(cuentaDeuda);//Descomentar
                     $('#monto-deuda').attr('readonly',false);
                 }else{
                     $('#monto-deuda').attr('readonly',true);
@@ -436,7 +430,7 @@
             });
 
             $('#pagar-cartera').change(function(){
-                limpiar();
+                // limpiar();//Descomentar
                 calculo();
             });
 

@@ -41,6 +41,14 @@ class DashboardsController extends AppController
 
     }
 
+    private function vencerVisitas(){
+
+        // prx($this->Visitas->find()->where(['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P'])->toArray());
+        
+        TableRegistry::get('Visitas')->updateAll(['status' => 'V'],['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P']);
+
+    }
+
     /**
      * Displays a view
      *
@@ -64,8 +72,12 @@ class DashboardsController extends AppController
                 ->where(['Ventas.fecha'=>date('Y-m-d')]);
 
         if($this->Auth->user('role') == 'usuario'){
+            $visitasPendientes = TableRegistry::get('Visitas')->find()->contain(['Usuarios', 'Clientes', 'Usuarios'])->where(['Visitas.status'=> 'P','Visitas.usuario_id'=>$this->Auth->user('role')])->toArray();
             $control->where(['usuario_id' => $this->Auth->user('id')]);
         }else{
+            $this->vencerVisitas();
+            $visitasPendientes = TableRegistry::get('Visitas')->find()->contain(['Usuarios', 'Clientes', 'Usuarios']) ->where(['Visitas.status'=> 'P'])->toArray();
+
             $clientes = TableRegistry::get('Clientes')->find();
             $clientes = $clientes->select([
                         'total_clientes' => $clientes->func()->count('id'),
@@ -112,7 +124,7 @@ class DashboardsController extends AppController
                     'Ventas.monto_transferencia IS NOT NULL'
                 ])->first();
 
-        $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen'));
+        $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes'));
 
         // prx($transferidas);
     }

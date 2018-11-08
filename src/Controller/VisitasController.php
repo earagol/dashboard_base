@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\I18n\Time;
+use Exception;
 
 /**
  * Visitas Controller
@@ -40,9 +41,6 @@ class VisitasController extends AppController
 
         if($this->Auth->user('role') === 'usuario'){
             $options = array_merge($options,['conditions'=>['Visitas.usuario_id'=>$this->Auth->user('id')]]);
-        }else{
-            // prx(date('Y-m-d'));
-            $this->vencerVisitas();
         }
 
         $this->paginate = $options;
@@ -52,13 +50,7 @@ class VisitasController extends AppController
     }
 
 
-    private function vencerVisitas(){
-
-        // prx($this->Visitas->find()->where(['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P'])->toArray());
-        
-        $this->Visitas->updateAll(['status' => 'V'],['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P']);
-
-    }
+    
 
 
     /**
@@ -86,35 +78,37 @@ class VisitasController extends AppController
     {
         $visita = $this->Visitas->newEntity();
         if ($this->request->is('post')) {
+            $flag = true;
             $validator = new \Cake\Validation\Validator();
             try {
-
-                $this->request->data('status','P');
-                // if($this->request->data('fecha_vencimiento') === date('m/d/Y')){
-                //     $now = new Time($this->request->data('fecha_vencimiento'));
-                //     $this->request->data('fecha_vencimiento',$now->modify('+3 days'));
-                //     exit;
-                // }
+                // throw new Exception($error);
                 $now = new Time($this->request->data('fecha_vencimiento'));
-                $this->request->data('fecha_vencimiento',$now->modify('+3 days'));
-                // prx($this->request->data);
-                // $this->request->data('fecha_vencimiento',date('Y-m-d'));
-                $this->request->data('user_id',$this->Auth->user('id'));
-                $visita = $this->Visitas->patchEntity($visita, $this->request->getData());
-                if ($this->Visitas->save($visita)) {
-                    $this->Flash->success(__('Registro exitoso.'));
+                $this->request->data('fecha_vencimiento',$now->format('Y-m-d'));
 
-                    return $this->redirect(['action' => 'index']);
+                if($this->request->data('fecha_vencimiento') < date('Y-m-d')){
+                    $this->Flash->alert(__('La fecha de vencimiento no puede ser menor a la fecha de hoy.'));
+                }else{
+
+                    $this->request->data('status','P');
+                    $this->request->data('user_id',$this->Auth->user('id'));
+                    $visita = $this->Visitas->patchEntity($visita, $this->request->getData());
+                    if ($this->Visitas->save($visita)) {
+                        $this->Flash->success(__('Registro exitoso.'));
+
+                        return $this->redirect(['action' => 'index']);
+                    }
+
+                    $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
+
                 }
 
-                $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
+                
             } catch (Exception $e) {
                 $message = $e->getMessage();
                 $this->Flash->error($message);  
             }
         }
         $usuarios = $this->Visitas->Usuarios->find('list', ['limit' => 200]);
-        // $usuarios = $this->Visitas->Usuarios->find('list')->combine('id','full_name');
 
         $clientes = $this->Visitas->Clientes->find('list')->notMatching(
             'Visitas', function ($q) {
@@ -123,7 +117,6 @@ class VisitasController extends AppController
         );
 
 
-        // $clientes = $this->Visitas->Clientes->find('list', ['Visitas.status NOT IN'=>['P'],'limit' => 200]);
         $this->set(compact('visita', 'usuarios', 'clientes', 'usuarios'));
     }
 

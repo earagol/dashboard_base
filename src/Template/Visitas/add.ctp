@@ -35,7 +35,7 @@
             </div>
 
             <div class="form-group">
-                <?php echo $this->Form->button(__('Guardar',['class'=>'btn btn-primary'])) ?>
+                <?php echo $this->Form->button(__('Guardar',['class'=>'btn btn-primary','rel'=>'save'])) ?>
             </div>
 
         </div>
@@ -48,6 +48,29 @@
     (function( $ ) {
         $('#fecha-vencimiento').datetimepicker({
             format: 'YYYY-MM-DD'
+        });
+
+        $('button[rel="save"]').click(function(e) {
+            e.preventDefault();
+            var fechaTermino = "<?php echo date('Y-m-d'); ?>";
+
+            console.log($("#fecha-vencimiento").val());
+
+            if(($("#fecha-vencimiento").val()!='' && fechaTermino!='')){
+                var fechaInicio = $("#fecha-vencimiento").val().split("-");
+                var fechaTermino = fechaTermino.split("-");
+                var fechaInicio = new Date(parseInt(fechaInicio[2]),parseInt(fechaInicio[1]-1),parseInt(fechaInicio[0]));
+                var fechaTermino = new Date(parseInt(fechaTermino[2]),parseInt(fechaTermino[1]-1),parseInt(fechaTermino[0]));
+                if(fechaInicio > fechaTermino){
+                    e.preventDefault();
+                    console.log('hhhhh');
+                    $.alerta('La fecha de termino no debe ser menor a la fecha de inicio');
+                    return;
+                }
+            }
+
+            $('form').submit();
+            
         });
     })(jQuery);
 </script>
