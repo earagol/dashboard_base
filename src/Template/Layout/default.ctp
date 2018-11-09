@@ -104,9 +104,13 @@ $cakeDescription = 'Estrella';
                 height: 160px;
             }
 
-            .card {
-                min-height: 500px;
+            .card:not(.nocard) {
+               min-height: 500px;
             }
+
+           /* .card {
+                min-height: 500px;
+            }*/
 
             footer{
                 margin-top: 200px;

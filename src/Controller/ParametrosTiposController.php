@@ -56,11 +56,11 @@ class ParametrosTiposController extends AppController
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $parametrosTipo = $this->ParametrosTipos->patchEntity($parametrosTipo, $this->request->getData());
             if ($this->ParametrosTipos->save($parametrosTipo)) {
-                $this->Flash->success(__('The parametros tipo has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The parametros tipo could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
         }
         $usuarios = $this->ParametrosTipos->Usuarios->find('list', ['limit' => 200]);
         $this->set(compact('parametrosTipo', 'usuarios'));
@@ -81,11 +81,11 @@ class ParametrosTiposController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $parametrosTipo = $this->ParametrosTipos->patchEntity($parametrosTipo, $this->request->getData());
             if ($this->ParametrosTipos->save($parametrosTipo)) {
-                $this->Flash->success(__('The parametros tipo has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The parametros tipo could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
         }
         $usuarios = $this->ParametrosTipos->Usuarios->find('list', ['limit' => 200]);
         $this->set(compact('parametrosTipo', 'usuarios'));
@@ -103,9 +103,9 @@ class ParametrosTiposController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $parametrosTipo = $this->ParametrosTipos->get($id);
         if ($this->ParametrosTipos->delete($parametrosTipo)) {
-            $this->Flash->success(__('The parametros tipo has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The parametros tipo could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

@@ -70,8 +70,7 @@ class VentasTable extends Table
 
         $validator
             ->numeric('monto_total')
-            ->requirePresence('monto_total', 'create')
-            ->notEmpty('monto_total');
+            ->allowEmpty('monto_total');
 
         $validator
             ->boolean('efectivo')

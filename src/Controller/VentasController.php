@@ -69,7 +69,8 @@ class VentasController extends AppController
                                     ])
                                 ->where([
                                         'Ventas.usuario_id' => $usuario_id,
-                                        'Ventas.fecha' => $fecha
+                                        'Ventas.fecha' => $fecha,
+                                        'Ventas.monto_total IS NOT NULL'
                                     ])
                                 ->first();
         $valores = [];
@@ -274,7 +275,8 @@ class VentasController extends AppController
                                         'Clientes'
                                      ])
                                 ->where([
-                                        'Ventas.fecha' => $fecha
+                                        'Ventas.fecha' => $fecha,
+                                        'Ventas.monto_total IS NOT NULL'
                                     ]);
 
 
@@ -417,7 +419,7 @@ class VentasController extends AppController
         $venta = $this->Ventas->newEntity();
         if ($this->request->is('post')) {
             $session = $this->request->session();
-            // pr($this->request->data);
+            // prx($this->request->data);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('cuenta_porcobrar',str_replace('.','',$this->request->data('cuenta_porcobrar')));
             $this->request->data('monto_total',$this->request->data('totales'));
@@ -445,30 +447,27 @@ class VentasController extends AppController
                 $this->request->data('monto_cartera',null);
             }
 
-            // $this->request->data('monto_cartera',true);
-            // if(!$session->read('detalles')){
-            //     $this->request->data('monto_cartera',false);
-            // }
+            $this->request->data('tiene_detalles',true);
+            if($session->read('detalles') == null){
+                $this->request->data('tiene_detalles',false);
+                $this->request->data('monto_total',null);
+            }
 
-            // if($this->request->data('pago_cartera')){
-            //     $this->request->data('monto_total',$this->request->data('monto_total')-$this->request->data('monto_cartera'));
-            // }
-            
-            // prx($this->request->data);
-            // prx($session->read('detalles'));
             $venta = $this->Ventas->patchEntity($venta, $this->request->getData());
             if ($this->Ventas->save($venta)) {
 
                 $controlTable = TableRegistry::get('ControlDeudaPagos');
                 $client = [];
-                foreach ($session->read('detalles') as $key => $value) {
-                    $value['precio_unitario'] = $value['precio'];
-                    $value['venta_id'] = $venta->id;
-                    $detalles = $this->Ventas->VentaDetalles->newEntity();
-                    $detalles = $this->Ventas->VentaDetalles->patchEntity($detalles, $value);
-                    $this->Ventas->VentaDetalles->save($detalles);
+                if($session->read('detalles') != null){
+                    foreach ($session->read('detalles') as $key => $value) {
+                        $value['precio_unitario'] = $value['precio'];
+                        $value['venta_id'] = $venta->id;
+                        $detalles = $this->Ventas->VentaDetalles->newEntity();
+                        $detalles = $this->Ventas->VentaDetalles->patchEntity($detalles, $value);
+                        $this->Ventas->VentaDetalles->save($detalles);
+                    }
                 }
-                // pr($this->request->data);
+                
                 $client['credito_disponible'] = $this->request->data('credito');
                 $client['cuenta_porcobrar']= $this->request->data('cuenta_porcobrar_cliente');
                 if($this->request->data('cuenta_porcobrar') != 0){
@@ -500,7 +499,7 @@ class VentasController extends AppController
                     $detallesControl = $controlTable->patchEntity($detallesControl, $control);
                     $controlTable->save($detallesControl);
                 }
-                // prx($client);
+
                 $cliUpd = $this->Ventas->Clientes->get($this->request->data('cliente_id'), [
                     'contain' => []
                 ]);
@@ -512,20 +511,13 @@ class VentasController extends AppController
                     ['Visitas.status ' => 'R' ],
                     ['id' => $this->request->data('cliente_id')]
                 );
+                $mensaje = $session->read('detalles') != null?'Venta realizada con exito.':'Pago de cartera exitoso.';
 
-                // $visita = $$visitalTable->get($this->request->data('cliente_id'), [
-                //     'contain' => [],
-                //     'conditions' => ['Visitas.cliente_id'=>$this->request->data('cliente_id'),'Visitas.status'=>'P']
-                // ]);
-                // $visita = $$visitalTable->patchEntity($visita, ['Visitas.status'=>'R']);
-                // $visitalTable->save($visita);
-
-                $this->Flash->success(__('The venta has been saved.'));
+                $this->Flash->success(__($mensaje));
 
                 return $this->redirect(['action' => 'index']);
             }
-            // prx($this->request->data);
-            $this->Flash->error(__('The venta could not be saved. Please, try again.'));
+            $this->Flash->error(__('La venta no pudo ser procesada, intente nuevamente.'));
         }
         $cliente = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();
         $productosTable = TableRegistry::get('Productos');

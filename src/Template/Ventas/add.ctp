@@ -158,7 +158,7 @@
                     </tr>
 
                     <tr>
-                        <td clospan="4"></td>
+                        <td colspan="4"></td>
                     </tr>
 
                     <?php if($carteraPendiente): ?>
@@ -232,8 +232,11 @@
                 e.preventDefault();
                 console.log('save',eval($('#cuenta-porcobrar').val()));
 
-                if(!$('#totales').val()){
+                if(!$('#totales').val() && !$('#pagar-cartera').is(':checked')){
                     alert('No hay productos ingresados para la venta.');
+                    return;
+                }else if(!$('#totales').val() && ($('#pagar-cartera').is(':checked') && ($('#monto-deuda').val() == '' || eval($('#monto-deuda').val()) == 0))){
+                    alert('El monto de pago de cartera es incorrecto');
                     return;
                 }else if(eval($('#cuenta-porcobrar').val()) > 0){
                     var cuenta = $('#cuenta-porcobrar').val();
@@ -254,7 +257,7 @@
                     }
                 }
 
-                var conf = confirm('¿Estas seguro de finalizar esta venta?');
+                var conf = confirm('¿Estas seguro de finalizar esta operación?');
                 if(!conf){
                     return;
                 }

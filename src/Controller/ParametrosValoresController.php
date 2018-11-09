@@ -85,7 +85,7 @@ class ParametrosValoresController extends AppController
                         }
                     }
                     if ($flag) {
-                        $this->Flash->success(__('The parametros tipo has been saved.'));
+                        $this->Flash->success(__('Registro exitoso.'));
                         return $this->redirect(['action' => 'index']);
                     }
                 }else{
@@ -93,16 +93,16 @@ class ParametrosValoresController extends AppController
                     $parametrosValore = $this->ParametrosValores->newEntity();
                     $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $this->request->getData());
                     if ($this->ParametrosValores->save($parametrosValore)) {
-                        $this->Flash->success(__('The parametros tipo has been saved.'));
+                        $this->Flash->success(__('Registro exitoso.'));
 
                         return $this->redirect(['action' => 'index']);
                     }
                 }
                 // prx($this->request->data);
-                $this->Flash->error(__('The parametros tipo could not be saved. Please, try again.'));
+                $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
             }
             // prx($this->request->data);
-            $this->Flash->error(__('The parametros tipo could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
         }
 
         $parametrosTiposTable = TableRegistry::get('ParametrosTipos');
@@ -139,11 +139,11 @@ class ParametrosValoresController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $this->request->getData());
             if ($this->ParametrosValores->save($parametrosValore)) {
-                $this->Flash->success(__('The parametros tipo has been saved.'));
+                $this->Flash->success(__('Registro exitoso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The parametros tipo could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
         }
         $usuarios = $this->ParametrosValores->Usuarios->find('list', ['limit' => 200]);
         $this->set(compact('parametrosValore', 'usuarios'));
@@ -161,9 +161,9 @@ class ParametrosValoresController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $parametrosValore = TableRegistry::get('ParametrosValoresPadre')->get($id);
         if (TableRegistry::get('ParametrosValoresPadre')->delete($parametrosValore)) {
-            $this->Flash->success(__('The parametros tipo has been deleted.'));
+            $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The parametros tipo could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

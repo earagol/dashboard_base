@@ -1,7 +1,7 @@
 <!-- Widgets  -->
 <div class="row">
     <div class="col-lg-3 col-md-6">
-        <div class="card">
+        <div class="card nocard">
             <div class="card-body">
                 <div class="stat-widget-five">
                     <div class="stat-icon dib flat-color-1">
@@ -9,7 +9,7 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib"> 
-                            <div class="stat-text">$<span class="count"><?php echo $dataReal->monto_total?$dataReal->monto_total:''; ?></span></div>
+                            <div class="stat-text">$<span class="count"><?php echo $dataReal->monto_total?$dataReal->monto_total:0; ?></span></div>
                             <div class="stat-heading">Monto Venta <small><?php echo $fecha; ?></small></div>
                         </div>
                     </div>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="col-lg-3 col-md-6">
-        <div class="card">
+        <div class="card nocard">
             <div class="card-body">
                 <div class="stat-widget-five">
                     <div class="stat-icon dib flat-color-2">
@@ -27,7 +27,7 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib">
-                            <div class="stat-text"><span class="count"><?php echo $dataReal->total_ventas?$dataReal->total_ventas:''; ?></span></div>
+                            <div class="stat-text"><span class="count"><?php echo $dataReal->total_ventas?$dataReal->total_ventas:0; ?></span></div>
                             <div class="stat-heading">Ventas</div> 
                         </div>
                     </div>
@@ -37,7 +37,7 @@
     </div>
 
     <div class="col-lg-3 col-md-6">
-        <div class="card">
+        <div class="card nocard">
             <div class="card-body">
                 <div class="stat-widget-five">
                     <div class="stat-icon dib flat-color-3">
@@ -45,10 +45,10 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib"> 
-                            <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:''; ?></span></div>
+                            <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:0; ?></span></div>
                             <div class="stat-heading">N° Trans por Confirmar</div>
 
-                            <div class="stat-text"><span class="count"><?php echo $transferidas->monto_transferencia?$transferidas->monto_transferencia:''; ?></span></div>
+                            <div class="stat-text"><span class="count"><?php echo $transferidas->monto_transferencia?$transferidas->monto_transferencia:0; ?></span></div>
                             <div class="stat-heading">Monto Trans por Confirmar</div>
                         </div>
                     </div>
@@ -58,14 +58,14 @@
     </div>
     <?php if($currentUser['role'] == 'admin'): ?>
         <div class="col-lg-3 col-md-6">
-            <div class="card">
+            <div class="card nocard">
                 <div class="card-body">
                     <div class="stat-widget-five">
                         <div class="stat-icon dib flat-color-4">
                             <i class="pe-7f-users"></i>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-text"><span class="count"><?php echo $clientes->total_clientes?$clientes->total_clientes:''; ?></span></div>
+                            <div class="stat-text"><span class="count"><?php echo $clientes->total_clientes?$clientes->total_clientes:0; ?></span></div>
                                 <div class="stat-heading">N° Clientes</div>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
 <div class="orders">
     <div class="row">
         <div class="col-lg-6 col-xl-6 col-sm-12"> 
-            <div class="card">
+            <div class="card nocard">
                 <div class="card-body">
                     <h4 class="box-title">Clientes</h4>
                 </div>
@@ -132,7 +132,7 @@
         </div>  <!-- /.col-lg-8 -->
 
         <div class="col-lg-6 col-xl-6 col-sm-12"> 
-            <div class="card">
+            <div class="card nocard">
                 <div class="card-body">
                     <h4 class="box-title">Visitas Pendientes</h4>
                 </div>
