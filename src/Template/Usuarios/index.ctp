@@ -14,19 +14,27 @@
                         <th >Nombres</th>
                         <th >Apellidos</th>
                         <th >Usuario</th>
-                        <th >Ruta(s)</th>
+                        <th >Ruta(s) Asignada</th>
                         <th >Activo</th>
                         <th >Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($usuarios as $usuario): ?>
+                    <?php foreach ($usuarios as $usuario): 
+                        $rutas = '';
+                        if($usuario->rutas){
+                            foreach ($usuario->rutas as $key => $value) {
+                                $rutas.=(!$rutas)?$value->nombre:'<br>'.$value->nombre;
+                            }
+                        }
+
+                        ?>
                         <tr>
                             <td><?php echo $this->Number->format($usuario->id) ?></td>
                             <td><?php echo h($usuario->nombres) ?></td>
                             <td><?php echo h($usuario->apellidos) ?></td>
                             <td><?php echo h($usuario->username) ?></td>
-                            <td><?php echo ($usuario->activo)?'Si':'No'; ?></td>
+                            <td><?php echo $rutas; ?></td>
                             <td><?php echo ($usuario->activo)?'Si':'No'; ?></td>
                             <td class="text-center">
                                 <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $usuario->id],['title'=>'Editar','escape' => false]) ?>

@@ -79,59 +79,61 @@
 <div class="clearfix"></div>
 <div class="orders">
     <div class="row">
-        <div class="col-lg-6 col-xl-6 col-sm-12"> 
-            <div class="card nocard">
-                <div class="card-body">
-                    <h4 class="box-title">Clientes</h4>
-                </div>
-                <div class="card-body--">
-                    <div class="table-stats order-table ov-h">
-                        <table class="table ">
-                            <thead>
-                                <tr>
-                                    <th class="serial">#</th>
-                                    <th class="avatar">Nombre</th>
-                                    <th>Email</th>
-                                    <th>Telefono 1</th>
-                                    <th>Telefono 2</th>
-                                    <th>Monto</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody> 
-                                <?php if($clienteTransPen): ?>
-                                    <?php foreach ($clienteTransPen as $key => $value) : ?>
-                                            <tr>
-                                                <td class="serial"><?php echo $value->id; ?></td>
-                                                <td> <?php echo $value->nombres; ?> </td>
-                                                <td> <span class="name"><?php echo $value->email; ?></span> </td> 
-                                                <td><span class="product"><?php echo $value->telefono1; ?></span> </td>
-                                                <td><?php echo $value->telefono2; ?></td>
-                                                <td><span class="count"><?php echo number_format($value->_matchingData['Ventas']->monto_transferencia, 0, ",", "."); ?></span></td>
-                                                <td> 
-                                                    <button class="change badge badge-complete" data-id="<?php echo $value->_matchingData['Ventas']->id; ?>">Confirmar</button>
-                                                </td> 
+        <?php if($currentUser['role'] == 'admin'): ?>
+            <div class="col-lg-12 col-xl-12 col-sm-12"> 
+                <div class="card nocard">
+                    <div class="card-body">
+                        <h4 class="box-title">Clientes a confirmar Transferencia</h4>
+                    </div>
+                    <div class="card-body--">
+                        <div class="table-stats order-table ov-h">
+                            <table class="table ">
+                                <thead>
+                                    <tr>
+                                        <th class="serial">#</th>
+                                        <th class="avatar">Nombre</th>
+                                        <th>Email</th>
+                                        <th>Telefono 1</th>
+                                        <th>Telefono 2</th>
+                                        <th>Monto</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <?php if($clienteTransPen): ?>
+                                        <?php foreach ($clienteTransPen as $key => $value) : ?>
+                                                <tr>
+                                                    <td class="serial"><?php echo $value->id; ?></td>
+                                                    <td> <?php echo $value->nombres; ?> </td>
+                                                    <td> <span class="name"><?php echo $value->email; ?></span> </td> 
+                                                    <td><span class="product"><?php echo $value->telefono1; ?></span> </td>
+                                                    <td><?php echo $value->telefono2; ?></td>
+                                                    <td><span class="count"><?php echo number_format($value->_matchingData['Ventas']->monto_transferencia, 0, ",", "."); ?></span></td>
+                                                    <td> 
+                                                        <button class="change badge badge-complete" data-id="<?php echo $value->_matchingData['Ventas']->id; ?>">Confirmar</button>
+                                                    </td> 
+                                                </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                            <tr class="pb-0">
+                                                <td class="serial"></td>
+                                                <td></td>
+                                                <td> </td> 
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td> 
                                             </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                        <tr class="pb-0">
-                                            <td class="serial"></td>
-                                            <td></td>
-                                            <td> </td> 
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td> 
-                                        </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div> <!-- /.table-stats -->
-                </div>
-            </div> <!-- /.card -->
-        </div>  <!-- /.col-lg-8 -->
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div> <!-- /.table-stats -->
+                    </div>
+                </div> <!-- /.card -->
+            </div>  <!-- /.col-lg-8 -->
+        <?php endif; ?>
 
-        <div class="col-lg-6 col-xl-6 col-sm-12"> 
+        <div class="col-lg-12 col-xl-12 col-sm-12"> 
             <div class="card nocard">
                 <div class="card-body">
                     <h4 class="box-title">Visitas Pendientes</h4>
@@ -157,7 +159,7 @@
                                                 <td><?php echo h($visita->cliente->nombres) ?></td>
                                                 <td><?php echo h($visita->fecha_vencimiento->format('Y-m-d')) ?></td>
                                                 <td> 
-                                                    <small class="badge badge-pending">Pendiente</small>
+                                                    <?php echo $this->Html->link(__('<small class="badge badge-pending">Pendiente</small>'), ['controller' => 'ventas','action' => 'add', $visita->cliente_id],['title'=>'Realizar Venta','escape' => false]) ?>
                                                 </td> 
                                             </tr>
                                     <?php endforeach; ?>
@@ -168,11 +170,66 @@
                                             <td></td> 
                                             <td></td>
                                             <td></td>
-                                            <td></td>
                                         </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
+                    </div> <!-- /.table-stats -->
+                </div>
+            </div> <!-- /.card -->
+        </div>  <!-- /.col-lg-8 -->
+
+        <div class="col-lg-12 col-xl-12 col-sm-12"> 
+            <div class="card nocard">
+                <div class="card-body">
+                    <h4 class="box-title">Clientes con cartera pendiente</h4>
+                </div>
+                <div class="card-body--">
+                    <div class="table-stats order-table ov-h">
+                        <table class="table ">
+                                <thead>
+                                    <tr>
+                                        <th class="serial">#</th>
+                                        <th class="avatar">Nombre</th>
+                                        <th>Email</th>
+                                        <th>Telefono 1</th>
+                                        <th>Telefono 2</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <?php 
+                                        $morosoTotal=0;
+                                        if($clienteMorosos): ?>
+                                        <?php foreach ($clienteMorosos as $key => $value) : 
+                                                $morosoTotal+=$value->cuenta_porcobrar;
+                                                ?>
+                                                <tr>
+                                                    <td class="serial"><?php echo $value->id; ?></td>
+                                                    <td> <?php echo $value->nombres; ?> </td>
+                                                    <td> <span class="name"><?php echo $value->email; ?></span> </td> 
+                                                    <td><span class="product"><?php echo $value->telefono1; ?></span> </td>
+                                                    <td><?php echo $value->telefono2; ?></td>
+                                                    <td><span class="count"><?php echo number_format($value->cuenta_porcobrar, 0, ",", "."); ?></span></td> 
+                                                </tr>
+                                        <?php endforeach; ?>
+                                            <tr class="pb-0">
+                                                <td class="serial text-right" colspan="5"><b>Total:</b></td>
+                                                <td><?php echo number_format($morosoTotal, 0, ",", "."); ?></td>
+                                            </tr>
+                                    <?php else: ?>
+                                            <tr class="pb-0">
+                                                <td class="serial"></td>
+                                                <td></td>
+                                                <td> </td> 
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td> 
+                                            </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
                     </div> <!-- /.table-stats -->
                 </div>
             </div> <!-- /.card -->

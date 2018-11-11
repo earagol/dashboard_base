@@ -26,7 +26,7 @@ if(!isset($excel)){
             </div>
 
             <div class="form-group">
-                <?php echo $this->Form->button(__('Guardar',['class'=>'btn btn-primary'])) ?>
+                <?php echo $this->Form->button(__('Ver',['class'=>'btn btn-primary'])) ?>
             </div>
 
         </div>

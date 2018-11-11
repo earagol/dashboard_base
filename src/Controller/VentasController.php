@@ -27,6 +27,18 @@ use Box\Spout\Writer\Style\BorderBuilder;
 class VentasController extends AppController
 {
 
+    public function isAuthorized($user){
+
+        if(isset($user['role']) && $user['role'] === 'usuario'){
+            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','detalles'])){
+                return true;
+            }
+        }
+
+        return parent::isAuthorized($user);
+
+    }
+
 
     /**
      * Index method
@@ -37,11 +49,16 @@ class VentasController extends AppController
     {
 
         if($this->Auth->user('role') === 'usuario'){
-            $rutas = $this->Ventas->Usuarios->Rutas->find('list', ['conditions' => ['usuario_id' => $this->Auth->user('role') ]])->toArray();
+            $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
+            if($usuario){
+                $rutas = [];
+                foreach ($usuario->rutas as $key => $value) {
+                    $rutas[$value->id]=$value->id;
+                }
+            }
         }else{
             $rutas = $this->Ventas->Clientes->Rutas->find('list')->toArray();
         }
-        // prx($rutas->toArray());
 
         $options = [
             'contain' => ['Rutas','Clasificaciones'],
@@ -230,7 +247,7 @@ class VentasController extends AppController
         if($this->Auth->user('role') == 'admin'){
             $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
         }else{
-            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuario.id' => $this->Auth->user('id')] ,'limit' => 200]);
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
         }
         
         $this->set(compact('usuarios'));
@@ -334,6 +351,56 @@ class VentasController extends AppController
         
     }
 
+
+    public function reporteConsolidadoVentasUsuario(){
+
+        if($this->request->is('post')){
+
+
+            $this->viewBuilder()->setLayout('excel');
+
+            if($this->request->data('fecha') == null){
+                $this->request->data('fecha',date('Y-m-d'));
+            }
+
+            $fechaFormat = new Time($this->request->data('fecha'));
+            $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
+            $fecha = $this->request->data('fecha');
+//exit('gggff');
+            $consolidado = TableRegistry::get('Usuarios')->find();
+            $consolidados = $consolidado->select([
+                                    'Usuarios.id',
+                                    'Usuarios.nombres',
+                                    'Usuarios.apellidos',
+                                    'Usuarios.email',
+                                    'Ventas.id',
+                                    'total' => $consolidado->func()->sum('Ventas.monto_total')
+                                ])
+                       ->innerJoinWith('Ventas')
+                       ->group(['Usuarios.id'])
+                       ->toArray();
+            //prx($consolidado);
+            $excel = 1;
+            $name = 'Ventas_consolidados_vendedores_'.$fecha;
+            $this->set(compact('consolidados','name','excel'));
+
+        }
+
+        
+
+        
+        if($this->Auth->user('role') == 'admin'){
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+
+        $this->set(compact('usuarios'));
+        
+        
+        
+    }
+
     
 
     /**
@@ -416,10 +483,9 @@ class VentasController extends AppController
      */
     public function add($id = null)
     {
+        $session = $this->request->session();
         $venta = $this->Ventas->newEntity();
         if ($this->request->is('post')) {
-            $session = $this->request->session();
-            // prx($this->request->data);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('cuenta_porcobrar',str_replace('.','',$this->request->data('cuenta_porcobrar')));
             $this->request->data('monto_total',$this->request->data('totales'));
@@ -432,6 +498,7 @@ class VentasController extends AppController
             $this->request->data('mes',date('m'));
             $this->request->data('dia',date('d'));
             $this->request->data('fecha',date('Y-m-d'));
+            $this->request->data('created',date('Y-m-d H:i:s'));
 
             if(!$this->request->data('efectivo') || $this->request->data('monto_efectivo') == null){
                 $this->request->data('efectivo',false);
@@ -508,8 +575,8 @@ class VentasController extends AppController
 
                 $visitalTable = TableRegistry::get('Visitas');
                 $visitalTable->updateAll(
-                    ['Visitas.status ' => 'R' ],
-                    ['id' => $this->request->data('cliente_id')]
+                    ['status' => 'R'],
+                    ['cliente_id' => $this->request->data('cliente_id'),'status' => 'P']
                 );
                 $mensaje = $session->read('detalles') != null?'Venta realizada con exito.':'Pago de cartera exitoso.';
 
@@ -524,10 +591,10 @@ class VentasController extends AppController
         $productos = $productosTable->find('list')->toArray();
         $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
 
-        $session = $this->request->session();
         $session->delete('detalles');
 
         $carteraPendiente = $this->carteraPendiente($id);
+        //prx('ff');
 
         $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente'));
     }
@@ -538,8 +605,9 @@ class VentasController extends AppController
         $control = TableRegistry::get('ControlDeudaPagos')->find();
         $saldo = $control->select(['id','sum' => $control->func()->sum('monto')])
                 ->where(['cliente_id' => $id])
+                ->group(['id'])
                 ->first();
-        return $saldo->sum;
+        return $saldo;
     }
 
     /**

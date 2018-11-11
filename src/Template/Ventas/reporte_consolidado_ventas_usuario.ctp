@@ -9,7 +9,7 @@ if(!isset($excel)){
  <div class="col-lg-12 ">
     <div class="card">
         <div class="card-header">
-            <strong>Reporte Clientes Ventas</strong>
+            <strong>Reporte Consolidado por vendedores</strong>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
             </div>
@@ -57,38 +57,30 @@ if(!isset($excel)){
     tr:nth-child(even) {background-color: #f2f2f2}
 </style>
 
+
 <table>
     <thead>
          <tr>
-        <?php foreach ($header as $key => $value) { ?>
-           
-                <th><?php echo $value; ?></th>
-            
-        <?php } ?>
+            <th>Vendedor</th>
+            <th>Monto</th>
         </tr>
         
     </thead>
     <tbody>
-        
+
             <?php 
-                if($detallesVentas){ 
-
-                    foreach ($detallesVentas as $detalle => $detalles) { ?>
+                if($consolidados){ 
+                    foreach ($consolidados as $key => $consolidado) { ?>
                         <tr>
-                            <td><?php echo utf8_encode($detalles['nombre']); ?></td>
-                            <td><?php echo utf8_encode($detalles['direccion']); ?></td>
-                            <?php foreach ($detalles['productos'] as $pro => $pros) { ?>
-                                <td><?php echo $pros; ?></td>
-                            <?php } ?>
-                            <td><?php echo utf8_encode($detalles['observacion']); ?></td>
+                            <td><?php echo utf8_encode($consolidado->full_name); ?></td>
+                            <td><?php echo number_format($consolidado->total, 0, ",", "."); ?></td>
                         </tr>
-                    <?php } 
-
+                    <?php }
                 }
             ?>
-    
     </tbody>
 </table>
 
 
 <?php } ?>
+

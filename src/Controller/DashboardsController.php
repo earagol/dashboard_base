@@ -72,7 +72,7 @@ class DashboardsController extends AppController
                 ->where(['Ventas.fecha'=>date('Y-m-d'),'Ventas.monto_total IS NOT NULL']);
 
         if($this->Auth->user('role') == 'usuario'){
-            $visitasPendientes = TableRegistry::get('Visitas')->find()->contain(['Usuarios', 'Clientes', 'Usuarios'])->where(['Visitas.status'=> 'P','Visitas.usuario_id'=>$this->Auth->user('role')])->toArray();
+            $visitasPendientes = TableRegistry::get('Visitas')->find()->contain(['Usuarios', 'Clientes', 'Usuarios'])->where(['Visitas.status'=> 'P','Visitas.usuario_id'=>$this->Auth->user('id')])->toArray();
             $control->where(['usuario_id' => $this->Auth->user('id')]);
         }else{
             $this->vencerVisitas();
@@ -124,7 +124,22 @@ class DashboardsController extends AppController
                     'Ventas.monto_transferencia IS NOT NULL'
                 ])->first();
 
-        $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes'));
+        $clientTabla = TableRegistry::get('Clientes');
+        $clienteMorosos = $clientTabla->find()->where(['cuenta_porcobrar >'=>0]);
+        if($this->Auth->user('role') === 'usuario'){
+            $usuario = $clientTabla->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
+            if($usuario->rutas){
+                $rutas = [];
+                foreach ($usuario->rutas as $key => $value) {
+                    $rutas[$value->id]=$value->id;
+                }
+                $clienteMorosos->where(['Clientes.ruta_id IN' => array_keys($rutas)]);
+            }
+        }
+
+        $clienteMorosos = $clienteMorosos->toArray();
+
+        $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes','clienteMorosos'));
 
         // prx($transferidas);
     }

@@ -43,7 +43,7 @@
                             <td><?= h($cliente->nombres) ?></td>
                             <td><?= $cliente->has('ruta') ? $cliente->ruta->nombre : '' ?></td>
                             <td class="text-center">
-                                <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'add', $cliente->id],['title'=>'Venta','escape' => false]) ?>
+                                <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'add', $cliente->id],['title'=>'Realizar Venta','escape' => false]) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

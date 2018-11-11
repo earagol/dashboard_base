@@ -53,6 +53,11 @@ class UsuariosTable extends Table
             ]
         ]);
 
+        $this->hasMany('Ventas', [
+            'className' => 'Ventas',
+            'foreignKey' => 'usuario_id'
+        ]);
+
     }
 
     /**
@@ -63,15 +68,7 @@ class UsuariosTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->scalar('username')
-            ->maxLength('username', 20)
-            ->requirePresence('username', 'create')
-            ->notEmpty('username');
+        
 
         // $validator
         //     ->scalar('password')
@@ -79,29 +76,7 @@ class UsuariosTable extends Table
         //     ->requirePresence('password', 'create')
         //     ->notEmpty('password');
 
-        $validator
-            ->scalar('nombres')
-            ->maxLength('nombres', 50)
-            ->requirePresence('nombres', 'create')
-            ->notEmpty('nombres');
-
-        $validator
-            ->scalar('apellidos')
-            ->maxLength('apellidos', 50)
-            ->requirePresence('apellidos', 'create')
-            ->notEmpty('apellidos');
-
-        $validator
-            ->scalar('email')
-            ->maxLength('email', 60)
-            ->requirePresence('email', 'create')
-            ->notEmpty('email');
-
-         $validator
-            ->scalar('role')
-            ->maxLength('role', 20)
-            ->requirePresence('role', 'create')
-            ->notEmpty('role');
+        
 
         // $validator
         //     ->dateTime('deleted')

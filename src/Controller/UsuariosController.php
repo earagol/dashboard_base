@@ -17,7 +17,7 @@ class UsuariosController extends AppController
     public function isAuthorized($user){
 
         if(isset($user['role']) && $user['role'] === 'usuario'){
-            if(in_array($this->request->action, ['home','logout','index','login'])){
+            if(in_array($this->request->action, ['home','logout','login'])){
                 return true;
             }
         }
@@ -61,7 +61,11 @@ class UsuariosController extends AppController
      */
     public function index()
     {
+        $this->paginate = [
+            'contain' => ['Rutas']
+        ];
         $usuarios = $this->paginate($this->Usuarios);
+        //prx($usuarios);
 
         $this->set(compact('usuarios'));
     }
@@ -112,20 +116,24 @@ class UsuariosController extends AppController
                     }
                 }
 
+
+                $this->request->data('created',date('Y-m-d H:i:s'));
                 $this->request->data('usuario_id',$this->Auth->user('id'));
-                $usuario = $this->Usuarios->patchEntity($usuario, $this->request->getData());
+                //prx($this->request->getData());
+                $usuario = $this->Usuarios->patchEntity($usuario, $this->request->data);
                 if ($this->Usuarios->save($usuario)) {
                     if($this->request->data('ruta_id')){
                         $usuariosRutasTable = TableRegistry::get('UsuariosRutas');
                         foreach ($this->request->data('ruta_id') as $key => $value) {
                             $usuarioRuta = $usuariosRutasTable->newEntity();
-                            $usuarioRuta = $usuariosRutasTable->patchEntity($usuarioRuta, ['usuario_id'=>$usuario->id,'ruta_id'=>$value]);
+                            $usuarioRuta = $usuariosRutasTable->patchEntity($usuarioRuta, ['usuario_id'=>$usuario->id,'ruta_id'=>$value,'user_id'=>$this->Auth->user('id')]);
                             $usuariosRutasTable->save($usuarioRuta);
                         }
                     }
                     $this->Flash->success(__('Registro exitoso.'));
                     return $this->redirect(['action' => 'index']);
                 }
+               //prx($this->request->data);
                 $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
 
             } catch (Exception $e) {
@@ -181,6 +189,7 @@ class UsuariosController extends AppController
 
                 }else{
                     unset($usuario->password);
+                    unset($this->request->data['password']);
                 }
                 
 
@@ -191,7 +200,7 @@ class UsuariosController extends AppController
                         $usuariosRutasTable->deleteAll(['usuario_id' => $id]);
                         foreach ($this->request->data('ruta_id') as $key => $value) {
                             $usuarioRuta = $usuariosRutasTable->newEntity();
-                            $usuarioRuta = $usuariosRutasTable->patchEntity($usuarioRuta, ['usuario_id'=>$usuario->id,'ruta_id'=>$value]);
+                            $usuarioRuta = $usuariosRutasTable->patchEntity($usuarioRuta, ['usuario_id'=>$usuario->id,'ruta_id'=>$value,'user_id'=>$this->Auth->user('id')]);
                             $usuariosRutasTable->save($usuarioRuta);
                         }
                     }
@@ -199,6 +208,7 @@ class UsuariosController extends AppController
 
                     return $this->redirect(['action' => 'index']);
                 }
+
                 $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
 
             } catch (Exception $e) {

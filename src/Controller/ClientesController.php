@@ -33,10 +33,28 @@ class ClientesController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Rutas', 'Clasificaciones', 'Regiones', 'Comunas', 'Usuarios']
+        $options = [
+            'contain' => ['Rutas', 'Clasificaciones', 'Regiones', 'Comunas', 'Usuarios'],
+            'conditions' => []
         ];
+
+        if($this->Auth->user('role') === 'usuario'){
+            $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
+            if($usuario->rutas){
+                $rutas = [];
+                foreach ($usuario->rutas as $key => $value) {
+                    $rutas[$value->id]=$value->id;
+                }
+                $options['conditions'] = array_merge($options['conditions'],['Clientes.ruta_id IN' => array_keys($rutas)]);
+            }
+        }
+
+        if(!is_null($this->request->data('buscar'))){
+            $options['conditions'] = array_merge($options['conditions'],['Clientes.nombres LIKE' => '%'.$this->request->data('buscar').'%']);
+        }
+        $this->paginate = $options;
         $clientes = $this->paginate($this->Clientes);
+        //prx($clientes);
 
         $this->set(compact('clientes'));
     }
@@ -80,7 +98,7 @@ class ClientesController extends AppController
                 //         }
                 //     }
                 // }
-
+                $this->request->data('credito_disponible',str_replace('.','',$this->request->data('credito_disponible')));
                 $this->request->data('usuario_id',$this->Auth->user('id'));
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
                 if ($this->Clientes->save($cliente)) {

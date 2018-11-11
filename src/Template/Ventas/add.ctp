@@ -31,7 +31,7 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Credito Disponible</label>
-                <?php echo $this->Form->control('credito',['class'=>'form-control','value'=>number_format($cliente->credito_disponible, 0, ",", "."),'label'=>false]); ?>
+                <?php echo $this->Form->control('credito',['readonly'=>'readonly','class'=>'form-control','value'=>number_format($cliente->credito_disponible, 0, ",", "."),'label'=>false]); ?>
             </div>
 
             <?php echo $this->Form->control('cuenta_porcobrar_cliente',['type'=>'hidden','class'=>'form-control','value'=>$cliente->cuenta_porcobrar,'label'=>false]); ?>

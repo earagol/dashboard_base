@@ -13,6 +13,17 @@ use Cake\ORM\TableRegistry;
  */
 class ParametrosValoresController extends AppController
 {
+    public function isAuthorized($user){
+
+        if(isset($user['role']) && $user['role'] === 'usuario'){
+            if(in_array($this->request->action, ['index','add','view','edit','delete','datos'])){
+                return true;
+            }
+        }
+
+        return parent::isAuthorized($user);
+
+    }
 
     /**
      * Index method
@@ -63,7 +74,7 @@ class ParametrosValoresController extends AppController
             $productos = $productosTable->find('list', ['limit' => 200]);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('fecha',date('Y-m-d'));
-            // prx($this->request->data);
+            //prx($this->request->data);
             $padreValore = $padreTable->newEntity();
             $padreValore = $padreTable->patchEntity($padreValore, $this->request->getData());
             if($padreTable->save($padreValore)){
@@ -76,9 +87,10 @@ class ParametrosValoresController extends AppController
                         $valor['parametros_tipo_id'] = $this->request->data('parametros_tipo_id');
                         $valor['padre_id'] = $padreValore->id;
                         $valor['producto_id'] = $key;
-                        $valor['monto_o_cantidad'] = $this->request->data('producto_id_'.$key);
+                        $valor['monto_o_cantidad'] = str_replace('.','',$this->request->data('producto_id_'.$key));
                         $valor['usuario_id'] = $this->request->data('usuario_id');
                         $valor['fecha'] = $this->request->data('fecha');
+                        $valor['tipo'] = $this->request->data('tipo');
                         $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $valor);
                         if($this->ParametrosValores->save($parametrosValore)){
                             $flag = true;
@@ -89,6 +101,7 @@ class ParametrosValoresController extends AppController
                         return $this->redirect(['action' => 'index']);
                     }
                 }else{
+                    $this->request->data('monto_o_cantidad',str_replace('.','',$this->request->data('monto_o_cantidad')));
                     $this->request->data('padre_id',$padreValore->id);
                     $parametrosValore = $this->ParametrosValores->newEntity();
                     $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $this->request->getData());

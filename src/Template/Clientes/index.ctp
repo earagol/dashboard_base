@@ -2,6 +2,23 @@
     <div class="card">
         <div class="card-header">
             <strong class="card-title">Clientes</strong>
+            <?php echo $this->Form->create() ?>
+            <!-- <div class="pull-right"> -->
+                <div class="form-group">
+                    <!-- <label for="company" class=" form-control-label">Buscar</label> -->
+                    <div class="input-group">
+                      <?php echo $this->Form->control('buscar',[
+                                        'class'=>'form-control',
+                                        'placeholder'=>'Buscar...',
+                                        'value'=>$this->request->query('buscar'),
+                                        'label'=>false]); ?>
+                      <span class="input-group-btn">
+                        <?php echo $this->Form->button('Buscar',['class'=>'btn btn-primary','id' => 'plus']) ?>
+                      </span>
+                    </div>
+                </div>
+            <!-- </div> -->
+            <?php echo $this->Form->end() ?>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Agregar',['class'=>'btn btn-default']), ['action' => 'add']) ?></li>
             </div>
@@ -24,7 +41,7 @@
                         ?>
                         <tr>
                             <td><?= $this->Number->format($cliente->id) ?></td>
-                            <td><?= $this->Number->format($cliente->clasificacion_id) ?></td>
+                            <td><?= h($cliente->clasificacione->nombre) ?></td>
                             <td><?= h($tipo) ?></td>
                             <td><?= h($cliente->nombres) ?></td>
                             <td><?= $cliente->has('ruta') ? $cliente->ruta->nombre : '' ?></td>

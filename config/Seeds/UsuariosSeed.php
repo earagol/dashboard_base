@@ -30,6 +30,7 @@ class UsuariosSeed extends AbstractSeed
                 'apellidos'     => 'Aragol',
                 'activo'        => 1,
                 'role'     => 'admin',
+                'usuario_id'     => 1,
                 'created'       => date('Y-m-d H:i:s'),
             ];
         for ($i = 0; $i < 100; $i++) {

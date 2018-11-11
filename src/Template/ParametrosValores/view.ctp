@@ -23,11 +23,11 @@
                             $nombre = $parametrosValore->parametros_tipo->nombre;
                         ?>
                         <tr>
-                            <td><?= $this->Number->format($parametrosValore->id) ?></td>
-                            <td><?= h($parametrosValore->parametros_tipo->nombre) ?></td>
-                            <td><?= h($parametrosValore->producto->nombre) ?></td>
-                            <td><?= h($parametrosValore->monto_o_cantidad) ?></td>
-                            <td><?= $parametrosValore->created->format('Y-m-d H:i:s'); ?></td>
+                            <td><?php echo $this->Number->format($parametrosValore->id) ?></td>
+                            <td><?php echo h($parametrosValore->parametros_tipo->nombre) ?></td>
+                            <td><?php echo $parametrosValore->producto?h($parametrosValore->producto->nombre):'' ?></td>
+                            <td><?php echo h($parametrosValore->monto_o_cantidad) ?></td>
+                            <td><?php echo $parametrosValore->created->format('Y-m-d H:i:s'); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
