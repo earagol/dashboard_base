@@ -323,11 +323,12 @@
                         deuda = deuda.replace('.', '');
                         var deuda2 = $('#monto-deuda2').val();
                         deuda2 = deuda2.replace('.', '');
+                        console.log(deuda,deuda2);
                         if(eval($('#monto-deuda').val()) <= 0){
                             $('#monto-deuda').val($('#monto-deuda2').val());
                             alert('Ingrese un monto valido');
                             return;
-                        }else if(deuda > deuda2){
+                        }else if(eval(deuda) > eval(deuda2)){
                             // cuenta = number_format(cuenta,0);
                             // $('#cuenta-porcobrar').val(cuenta);
                             // $('#cuentaCobrar').html(cuenta);
