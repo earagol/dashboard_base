@@ -377,6 +377,7 @@ class VentasController extends AppController
                                     'total' => $consolidado->func()->sum('Ventas.monto_total')
                                 ])
                        ->innerJoinWith('Ventas')
+                       ->where(['Ventas.fecha'=>$fecha])
                        ->group(['Usuarios.id'])
                        ->toArray();
             //prx($consolidado);
@@ -594,7 +595,7 @@ class VentasController extends AppController
         $session->delete('detalles');
 
         $carteraPendiente = $this->carteraPendiente($id);
-        //prx('ff');
+        $carteraPendiente = $carteraPendiente['sum'];
 
         $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente'));
     }

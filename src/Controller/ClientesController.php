@@ -39,7 +39,7 @@ class ClientesController extends AppController
         ];
 
         if($this->Auth->user('role') === 'usuario'){
-            $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
+            $usuario = $this->Clientes->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
             if($usuario->rutas){
                 $rutas = [];
                 foreach ($usuario->rutas as $key => $value) {

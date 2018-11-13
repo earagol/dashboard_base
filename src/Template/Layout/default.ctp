@@ -23,7 +23,7 @@ $cakeDescription = 'Estrella';
 
         <title><?= $cakeDescription; ?></title>
 
-        <?= $this->Html->meta('description',"Ela Admin - HTML5 Admin Template"); ?>
+        <?= $this->Html->meta('description',"Agua Purificada Estrella"); ?>
         <?= $this->Html->meta('viewport',"width=device-width, initial-scale=1"); ?>
         <?= $this->Html->meta('favicon.ico','img/images/favicon.png',['type' => 'icon']); ?>
 
@@ -59,11 +59,13 @@ $cakeDescription = 'Estrella';
         <?php echo $this->Html->script('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
         <?= $this->Html->css('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
 
-        <?php echo $this->Html->script('lib/flot-chart/jquery.flot'); ?>
-        <?php echo $this->Html->script('lib/flot-chart/jquery.flot.pie'); ?>
-        <?php echo $this->Html->script('lib/flot-chart/jquery.flot.spline'); ?>
+        <?php //echo $this->Html->script('lib/flot-chart/jquery.flot'); ?>
+        <?php //echo $this->Html->script('lib/flot-chart/jquery.flot.pie'); ?>
+        <?php //echo $this->Html->script('lib/flot-chart/jquery.flot.spline'); ?>
 
-        <?= $this->Html->script('bootstrap') ?> 
+        <?php echo $this->Html->script('bootstrap') ?> 
+        <?php echo $this->Html->script('plugins'); ?>
+        <?php echo $this->Html->script('main'); ?>
 
         <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script> -->
 
@@ -280,6 +282,12 @@ $cakeDescription = 'Estrella';
                                 <li>
                                     <?php echo $this->Html->link(__(' <i class="fa fa-exchange"></i>Ventas'), ['controller'=>'Ventas','action' => 'index'],['title'=>'Ventas','escape' => false]) ?>
                                 </li>
+                            </ul>
+                        </li>
+
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-inbox"></i>Reportes</a>
+                            <ul class="sub-menu children dropdown-menu">
 
                                 <li>
                                     <?php echo $this->Html->link(__(' <i class="fa fa-inbox"></i>Reporte Diario'), ['controller'=>'Ventas','action' => 'reporteDiarioVendedor'],['title'=>'Reporte Diario','escape' => false]) ?>
@@ -294,6 +302,7 @@ $cakeDescription = 'Estrella';
                                 </li>
                             </ul>
                         </li>
+
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </nav>
@@ -437,8 +446,8 @@ $cakeDescription = 'Estrella';
 
         </div><!-- /#right-panel -->
 
-        <?php echo $this->Html->script('plugins'); ?>
-        <?php echo $this->Html->script('main'); ?>
+        
+        
 
         <?php echo $this->Html->script('lib/chart-js/Chart.bundle'); ?>
 
@@ -455,6 +464,16 @@ $cakeDescription = 'Estrella';
         <?php echo $this->Html->script('lib/moment/moment'); ?>
         <?php echo $this->Html->script('../vendors/calendar/fullcalendar.min'); ?>
         <?php echo $this->Html->script('../vendors/calendar/fullcalendar-init'); ?>
+
+        <script type="text/javascript">
+
+            (function( $ ) {
+                $(".menu-item-has-children.dropdown").click();
+            })(jQuery);
+            
+            
+
+        </script>
 
   
 

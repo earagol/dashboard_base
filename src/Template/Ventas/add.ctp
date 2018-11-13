@@ -210,9 +210,11 @@
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
     var precios = '<?php echo $precios ?>';
-    var jsonPrecios = $.parseJSON(precios);
+    
 
     (function( $ ) {
+
+        var jsonPrecios = $.parseJSON(precios);
 
             $('#producto-id').change(function() {
                 cargarPrecio($(this).val());

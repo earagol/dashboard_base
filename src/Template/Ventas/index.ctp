@@ -1,7 +1,7 @@
 <div class="col-lg-12">
     <div class="card">
         <div class="card-header">
-            <strong class="card-title">Clientes</strong>
+            <strong class="card-title">Ventas</strong>
             <?php echo $this->Form->create() ?>
             <!-- <div class="pull-right"> -->
                 <div class="form-group">

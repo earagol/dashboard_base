@@ -41,7 +41,7 @@
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
     (function( $ ) {
-        $('#parametros-tipo-id').click(function() {
+        $('#parametros-tipo-id').change(function() {
             if($('#parametros-tipo-id').val() == ''){
                 return;
             }
