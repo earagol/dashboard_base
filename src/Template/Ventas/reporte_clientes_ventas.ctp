@@ -72,20 +72,47 @@ if(!isset($excel)){
         
             <?php 
                 if($detallesVentas){ 
+                    $montoEfecTotal=0;
+                    $montoTransTotal=0;
+                    $cxcTotal=0;
+                    $prodcutTotal = $detalles['productos'];
+                    foreach ($prodcutTotal  as $key => $value) {
+                        $prodcutTotal[$key]=0;
+                    }
 
-                    foreach ($detallesVentas as $detalle => $detalles) { ?>
+                    foreach ($detallesVentas as $detalle => $detalles) { 
+                        $montoEfecTotal+=$detalles['monto_efectivo'];
+                        $montoTransTotal+=$detalles['monto_transferencia'];
+                        $cxcTotal+=$detalles['cuenta_porcobrar'];
+                    ?>
                         <tr>
                             <td><?php echo utf8_encode($detalles['nombre']); ?></td>
                             <td><?php echo utf8_encode($detalles['direccion']); ?></td>
-                            <?php foreach ($detalles['productos'] as $pro => $pros) { ?>
+                            <?php foreach ($detalles['productos'] as $pro => $pros) { 
+                                    $prodcutTotal[$pro]+=$pros;
+                                ?>
                                 <td><?php echo $pros; ?></td>
                             <?php } ?>
+                            <td><?php echo utf8_encode($detalles['monto_efectivo']); ?></td>
+                            <td><?php echo utf8_encode($detalles['monto_transferencia']); ?></td>
+                            <td><?php echo utf8_encode($detalles['cuenta_porcobrar']); ?></td>
                             <td><?php echo utf8_encode($detalles['observacion']); ?></td>
                         </tr>
                     <?php } 
 
                 }
             ?>
+
+            <tr>
+                <td colspan="2">Totales:</td>
+                <?php foreach ($prodcutTotal as $key => $value) { ?>
+                    <td><?php echo $value; ?></td>
+                <?php } ?>
+                <td><?php echo $montoEfecTotal; ?></td>
+                <td><?php echo $montoTransTotal; ?></td>
+                <td><?php echo $cxcTotal; ?></td>
+                <td></td>
+            </tr>
     
     </tbody>
 </table>

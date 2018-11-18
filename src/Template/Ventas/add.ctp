@@ -79,27 +79,36 @@
            
 
             <div id="grilla" style="margin-top: 5px;max-height: 300px;">
+                <?php if(isset($detalles)): ?>
 
-                <table class="table table-striped table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Producto</th>
-                            <th scope="col">Precio Unitario</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Total</th>
-                            <th >Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                    </tbody>
-                </table>
+                    <?php echo $this->element('detalles_ventas', array('detalles' => $detalles) ); ?>
+                <?php else: ?>
+
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Precio Unitario</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Total</th>
+                                <th >Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                        </tbody>
+                    </table>
+
+
+                <?php endif; ?>
+
+                
                 
             </div>
 
@@ -247,6 +256,10 @@
     
 
     (function( $ ) {
+
+        <?php if(isset($detalles)): ?>
+            calculo();
+        <?php endif; ?>
 
         var jsonPrecios = $.parseJSON(precios);
 

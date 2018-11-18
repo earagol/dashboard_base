@@ -99,7 +99,7 @@ if(!isset($excel)){
 
             <tr>
                 <td>TOTAL CXC</td>
-                <td>?</td>
+                <td><?php echo $ventas['cuenta_porcobrar']?$ventas['cuenta_porcobrar']:''; ?></td>
             </tr>
 
             <tr>
@@ -129,6 +129,60 @@ if(!isset($excel)){
 
             <?php  }
             ?>
+
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+        
+    </tbody>
+</table>
+
+<h3>CARTERA RECOGIDA</h3>
+
+<table>
+    <thead>
+         <tr>
+            <td>Cliente</td>
+            <td>Valor</td>
+        </tr>
+        
+    </thead>
+    <tbody>
+
+            <?php 
+            $granTotal=0;
+            $efectivoTotal=0;
+            $transTotal = 0;
+                if($carteraRecogida){ 
+                    foreach ($carteraRecogida as $carKey => $valueCartera) { 
+                        $efectivoTotal+=$valueCartera->monto_efectivo_cartera;
+                        $transTotal+=$valueCartera->monto_transferencia_cartera;
+                        $granTotal=$valueCartera->monto_cartera;
+                        ?>
+                        <tr>
+                            <td><?php echo utf8_encode($valueCartera->cliente->nombres); ?></td>
+                            <td><?php echo $valueCartera->monto_cartera; ?></td>
+                        </tr>
+                    <?php }
+                }
+            ?>
+
+            <tr><td></td></tr>
+
+            <tr>
+                <td>TOTAL EFECTIVO/CHEQUE</td>
+                <td><?php echo $efectivoTotal; ?></td>
+            </tr>
+
+            <tr>
+                <td>TOTAL TRANSFERENCIAS</td>
+                <td><?php echo $transTotal; ?></td>
+            </tr>
+
+            <tr>
+                <td>GRAN TOTAL</td>
+                <td><?php echo ($granTotal); ?></td>
+            </tr>
         
     </tbody>
 </table>

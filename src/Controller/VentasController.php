@@ -118,6 +118,49 @@ class VentasController extends AppController
     }
 
 
+    public function cantidadVentaPorProducto($usuarioId=null,$fecha=null){
+        $producto = [];
+        $consolidado = $this->Ventas->VentaDetalles->find();
+        $consolidados = $consolidado->select([
+                                'VentaDetalles.producto_id',
+                                'total' => $consolidado->func()->sum('VentaDetalles.cantidad')
+                            ])
+                   ->innerJoinWith('Ventas')
+                   ->where(['Ventas.fecha'=>$fecha,'Ventas.usuario_id'=>$usuarioId])
+                   ->group(['VentaDetalles.producto_id'])
+                   ->toArray();
+        if($consolidados){
+            foreach ($consolidados as $key => $value) {
+                $producto[$value->producto_id] = $value->total;
+            }
+        }
+        return $producto;
+    }
+
+
+    public function getCarteraRecogida($usuario_id,$fecha){
+        $ventas = $this->Ventas->find()
+                                ->contain('Clientes')
+                                ->where([
+                                        'Ventas.usuario_id' => $usuario_id,
+                                        'Ventas.fecha' => $fecha,
+                                        'Ventas.monto_cartera IS NOT NULL'
+                                    ])
+                                ->toArray();
+        //$valores = [];
+        /*if($ventas){
+            $valores['monto_total'] = $ventas->monto_total; 
+            $valores['monto_efectivo'] = $ventas->monto_efectivo; 
+            $valores['monto_transferencia'] = $ventas->monto_transferencia; 
+            $valores['cuenta_porcobrar'] = $ventas->cuenta_porcobrar; 
+            $valores['monto_cartera'] = $ventas->monto_cartera; 
+            $valores['deuda'] = $ventas->cuenta_porcobrar-$ventas->monto_cartera; 
+        }
+        */
+        return $ventas;
+    }
+
+
     public function reporteDiarioVendedor(){
 
         if($this->request->is('post')){
@@ -151,6 +194,7 @@ class VentasController extends AppController
             $fecha = $this->request->data('fecha');
 
             $ventas = $this->getVentas($this->request->data('usuario_id'),$this->request->data('fecha'));
+            
 
             $resultados = $valoresPadreTable->find('all')
                                             ->contain(['ParametrosValores','ParametrosTipos'])
@@ -201,37 +245,69 @@ class VentasController extends AppController
                 
             }
 
+             //prx($paramsTipoDiario);
+
             foreach ($paramsTipoDiario as $keyT => $valueT) {
-                    $newValor = [];
-                    foreach ($productos as $keyP => $valueP) {
+                $newValor = [];
+                foreach ($productos as $keyP => $valueP) {
 
-                        if(isset($valores['Diario'][$keyT]['valores'][$keyP])){
-                            $newValor[$keyP] = $valores['Diario'][$keyT]['valores'][$keyP];
-                        }else{
-                            $newValor[$keyP] = [
-                                            'nombre' => $valueP,
-                                            'cantidad' => ''
-                                        ];
-                        }
+                    if(isset($valores['Diario'][$keyT]['valores'][$keyP])){
+                        $newValor[$keyP] = $valores['Diario'][$keyT]['valores'][$keyP];
+                    }else{
+                        $newValor[$keyP] = [
+                                        'nombre' => $valueP,
+                                        'cantidad' => ''
+                                    ];
                     }
-                    $diario[$keyT]['nombre'] = $valueT;
-                    $diario[$keyT]['valores'] = $newValor;
                 }
-                
-                foreach ($paramsTipoGasto as $keyT => $valueT) {
-                    $newValor = [];
+                $diario[$keyT]['nombre'] = $valueT;
+                $diario[$keyT]['valores'] = $newValor;
+            }
 
-                        if(isset($valores['Gasto'][$keyT])){
-                            $newValor = $valores['Gasto'][$keyT]['cantidad'];
-                        }else{
-                            $newValor = '';
-                        }
-                    $gasto[$keyT]['nombre'] = $valueT;
-                    $gasto[$keyT]['cantidad'] = $newValor;
+            ////Cantidad de Ventas//////
+            $ventasCantidadProducto = $this->cantidadVentaPorProducto($this->request->data('usuario_id'),$this->request->data('fecha'));
+            foreach ($productos as $keyP => $valueP) {
+
+                if(isset($ventasCantidadProducto[$keyP])){
+                    $newValor[$keyP]['nombre'] = $productos[$keyP];
+                    $newValor[$keyP]['cantidad'] = $ventasCantidadProducto[$keyP];
+                }else{
+                    $newValor[$keyP] = [
+                                    'nombre' => $valueP,
+                                    'cantidad' => ''
+                                ];
                 }
+            }
+            $numVentas = [
+                        'nombre' => 'Ventas',
+                        'valores' => $newValor
+                    ];
+
+            array_push($diario,$numVentas);
+
+
+                
+            foreach ($paramsTipoGasto as $keyT => $valueT) {
+                $newValor = [];
+
+                    if(isset($valores['Gasto'][$keyT])){
+                        $newValor = $valores['Gasto'][$keyT]['cantidad'];
+                    }else{
+                        $newValor = '';
+                    }
+                $gasto[$keyT]['nombre'] = $valueT;
+                $gasto[$keyT]['cantidad'] = $newValor;
+            }
 
             $header[] = '';
             $header = array_merge($header,$productos);
+
+
+            ///CARTERA RECOGIDA////
+            $carteraRecogida = $this->getCarteraRecogida($this->request->data('usuario_id'),$this->request->data('fecha'));
+            //prx($carteraRecogida);
+
+            
 
             // prx($valores); // Todo
             // pr($diario); //Depende de valores, ya esta ordenado
@@ -240,7 +316,7 @@ class VentasController extends AppController
 
             $excel = 1;
             $name = 'Reporte_diario_'.$fecha;
-            $this->set(compact('header','diario','excel','name','ventas','gasto','usuario'));
+            $this->set(compact('header','diario','excel','name','ventas','gasto','usuario','carteraRecogida'));
 
         }
 
@@ -305,10 +381,10 @@ class VentasController extends AppController
 
             $ventas = $ventas->toArray();
 
-             // prx($ventas);
+             //prx($ventas);
             $header = ['Cliente',utf8_encode('Direccion')];
             $header = array_merge($header,$productos);
-            $header[] = utf8_encode('Observacion');
+            $header = array_merge($header,['Monto Efectivo','Monto Transferencia','CXC',utf8_encode('Observacion')]);
 
             $detallesVentas = [];
             foreach ($ventas as $key => $value) {
@@ -316,7 +392,11 @@ class VentasController extends AppController
                             'id' => $value->cliente->id,
                             'nombre' => $value->cliente->nombres,
                             'direccion' => $value->cliente->calle." ".$value->cliente->numero_calle." ".$value->cliente->dept_casa_oficina_numero." (".$comunas[$value->cliente->comuna_id].")",
-                            'observacion' => $value->cliente->observacion
+                            'observacion' => $value->cliente->observacion,
+                            'monto_efectivo' => $value->monto_efectivo,
+                            'monto_transferencia' => $value->monto_transferencia,
+                            'cuenta_porcobrar' => $value->cuenta_porcobrar,
+                            'monto_cartera' => $value->monto_cartera,
                         ];
                 $producVenta = [];
                 foreach ($productos as $keyP => $valueP) {
@@ -333,6 +413,9 @@ class VentasController extends AppController
                 $detalle['productos'] = $producVenta;
                 $detallesVentas[] = $detalle;
             }
+
+     //       pr($header);
+       //     prx($detallesVentas);
 
 
             $excel = 1;
@@ -429,6 +512,7 @@ class VentasController extends AppController
     public function detalles()
     {
         extract($this->request->data);
+        
         $session = $this->request->session();
         $mensaje = false;
         if($tipo == 1){
@@ -450,9 +534,10 @@ class VentasController extends AppController
                 $session->write('detalles',$detalles);
             }else{
                 $aux = $session->read('detalles');
+                
                 $flag = false;
                 foreach ($aux as $value) {
-                    if($value['producto_id'] === $producto){
+                    if($value['producto_id'] == $producto){
                         $flag = true;
                         break;
                     }
@@ -466,13 +551,22 @@ class VentasController extends AppController
                 $detalles = $aux;
             }
 
-        }else{
+        }else if($tipo == 2){
 
             $detalles = $session->read('detalles');
             unset($detalles[$this->request->data('index')]);
             $session->write('detalles',$detalles);
 
+        }else{
+
+            $aux = $session->read('detalles');
+            $detalles = $aux;
+            $detalles[$this->request->data('index')]['cantidad'] = $this->request->data('cantidad');
+            $detalles[$this->request->data('index')]['total'] = $this->request->data('cantidad') * $detalles[$this->request->data('index')]['precio'];
+            $session->write('detalles',$detalles);
+
         }
+
         $this->set(compact('detalles','mensaje'));
     }
 
@@ -482,7 +576,7 @@ class VentasController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add($id = null)
+    public function add($id = null,$visitaId=null)
     {
         $session = $this->request->session();
         $venta = $this->Ventas->newEntity();
@@ -619,12 +713,23 @@ class VentasController extends AppController
             }
             $this->Flash->error(__('La venta no pudo ser procesada, intente nuevamente.'));
         }
+
+        $session->delete('detalles');
+
+        
         $cliente = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();
         $productosTable = TableRegistry::get('Productos');
         $productos = $productosTable->find('list')->toArray();
         $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
 
-        $session->delete('detalles');
+        $compruebaVisita = $this->compruebaVisita($visitaId,$productos);
+        if($session->read('detalles')){
+            $this->set('detalles',$session->read('detalles'));
+        }
+
+        
+
+        
 
         $carteraPendiente = $this->carteraPendiente($id);
         $carteraPendiente = $carteraPendiente['sum'];
@@ -644,6 +749,31 @@ class VentasController extends AppController
                // prx($saldo);
         return $saldo;
     }
+
+
+    private function compruebaVisita($visitaId = null,$productos=null){
+        if($visitaId){
+            $visitas = TableRegistry::get('Visitas')->VisitaDetalles->find()->where(['visita_id'=>$visitaId])->toArray();
+            if($visitas){
+                $session = $this->request->session();
+                $productosTable = TableRegistry::get('Productos');
+                $productosPrecios = $productosTable->ProductosPrecios->find('list',['keyField'=>'id','valueField'=>'precio'])->toArray();
+
+                foreach ($visitas as $key => $value) {
+                    $detallesVentas['producto_id'] = $value->producto_id;
+                    $detallesVentas['producto'] = $productos[$value->producto_id];
+                    $detallesVentas['precio_id'] = $value->precio_id;
+                    $detallesVentas['precio'] = $productosPrecios[$value->precio_id];
+                    $detallesVentas['cantidad'] = $value->cantidad;
+                    $detallesVentas['total'] = $value->cantidad*$detallesVentas['precio'];
+
+                    $detalles[] = $detallesVentas;
+                }
+
+                $session->write('detalles',$detalles);
+            }
+        }
+    }//Fin compruebaVisita
 
     /**
      * Edit method
