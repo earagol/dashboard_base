@@ -139,7 +139,19 @@ class DashboardsController extends AppController
 
         $clienteMorosos = $clienteMorosos->toArray();
 
-        $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes','clienteMorosos'));
+
+        //////////////////CXC////////////////////////////
+        
+        $cxc = TableRegistry::get('Clientes')->find();
+        $cxc = $cxc->select([
+                    'total_cxc' => $cxc->func()->count('id'),
+                    'monto_cxc' => $cxc->func()->sum('cuenta_porcobrar')
+                ])
+                ->where([
+                    'cuenta_porcobrar >'=>0
+                ])->first();
+//prx($cxc);
+        $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes','clienteMorosos','cxc'));
 
         // prx($transferidas);
     }

@@ -123,9 +123,8 @@
                     cuenta = cuentaAux;
                 }
 
-                cuenta = number_format(cuenta,0);
-                
                 $('#cuenta-porcobrar').val(cuenta);
+                cuenta = number_format(cuenta,0);
                 $('#resta').html(cuenta);
                 // $('#cuentaCobrar').html(cuenta);
                 
@@ -143,40 +142,13 @@
             $('#producto-id').val('');
             $('#precio-id').val('');
             $('#cantidad').val('');
-            // if($('#pagar-cartera').is(':checked')){
-            //     var cuentaCobrar = $('#cuenta-porcobrar').val();
-            //     var totales = $('#totales').val();
-            //     console.log(cuentaCobrar,totales);
-            //     var cuentaCobrar = cuentaCobrar.replace('.', '');
-            //     var totales = totales.replace('.', '');
-
-            //     console.log(cuentaCobrar,totales);
-
-            //     var cuenta = eval(totales) + eval(cuentaCobrar);
-            //     cuenta = number_format(cuenta,0);
-            //     $('#cuentaCobrar').html(cuenta);
-            //     $('#cuenta-porcobrar2').val(cuenta);
-            // }else{
-            //     // $('#cuenta-porcobrar').val(<?php echo number_format($total, 0, ",", ".");  ?>);
-            //     var monto = '<?php echo number_format($total, 0, ".", ",");  ?>';
-            //     // var res = monto.replace(",", ".");
-            //     var res = monto.replace(/,/g, '.');
-
-            //     console.log(monto,monto.replace(/,/g, '.'),monto.replace(/./g, ','))
-            //     // tt.replace(/,/g, '.')
-            //     // $('#cuenta-porcobrar').val(monto.replace(/,/g, '.'));
-            //     $('#cuentaCobrar').html(monto.replace(/,/g, '.'));
-            //     $('#cuenta-porcobrar2').val(cuenta);
-            // }
-            
-            
 
             $('.eliminar').on("click", function() {
 
                 var id = $(this).data('id');
 
                 $.ajax({
-                    url:url1+'ventas/detalles',
+                    url:url1+'visitas/detalles',
                     dataType: 'html',
                     type: 'POST',
                     headers: {

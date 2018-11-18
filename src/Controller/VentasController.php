@@ -492,7 +492,6 @@ class VentasController extends AppController
             $this->request->data('monto_total',$this->request->data('totales'));
             $this->request->data('pago_cartera',$this->request->data('pagar_cartera'));
             $this->request->data('credito',str_replace('.','',$this->request->data('credito')));
-            $this->request->data('monto_cartera',str_replace('.','',$this->request->data('monto_deuda')));
             $this->request->data('monto_efectivo',str_replace('.','',$this->request->data('monto_efectivo')));
             $this->request->data('monto_transferencia',str_replace('.','',$this->request->data('monto_transferencia')));
             $this->request->data('ano',date('Y'));
@@ -501,19 +500,52 @@ class VentasController extends AppController
             $this->request->data('fecha',date('Y-m-d'));
             $this->request->data('created',date('Y-m-d H:i:s'));
 
-            if(!$this->request->data('efectivo') || $this->request->data('monto_efectivo') == null){
+            if($this->request->data('monto_efectivo') == null || $this->request->data('monto_efectivo') == 0){
                 $this->request->data('efectivo',false);
                 $this->request->data('monto_efectivo',null);
+            }else{
+                $this->request->data('efectivo',true);
             }
 
-            if(!$this->request->data('transferencia') || $this->request->data('monto_transferencia') == null){
+
+            if($this->request->data('monto_transferencia') == null || $this->request->data('monto_transferencia') == 0){
                 $this->request->data('transferencia',false);
                 $this->request->data('monto_transferencia',null);
+            }else{
+                $this->request->data('transferencia',true);
             }
+
+
 
             if(!$this->request->data('pago_cartera')){
                 $this->request->data('monto_cartera',null);
+                $this->request->data('monto_efectivo_cartera',null);
+                $this->request->data('monto_transferencia_cartera',null);
+            }else{
+                $montoCartera = 0;
+
+                if($this->request->data('monto_efectivo_cartera') == null || $this->request->data('monto_efectivo_cartera') == 0){
+                    $this->request->data('monto_efectivo_cartera',null);
+                }else{
+                    $this->request->data('monto_efectivo_cartera',str_replace('.','',$this->request->data('monto_efectivo_cartera')));
+                    $montoCartera+= $this->request->data('monto_efectivo_cartera');
+                }
+
+
+                if($this->request->data('monto_transferencia_cartera') == null || $this->request->data('monto_transferencia_cartera') == 0){
+                    $this->request->data('monto_transferencia_cartera',null);
+                }else{
+                    $this->request->data('monto_transferencia_cartera',str_replace('.','',$this->request->data('monto_transferencia_cartera')));
+                    $montoCartera+= $this->request->data('monto_transferencia_cartera');
+                }
+
+                $this->request->data('monto_cartera',$montoCartera);
+
             }
+
+            $this->request->data('monto_efectivo_cartera',str_replace('.','',$this->request->data('monto_efectivo_cartera')));
+            $this->request->data('monto_transferencia_cartera',str_replace('.','',$this->request->data('monto_transferencia_cartera')));
+            
 
             $this->request->data('tiene_detalles',true);
             if($session->read('detalles') == null){
@@ -597,6 +629,7 @@ class VentasController extends AppController
         $carteraPendiente = $this->carteraPendiente($id);
         $carteraPendiente = $carteraPendiente['sum'];
 
+
         $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente'));
     }
 
@@ -604,10 +637,11 @@ class VentasController extends AppController
     private function carteraPendiente($id){
 
         $control = TableRegistry::get('ControlDeudaPagos')->find();
-        $saldo = $control->select(['id','sum' => $control->func()->sum('monto')])
-                ->where(['cliente_id' => $id])
-                ->group(['id'])
-                ->first();
+        $control->select(['id','sum' => $control->func()->sum('monto')])
+                ->where(['cliente_id' => $id]);
+                //->group(['id']);
+        $saldo = $control->first();
+               // prx($saldo);
         return $saldo;
     }
 

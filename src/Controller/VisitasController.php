@@ -4,6 +4,8 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\I18n\Time;
 use Exception;
+use Cake\ORM\TableRegistry;
+use Cake\Network\Session;
 
 /**
  * Visitas Controller
@@ -76,8 +78,10 @@ class VisitasController extends AppController
      */
     public function add()
     {
+        $session = $this->request->session();
         $visita = $this->Visitas->newEntity();
         if ($this->request->is('post')) {
+            //prx($this->request->data);
             $flag = true;
             $validator = new \Cake\Validation\Validator();
             try {
@@ -89,10 +93,46 @@ class VisitasController extends AppController
                     $this->Flash->alert(__('La fecha de vencimiento no puede ser menor a la fecha de hoy.'));
                 }else{
 
+                    $this->request->data('monto_total',$this->request->data('totales'));
+                    $this->request->data('monto_efectivo',str_replace('.','',$this->request->data('monto_efectivo')));
+                    $this->request->data('monto_transferencia',str_replace('.','',$this->request->data('monto_transferencia')));
+
+                    if($this->request->data('monto_efectivo') == null || $this->request->data('monto_efectivo') == 0){
+                        $this->request->data('efectivo',false);
+                        $this->request->data('monto_efectivo',null);
+                    }else{
+                        $this->request->data('efectivo',true);
+                    }
+
+
+                    if($this->request->data('monto_transferencia') == null || $this->request->data('monto_transferencia') == 0){
+                        $this->request->data('transferencia',false);
+                        $this->request->data('monto_transferencia',null);
+                    }else{
+                        $this->request->data('transferencia',true);
+                    }
+
+                    $this->request->data('tiene_detalles',true);
+                    if($session->read('detalles') == null){
+                        $this->request->data('tiene_detalles',false);
+                        $this->request->data('monto_total',null);
+                    }
+
                     $this->request->data('status','P');
                     $this->request->data('user_id',$this->Auth->user('id'));
                     $visita = $this->Visitas->patchEntity($visita, $this->request->getData());
                     if ($this->Visitas->save($visita)) {
+
+                        if($session->read('detalles') != null){
+                            foreach ($session->read('detalles') as $key => $value) {
+                                $value['precio_unitario'] = $value['precio'];
+                                $value['visita_id'] = $visita->id;
+                                $detalles = $this->Visitas->VisitaDetalles->newEntity();
+                                $detalles = $this->Visitas->VisitaDetalles->patchEntity($detalles, $value);
+                                $this->Visitas->VisitaDetalles->save($detalles);
+                            }
+                        }
+
                         $this->Flash->success(__('Registro exitoso.'));
 
                         return $this->redirect(['action' => 'index']);
@@ -116,8 +156,69 @@ class VisitasController extends AppController
             }
         );
 
+        $session->delete('detalles');
 
-        $this->set(compact('visita', 'usuarios', 'clientes', 'usuarios'));
+        $productosTable = TableRegistry::get('Productos');
+        $productos = $productosTable->find('list')->toArray();
+        $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
+
+        $this->set(compact('visita', 'usuarios', 'clientes', 'usuarios','productos','productosPrecios'));
+    }
+
+
+     /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function detalles()
+    {
+        extract($this->request->data);
+        $session = $this->request->session();
+        $mensaje = false;
+        if($tipo == 1){
+
+            $productosTable = TableRegistry::get('Productos');
+            $productos = $productosTable->find('list')->toArray();
+            $productosPrecios = $productosTable->ProductosPrecios->find('list',['keyField'=>'id','valueField'=>'precio'])->toArray();
+            
+            $detallesVentas['producto_id'] = $producto;
+            $detallesVentas['producto'] = $productos[$producto];
+            $detallesVentas['precio_id'] = $precio;
+            $detallesVentas['precio'] = $productosPrecios[$precio];
+            $detallesVentas['cantidad'] = $cantidad;
+            $detallesVentas['total'] = $cantidad*$detallesVentas['precio'];
+
+            $detalles[] = $detallesVentas;
+
+            if(!$session->read('detalles')){
+                $session->write('detalles',$detalles);
+            }else{
+                $aux = $session->read('detalles');
+                $flag = false;
+                foreach ($aux as $value) {
+                    if($value['producto_id'] === $producto){
+                        $flag = true;
+                        break;
+                    }
+                }
+                if(!$flag){
+                    array_push($aux,$detalles[0]);
+                    $session->write('detalles',$aux);
+                }else{
+                    $mensaje = 'El producto ya esta incluido.';
+                }
+                $detalles = $aux;
+            }
+
+        }else{
+
+            $detalles = $session->read('detalles');
+            unset($detalles[$this->request->data('index')]);
+            $session->write('detalles',$detalles);
+
+        }
+        $this->set(compact('detalles','mensaje'));
     }
 
     /**

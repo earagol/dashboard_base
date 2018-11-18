@@ -53,6 +53,11 @@ class VisitasTable extends Table
             'foreignKey' => 'cliente_id',
             'joinType' => 'INNER'
         ]);
+
+
+        $this->hasMany('VisitaDetalles', [
+            'foreignKey' => 'visita_id'
+        ]);
     }
 
     /**

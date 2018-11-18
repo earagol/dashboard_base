@@ -1,5 +1,29 @@
 <!-- Widgets  -->
 <div class="row">
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card nocard">
+            <div class="card-body">
+                <div class="stat-widget-five">
+                    <div class="stat-icon dib flat-color-1">
+                        <i class="pe-7f-cash"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="text-left dib"> 
+
+                            <div class="stat-text"><span class="count"><?php echo $cxc->total_cxc?$cxc->total_cxc:0; ?></span></div>
+                            <div class="stat-heading">N° Clientes con CXC</div>
+
+                            <div class="stat-text">$<span class="count1"><?php echo $cxc->monto_cxc?$cxc->monto_cxc:0; ?></span></div>
+                            <div class="stat-heading">Monto total CXC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="col-lg-3 col-md-6">
         <div class="card nocard">
             <div class="card-body">
@@ -27,7 +51,7 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib">
-                            <div class="stat-text"><span class="count"><?php echo $dataReal->total_ventas?$dataReal->total_ventas:0; ?></span></div>
+                            <div class="stat-text"><span class="count1"><?php echo $dataReal->total_ventas?$dataReal->total_ventas:0; ?></span></div>
                             <div class="stat-heading">Ventas</div> 
                         </div>
                     </div>
@@ -48,7 +72,7 @@
                             <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:0; ?></span></div>
                             <div class="stat-heading">N° Trans por Confirmar</div>
 
-                            <div class="stat-text"><span class="count"><?php echo $transferidas->monto_transferencia?$transferidas->monto_transferencia:0; ?></span></div>
+                            <div class="stat-text"><span class="count1"><?php echo $transferidas->monto_transferencia?$transferidas->monto_transferencia:0; ?></span></div>
                             <div class="stat-heading">Monto Trans por Confirmar</div>
                         </div>
                     </div>
