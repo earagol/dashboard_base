@@ -24,26 +24,22 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col"><?= $this->Paginator->sort('id','Id <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('clasificacion_id','Clasificación <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('tipo','Tipo <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('Nombres','Razon social o Nombres <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('ruta_id','Ruta <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('id','Id <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('Vendedor','Vendedor <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('Cliente','Cliente <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('Monto Total','Monto Total <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                         <th >Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($clientes as $cliente): 
-                        $tipo = $cliente->tipo == 1?'Empresa':'Persona';
-                        ?>
+                    <?php foreach ($ventas as $venta): ?>
                         <tr>
-                            <td><?= $this->Number->format($cliente->id) ?></td>
-                            <td><?= h($cliente->clasificacione->nombre) ?></td>
-                            <td><?= h($tipo) ?></td>
-                            <td><?= h($cliente->nombres) ?></td>
-                            <td><?= $cliente->has('ruta') ? $cliente->ruta->nombre : '' ?></td>
+                            <td><?php echo $this->Number->format($venta->id) ?></td>
+                            <td><?php echo h($venta->Usuarios['nombres'].' '.$venta->Usuario['apellidos']) ?></td>
+                            <td><?php echo h($venta->Clientes['nombres']) ?></td>
+                            <td><?php echo $this->Number->format($venta->monto_total) ?></td>
                             <td class="text-center">
-                                <?php echo $this->Html->link(__('<i class="fa fa-arrow-right"></i>'), ['action' => 'add', $cliente->id],['title'=>'Realizar Venta','escape' => false]) ?>
+                                <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $venta->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas anular la venta {0}? Esta acción no se puede reversar.', $venta->id)]) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

@@ -81,7 +81,14 @@ if(!isset($excel)){
                                 <td><?php echo $diaValor['cantidad']; ?></td>
                             <?php } ?>
                         </tr>
-                    <?php }
+                    <?php } ?>
+                    <tr>
+                    <td>Totales:</td>
+                    <?php foreach ($productoTotal as $key => $value) { ?>
+                        <td><?php echo $value; ?></td>
+                    <?php } ?>
+                    </tr>
+            <?php
                 }
             ?>
 

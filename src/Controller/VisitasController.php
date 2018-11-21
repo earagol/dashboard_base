@@ -52,6 +52,58 @@ class VisitasController extends AppController
     }
 
 
+    public function reporteVisitas(){
+        $this->viewBuilder()->setLayout('excel');
+
+        $visitasPendientes = $this->Visitas->find()->contain(['Usuarios', 'Clientes', 'Usuarios','VisitaDetalles']) ->where(['Visitas.status'=> 'P'])->toArray();
+
+        $visitas = [];
+        $total = 0;
+        $name = 'visitas_pendientes_'.date('Y-m-d');
+
+        if($visitasPendientes){
+            $productosTable = TableRegistry::get('Productos');
+            $productos = $productosTable->find('list')->toArray();
+            $productoTotal = [];
+            if($productos){
+                foreach ($productos as $keypp => $valuepp) {
+                    $productoTotal[$keypp] = 0;
+                }
+            }
+
+            foreach ($visitasPendientes as $key => $value) {
+                $visita = [
+                    'cliente' => $value->cliente->nombres,
+                    'vendedor' => $value->usuario->full_name,
+                    'total' => $value->monto_total,
+                ];
+
+                $total+=$value->monto_total;
+                // $monto = 
+                $producto = [];
+                foreach ($productos as $keyp => $valuep) {
+                   $producto[$keyp] = '';
+                   // prx($value);
+                   if(isset($value->visita_detalles) && $value->visita_detalles){
+                        foreach ($value->visita_detalles as $keyv => $valuev) {
+                            if($valuev->producto_id == $keyp){
+                                $producto[$keyp] = $valuev->cantidad;
+                                $productoTotal[$keyp]+=$valuev->cantidad;
+                            }
+                        }
+                   }
+                }
+
+                $visita['productos'] = $producto;
+                $visitas[] = $visita;
+            }
+            
+        }
+
+        $this->set(compact('productos','visitas', 'productoTotal','total','name'));
+    }//Fin reporteVisitas
+
+
     
 
 

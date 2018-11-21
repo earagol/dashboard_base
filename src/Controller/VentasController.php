@@ -74,6 +74,68 @@ class VentasController extends AppController
         $this->set(compact('clientes'));
     }
 
+
+    public function ventas()
+    {
+
+        // $options = [
+        //     'contain' => ['Clientes','Usuarios','ControlDeudaPagos'],
+        //     'order' => ['Ventas.id'=>'DESC'],
+        // ];
+
+        $query = $this->Ventas->find()
+                     ->select([
+                        'Ventas.id',
+                        'Clientes.nombres',
+                        'Usuarios.nombres',
+                        'Usuarios.apellidos',
+                        'Ventas.monto_total',
+                     ])
+                     ->join([
+                        'Clientes' => [
+                            'table' => 'clientes',
+                            'type' => 'INNER',
+                            'conditions' => 'Clientes.id = Ventas.cliente_id',
+                        ],
+                        'Usuarios' => [
+                            'table' => 'usuarios',
+                            'type' => 'INNER',
+                            'conditions' => 'Usuarios.id = Ventas.usuario_id',
+                        ]
+                     ])
+                     // ->innerJoinWith('Clientes','Usuarios')
+                     ->order(['Ventas.id'=>'DESC']);
+
+        if(!is_null($this->request->data('buscar'))){
+            // $options['conditions'] = array_merge($options['conditions'],['nombres LIKE' => '%'.$this->request->data('buscar').'%']);
+
+            $query->where(function (QueryExpression $exp) {
+                    $orConditions = $exp->or_([
+                            'Clientes.nombres LIKE' => '%'.$this->request->data('buscar').'%',
+                            'Usuarios.nombres LIKE' => '%'.$this->request->data('buscar').'%',
+                            'Usuarios.apellidos LIKE' => '%'.$this->request->data('buscar').'%'
+                        ]);
+                    return $exp
+                        ->add($orConditions);
+                });
+
+            // $query->orWhere([
+            //             'Clientes.nombres' => '%'.$this->request->data('buscar').'%',
+            //             'Usuarios.nombres' => '%'.$this->request->data('buscar').'%',
+            //             'Usuarios.apellidos' => '%'.$this->request->data('buscar').'%'
+            //         ]);
+
+        }
+
+        // debug($query);
+
+
+        // $this->paginate = $options;
+        $ventas = $this->paginate($query);
+        // prx($ventas);
+        $this->set(compact('ventas'));
+    }
+
     public function getVentas($usuario_id,$fecha){
         $control = $this->Ventas->find();
         $ventas =  $control->select([
@@ -245,7 +307,12 @@ class VentasController extends AppController
                 
             }
 
-             //prx($paramsTipoDiario);
+            $productoTotal = [];
+            if($productos){
+                foreach ($productos as $keypp => $valuepp) {
+                    $productoTotal[$keypp] = 0;
+                }
+            }
 
             foreach ($paramsTipoDiario as $keyT => $valueT) {
                 $newValor = [];
@@ -253,6 +320,7 @@ class VentasController extends AppController
 
                     if(isset($valores['Diario'][$keyT]['valores'][$keyP])){
                         $newValor[$keyP] = $valores['Diario'][$keyT]['valores'][$keyP];
+                        $productoTotal[$keyP]+=$valores['Diario'][$keyT]['valores'][$keyP]['cantidad'];
                     }else{
                         $newValor[$keyP] = [
                                         'nombre' => $valueP,
@@ -271,6 +339,7 @@ class VentasController extends AppController
                 if(isset($ventasCantidadProducto[$keyP])){
                     $newValor[$keyP]['nombre'] = $productos[$keyP];
                     $newValor[$keyP]['cantidad'] = $ventasCantidadProducto[$keyP];
+                    $productoTotal[$keyP] = $productoTotal[$keyP]-$ventasCantidadProducto[$keyP];
                 }else{
                     $newValor[$keyP] = [
                                     'nombre' => $valueP,
@@ -284,8 +353,6 @@ class VentasController extends AppController
                     ];
 
             array_push($diario,$numVentas);
-
-
                 
             foreach ($paramsTipoGasto as $keyT => $valueT) {
                 $newValor = [];
@@ -316,7 +383,7 @@ class VentasController extends AppController
 
             $excel = 1;
             $name = 'Reporte_diario_'.$fecha;
-            $this->set(compact('header','diario','excel','name','ventas','gasto','usuario','carteraRecogida'));
+            $this->set(compact('header','diario','excel','name','ventas','gasto','usuario','carteraRecogida','productoTotal'));
 
         }
 
@@ -810,9 +877,36 @@ class VentasController extends AppController
      */
     public function delete($id = null)
     {
+        $venta = $this->Ventas->get($id, [
+            'contain' => ['Clientes','ControlDeudaPagos']
+        ]);
+        $client = [];
+        if($venta->control_deuda_pago){
+            $client['credito_disponible'] = $venta->cliente->credito_disponible;
+            $client['cuenta_porcobrar']= $venta->cliente->cuenta_porcobrar;
+            foreach ($venta->control_deuda_pago as $key => $value) {
+                if($value->tipo == 'P'){
+                    $client['credito_disponible']= $value->monto+$value->monto;
+                    $client['cuenta_porcobrar']= $value->monto-$client['cuenta_porcobrar'];
+                }else{
+                    $client['credito_disponible']= $value->monto-$value->monto;
+                    $client['cuenta_porcobrar']= $value->monto+$client['cuenta_porcobrar'];
+                }
+            }
+        }
+
+        $client['credito_disponible']= $this->request->data('credito')-$this->request->data('cuenta_porcobrar');
+        $client['cuenta_porcobrar']= $this->request->data('cuenta_porcobrar_cliente')+$this->request->data('cuenta_porcobrar');
         $this->request->allowMethod(['post', 'delete']);
         $venta = $this->Ventas->get($id);
         if ($this->Ventas->delete($venta)) {
+
+            if($client){
+                $this->Ventas->ControlDeudaPagos->deleteAll(['venta_id'=>$id]);
+                $clienteUpdate = $this->Ventas->Clientes->patchEntity($venta->cliente, $client);
+                $this->Ventas->Clientes->save($clienteUpdate);
+            }
+
             $this->Flash->success(__('The venta has been deleted.'));
         } else {
             $this->Flash->error(__('The venta could not be deleted. Please, try again.'));
@@ -821,3 +915,12 @@ class VentasController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 }
+
+
+/*
+Para anular se debe eliminar la venta
+se debe eliminar en ControlDeudaPagos lo relacionado al id de la venta
+se debe en el monto credito o cuenta_por cobrar de la tabla cliente sumar o restar
+
+
+*/

@@ -269,6 +269,11 @@ $cakeDescription = 'Estrella';
                                 <li>
                                     <?php echo $this->Html->link(__(' <i class="fa fa-th-large"></i>Visitas'), ['controller'=>'visitas','action' => 'index'],['title'=>'Visitas','escape' => false]) ?>
                                 </li>
+
+                                <li>
+                                    <?php echo $this->Html->link(__(' <i class="fa fa-inbox"></i>Reporte Visitas'), ['controller'=>'Visitas','action' => 'reporteVisitas'],['title'=>'Visitas Pendientes','escape' => false]) ?>
+                                </li>
+
                             </ul>
                         </li>
 
@@ -277,6 +282,10 @@ $cakeDescription = 'Estrella';
                             <ul class="sub-menu children dropdown-menu">
                                 <li>
                                     <?php echo $this->Html->link(__(' <i class="fa fa-road"></i>Rutas'), ['controller'=>'Rutas','action' => 'index'],['title'=>'Rutas','escape' => false]) ?>
+                                </li>
+
+                                <li>
+                                    <?php echo $this->Html->link(__(' <i class="fa fa-road"></i>Listado Ventas'), ['controller'=>'Ventas','action' => 'ventas'],['title'=>'Listado de Ventas','escape' => false]) ?>
                                 </li>
 
                                 <li>

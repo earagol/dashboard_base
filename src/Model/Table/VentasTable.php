@@ -51,7 +51,12 @@ class VentasTable extends Table
             'foreignKey' => 'usuario_id',
             'joinType' => 'INNER'
         ]);
+
         $this->hasMany('VentaDetalles', [
+            'foreignKey' => 'venta_id'
+        ]);
+
+        $this->hasMany('ControlDeudaPagos', [
             'foreignKey' => 'venta_id'
         ]);
     }

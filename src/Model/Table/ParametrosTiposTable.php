@@ -52,16 +52,19 @@ class ParametrosTiposTable extends Table
             'joinType' => 'INNER'
         ]);
 
-        $this->addAssociations([
-            'belongsToMany' => [
-                'Valores' => [
-                    'className' => 'ParametrosValores',
-                    // 'joinTable' => 'UsuariosRutas',
-                    'foreignKey' => 'parametro_tipo_id',
-                    // 'targetForeignKey' => 'parametro_tipo_id'
-                ]
-            ]
+        $this->hasmany('ParametrosValores', [
+            'foreignKey' => 'usuario_id',
+            'joinType' => 'INNER'
         ]);
+
+        // $this->belongsToMany([
+        //     'Valores' => [
+        //         'className' => 'ParametrosValores',
+        //         // 'joinTable' => 'UsuariosRutas',
+        //         'foreignKey' => 'parametro_tipo_id',
+        //         // 'targetForeignKey' => 'parametro_tipo_id'
+        //     ]
+        // ]);
     }
 
     /**
