@@ -509,14 +509,22 @@ class VentasController extends AppController
 
             $this->viewBuilder()->setLayout('excel');
 
-            if($this->request->data('fecha') == null){
-                $this->request->data('fecha',date('Y-m-d'));
+            if($this->request->data('desde') == null){
+                $this->request->data('desde',date('Y-m-d'));
             }
 
-            $fechaFormat = new Time($this->request->data('fecha'));
-            $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
-            $fecha = $this->request->data('fecha');
-//exit('gggff');
+            if($this->request->data('hasta') == null){
+                $this->request->data('hasta',date('Y-m-d'));
+            }
+
+            $fechaFormat = new Time($this->request->data('desde'));
+            $this->request->data('desde',$fechaFormat->format('Y-m-d'));
+            $desde = $this->request->data('desde');
+
+            $fechaFormat = new Time($this->request->data('hasta'));
+            $this->request->data('hasta',$fechaFormat->format('Y-m-d'));
+            $hasta = $this->request->data('hasta');
+
             $consolidado = TableRegistry::get('Usuarios')->find();
             $consolidados = $consolidado->select([
                                     'Usuarios.id',
@@ -527,12 +535,15 @@ class VentasController extends AppController
                                     'total' => $consolidado->func()->sum('Ventas.monto_total')
                                 ])
                        ->innerJoinWith('Ventas')
-                       ->where(['Ventas.fecha'=>$fecha])
+                       ->where([
+                            'Ventas.fecha >='=>$desde,
+                            'Ventas.fecha <='=>$hasta
+                        ])
                        ->group(['Usuarios.id'])
                        ->toArray();
             //prx($consolidado);
             $excel = 1;
-            $name = 'Ventas_consolidados_vendedores_'.$fecha;
+            $name = 'Ventas_consolidados_vendedores_'.date('Y-m-d');
             $this->set(compact('consolidados','name','excel'));
 
         }
@@ -880,39 +891,41 @@ class VentasController extends AppController
         $venta = $this->Ventas->get($id, [
             'contain' => ['Clientes','ControlDeudaPagos']
         ]);
+        $clienteId = $venta->cliente_id;
         $client = [];
-        if($venta->control_deuda_pago){
+        if($venta->control_deuda_pagos){
             $client['credito_disponible'] = $venta->cliente->credito_disponible;
             $client['cuenta_porcobrar']= $venta->cliente->cuenta_porcobrar;
-            foreach ($venta->control_deuda_pago as $key => $value) {
+            foreach ($venta->control_deuda_pagos as $key => $value) {
                 if($value->tipo == 'P'){
-                    $client['credito_disponible']= $value->monto+$value->monto;
-                    $client['cuenta_porcobrar']= $value->monto-$client['cuenta_porcobrar'];
+                    $client['credito_disponible']=(float) $client['credito_disponible']+$value->monto;
+                    $client['cuenta_porcobrar']=(float) $value->monto-$client['cuenta_porcobrar'];
                 }else{
-                    $client['credito_disponible']= $value->monto-$value->monto;
-                    $client['cuenta_porcobrar']= $value->monto+$client['cuenta_porcobrar'];
+                    $client['credito_disponible']=(float) $client['credito_disponible']-$value->monto;
+                    $client['cuenta_porcobrar']=(float) $value->monto+$client['cuenta_porcobrar'];
                 }
             }
         }
-
-        $client['credito_disponible']= $this->request->data('credito')-$this->request->data('cuenta_porcobrar');
-        $client['cuenta_porcobrar']= $this->request->data('cuenta_porcobrar_cliente')+$this->request->data('cuenta_porcobrar');
         $this->request->allowMethod(['post', 'delete']);
-        $venta = $this->Ventas->get($id);
         if ($this->Ventas->delete($venta)) {
 
             if($client){
+
                 $this->Ventas->ControlDeudaPagos->deleteAll(['venta_id'=>$id]);
-                $clienteUpdate = $this->Ventas->Clientes->patchEntity($venta->cliente, $client);
-                $this->Ventas->Clientes->save($clienteUpdate);
+
+                $this->Ventas->Clientes->updateAll(
+                    ['credito_disponible' => $client['credito_disponible'],'cuenta_porcobrar' => $client['cuenta_porcobrar']],
+                    ['id' => $clienteId]
+                );
+
             }
 
-            $this->Flash->success(__('The venta has been deleted.'));
+            $this->Flash->success(__('La venta ha sido anulada.'));
         } else {
-            $this->Flash->error(__('The venta could not be deleted. Please, try again.'));
+            $this->Flash->error(__('La venta no pudo ser anulada. Intente nevamente.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(['action' => 'ventas']);
     }
 }
 

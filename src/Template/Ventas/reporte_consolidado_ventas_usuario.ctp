@@ -21,8 +21,13 @@ if(!isset($excel)){
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Fecha</label>
-                 <?php echo $this->Form->control('fecha',['value'=>date('Y-m-d'),'type'=>'text','class'=>'form-control','placeholder'=>'Fecha','label'=>false,'data-toggle'=>'datetimepicker', 'data-target'=>'#fecha']); ?>
+                <label for="company" class=" form-control-label">Fecha Desde</label>
+                 <?php echo $this->Form->control('desde',['value'=>date('Y-m-d'),'type'=>'text','class'=>'form-control','placeholder'=>'Fecha','label'=>false,'data-toggle'=>'datetimepicker', 'data-target'=>'#desde']); ?>
+            </div>
+
+            <div class="form-group">
+                <label for="company" class=" form-control-label">Fecha Hasta</label>
+                 <?php echo $this->Form->control('hasta',['value'=>date('Y-m-d'),'type'=>'text','class'=>'form-control','placeholder'=>'Fecha','label'=>false,'data-toggle'=>'datetimepicker', 'data-target'=>'#hasta']); ?>
             </div>
 
             <div class="form-group">
@@ -36,7 +41,7 @@ if(!isset($excel)){
 <?= $this->Form->end() ?>
 <script>
     (function( $ ) {
-        $('#fecha').datetimepicker({
+        $('#desde,#hasta').datetimepicker({
             format: 'YYYY-MM-DD'
         });
     })(jQuery);
