@@ -502,6 +502,79 @@ class VentasController extends AppController
     }
 
 
+    public function reporteConsolidadoRutas(){
+
+        if($this->request->is('post')){
+
+
+            $this->viewBuilder()->setLayout('excel');
+
+            if($this->request->data('desde') == null){
+                $this->request->data('desde',date('Y-m-d'));
+            }
+
+            if($this->request->data('hasta') == null){
+                $this->request->data('hasta',date('Y-m-d'));
+            }
+
+            $fechaFormat = new Time($this->request->data('desde'));
+            $this->request->data('desde',$fechaFormat->format('Y-m-d'));
+            $desde = $this->request->data('desde');
+
+            $fechaFormat = new Time($this->request->data('hasta'));
+            $this->request->data('hasta',$fechaFormat->format('Y-m-d'));
+            $hasta = $this->request->data('hasta');
+            $consolidado = TableRegistry::get('Ventas')->find();
+            $query = $consolidado->select([
+                                    'Rutas.nombre',
+                                    'monto_total' => $consolidado->func()->sum('Ventas.monto_total'),
+                                    'cuenta_porcobrar' => $consolidado->func()->sum('Ventas.cuenta_porcobrar'),
+                                    'monto_cartera' => $consolidado->func()->sum('Ventas.monto_cartera')
+                                ])
+                                 ->join([
+                                    'Clientes' => [
+                                        'table' => 'clientes',
+                                        'type' => 'INNER',
+                                        'conditions' => 'Clientes.id = Ventas.cliente_id',
+                                    ],
+                                    // 'Usuarios' => [
+                                    //     'table' => 'usuarios',
+                                    //     'type' => 'INNER',
+                                    //     'conditions' => 'Usuarios.id = Ventas.usuario_id',
+                                    // ],
+                                    'Rutas' => [
+                                        'table' => 'rutas',
+                                        'type' => 'INNER',
+                                        'conditions' => 'Clientes.ruta_id = Rutas.id',
+                                    ]
+                                 ])
+                                 ->where([
+                                    'Ventas.fecha >='=>$desde,
+                                    'Ventas.fecha <='=>$hasta
+                                ])
+                                 ->group(['Clientes.ruta_id']);
+
+            if($this->request->data('ruta_id') != null){
+                $query->where(['Rutas.id'=>$this->request->data('ruta_id')]);
+            }
+
+            $consolidados = $query->toArray();
+
+            $excel = 1;
+            $name = 'Ventas_consolidados_rutas_'.date('Y-m-d');
+            $this->set(compact('consolidados','name','excel'));
+
+        }
+
+        $rutas = TableRegistry::get('Rutas')->find('list', ['limit' => 200]);
+
+        $this->set(compact('rutas'));
+
+
+        
+    }
+
+
     public function reporteConsolidadoVentasUsuario(){
 
         if($this->request->is('post')){
