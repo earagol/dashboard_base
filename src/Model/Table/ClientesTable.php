@@ -93,6 +93,16 @@ class ClientesTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
+            ->scalar('ruta_id')
+            ->requirePresence('ruta_id', 'create')
+            ->notEmpty('ruta_id');
+
+        $validator
+            ->scalar('clasificacion_id')
+            ->requirePresence('clasificacion_id', 'create')
+            ->notEmpty('clasificacion_id');
+
+        $validator
             ->scalar('tipo')
             ->requirePresence('tipo', 'create')
             ->notEmpty('tipo');

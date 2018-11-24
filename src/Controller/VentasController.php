@@ -599,7 +599,7 @@ class VentasController extends AppController
             $hasta = $this->request->data('hasta');
 
             $consolidado = TableRegistry::get('Usuarios')->find();
-            $consolidados = $consolidado->select([
+            $query = $consolidado->select([
                                     'Usuarios.id',
                                     'Usuarios.nombres',
                                     'Usuarios.apellidos',
@@ -612,9 +612,14 @@ class VentasController extends AppController
                             'Ventas.fecha >='=>$desde,
                             'Ventas.fecha <='=>$hasta
                         ])
-                       ->group(['Usuarios.id'])
-                       ->toArray();
-            //prx($consolidado);
+                       ->group(['Usuarios.id']);
+
+            if($this->request->data('usuario_id') != null){
+                $query->where(['Usuarios.id'=>$this->request->data('usuario_id')]);
+            }
+
+            $consolidados = $query->toArray();
+
             $excel = 1;
             $name = 'Ventas_consolidados_vendedores_'.date('Y-m-d');
             $this->set(compact('consolidados','name','excel'));
@@ -972,10 +977,10 @@ class VentasController extends AppController
             foreach ($venta->control_deuda_pagos as $key => $value) {
                 if($value->tipo == 'P'){
                     $client['credito_disponible']=(float) $client['credito_disponible']+$value->monto;
-                    $client['cuenta_porcobrar']=(float) $value->monto-$client['cuenta_porcobrar'];
+                    $client['cuenta_porcobrar']=(float) $client['cuenta_porcobrar']-$value->monto;
                 }else{
-                    $client['credito_disponible']=(float) $client['credito_disponible']-$value->monto;
-                    $client['cuenta_porcobrar']=(float) $value->monto+$client['cuenta_porcobrar'];
+                    $client['credito_disponible']=(float) $client['credito_disponible']-($value->monto*-1);
+                    $client['cuenta_porcobrar']=(float) $client['cuenta_porcobrar']+($value->monto*-1);
                 }
             }
         }

@@ -5,14 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <?php echo $this->Html->css('bootstrap.min') ?>
-  <?php echo $this->Html->script('vendor/jquery-1.11.3.min'); ?>
-  <?php echo $this->Html->css('font-awesome.min') ?>
-  <?php echo $this->Html->css('../vendors/login/font-awesome.min.css') ?>
-  <?php echo $this->Html->css('../vendors/login/util.css') ?>
-  <?php echo $this->Html->css('../vendors/login/main.css') ?>
 
-  <?php echo $this->Html->script('bootstrap') ?> 
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
+
 
 </head>
 <body>

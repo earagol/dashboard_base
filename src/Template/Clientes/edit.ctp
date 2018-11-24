@@ -55,7 +55,7 @@
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Telefono 1</label>
+                <label for="company" class=" form-control-label">Telefono 2</label>
                 <?php echo $this->Form->control('telefono2',['class'=>'form-control','placeholder'=>'Telefono 2...','label'=>false]); ?>
             </div>
 
