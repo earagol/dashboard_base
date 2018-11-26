@@ -964,44 +964,54 @@ class VentasController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete()
     {
-        $venta = $this->Ventas->get($id, [
-            'contain' => ['Clientes','ControlDeudaPagos']
-        ]);
-        $clienteId = $venta->cliente_id;
-        $client = [];
-        if($venta->control_deuda_pagos){
-            $client['credito_disponible'] = $venta->cliente->credito_disponible;
-            $client['cuenta_porcobrar']= $venta->cliente->cuenta_porcobrar;
-            foreach ($venta->control_deuda_pagos as $key => $value) {
-                if($value->tipo == 'P'){
-                    $client['credito_disponible']=(float) $client['credito_disponible']+$value->monto;
-                    $client['cuenta_porcobrar']=(float) $client['cuenta_porcobrar']-$value->monto;
-                }else{
-                    $client['credito_disponible']=(float) $client['credito_disponible']-($value->monto*-1);
-                    $client['cuenta_porcobrar']=(float) $client['cuenta_porcobrar']+($value->monto*-1);
+        // prx($this->request->data);
+        if($this->request->is(['post','delete'])){
+
+            $id = $this->request->data('venta_id');
+            $venta = $this->Ventas->get($id, [
+                'contain' => ['Clientes','ControlDeudaPagos']
+            ]);
+            $clienteId = $venta->cliente_id;
+            $client = [];
+            if($venta->control_deuda_pagos){
+                $client['credito_disponible'] = $venta->cliente->credito_disponible;
+                $client['cuenta_porcobrar']= $venta->cliente->cuenta_porcobrar;
+                foreach ($venta->control_deuda_pagos as $key => $value) {
+                    if($value->tipo == 'P'){
+                        $client['credito_disponible']=(float) $client['credito_disponible']+$value->monto;
+                        $client['cuenta_porcobrar']=(float) $client['cuenta_porcobrar']-$value->monto;
+                    }else{
+                        $client['credito_disponible']=(float) $client['credito_disponible']-($value->monto*-1);
+                        $client['cuenta_porcobrar']=(float) $client['cuenta_porcobrar']+($value->monto*-1);
+                    }
                 }
             }
-        }
-        $this->request->allowMethod(['post', 'delete']);
-        if ($this->Ventas->delete($venta)) {
+            $this->request->allowMethod(['post', 'delete']);
+            $ventaUdp = $venta;
+            $ventaUdp = $this->Ventas->patchEntity($ventaUdp, ['observacion_anulacion'=>$this->request->data('observacion_anulacion'),'usuario_id_anulacion'=>$this->Auth->user('id')]);
+            $this->Ventas->save($ventaUdp);
+            if ($this->Ventas->delete($venta)) {
 
-            if($client){
+                if($client){
 
-                $this->Ventas->ControlDeudaPagos->deleteAll(['venta_id'=>$id]);
+                    $this->Ventas->ControlDeudaPagos->deleteAll(['venta_id'=>$id]);
 
-                $this->Ventas->Clientes->updateAll(
-                    ['credito_disponible' => $client['credito_disponible'],'cuenta_porcobrar' => $client['cuenta_porcobrar']],
-                    ['id' => $clienteId]
-                );
+                    $this->Ventas->Clientes->updateAll(
+                        ['credito_disponible' => $client['credito_disponible'],'cuenta_porcobrar' => $client['cuenta_porcobrar']],
+                        ['id' => $clienteId]
+                    );
 
+                }
+
+                $this->Flash->success(__('La venta ha sido anulada.'));
+            } else {
+                $this->Flash->error(__('La venta no pudo ser anulada. Intente nevamente.'));
             }
 
-            $this->Flash->success(__('La venta ha sido anulada.'));
-        } else {
-            $this->Flash->error(__('La venta no pudo ser anulada. Intente nevamente.'));
         }
+        
 
         return $this->redirect(['action' => 'ventas']);
     }

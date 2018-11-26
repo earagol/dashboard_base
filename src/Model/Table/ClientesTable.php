@@ -78,6 +78,9 @@ class ClientesTable extends Table
         $this->hasMany('Visitas', [
             'foreignKey' => 'cliente_id'
         ]);
+        $this->hasMany('LogCreditos', [
+            'foreignKey' => 'cliente_id'
+        ]);
     }
 
     /**

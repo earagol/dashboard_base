@@ -17,7 +17,7 @@ class UsuariosController extends AppController
     public function isAuthorized($user){
 
         if(isset($user['role']) && $user['role'] === 'usuario'){
-            if(in_array($this->request->action, ['home','logout','login'])){
+            if(in_array($this->request->action, ['home','logout','login','cambioClave'])){
                 return true;
             }
         }
@@ -53,6 +53,43 @@ class UsuariosController extends AppController
         $this->redirect($this->Auth->logout());
 
     }
+
+
+
+    public function cambioClave()
+    {
+        $usuario = $this->Usuarios->get($this->Auth->user('id'));
+
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $validator = new \Cake\Validation\Validator();
+
+            try {
+
+                $usuario = $this->Usuarios->patchEntity($usuario, $this->request->getData());
+                if ($this->Usuarios->save($usuario)) {
+                    $this->Flash->success(__('Registro exitoso.'));
+
+                    return $this->redirect('/');
+                }
+
+                $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
+
+            } catch (Exception $e) {
+                $message = $e->getMessage();
+                if ($alertModal)
+                {
+                    $this->Flash->error($message);
+                }
+                else
+                {
+                    echo "<script type='text/javascript'>alert('$message');</script>";
+                }
+            }
+        }
+
+        $this->set(compact('usuario'));
+    }//Fin cambioClave
+
 
     /**
      * Index method

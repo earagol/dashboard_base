@@ -62,6 +62,8 @@ class Venta extends Entity
         'observacion' => true,
         'tiene_detalles' => true,
         'fecha' => true,
+        'usuario_id_anulacion' => true,
+        'observacion_anulacion' => true,
         'created' => true,
         'modified' => true,
         'deleted' => true,

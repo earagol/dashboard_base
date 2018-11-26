@@ -39,7 +39,8 @@
                             <td><?php echo h($venta->Clientes['nombres']) ?></td>
                             <td><?php echo $this->Number->format($venta->monto_total) ?></td>
                             <td class="text-center">
-                                <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $venta->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas anular la venta {0}? Esta acción no se puede reversar.', $venta->id)]) ?>
+                                <button data-id="<?php echo $venta->id; ?>" type="button" class="btn btn-danger cancelar" title="Anular"><i class="fa fa-ban"></i></button>
+                                <?php //echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $venta->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas anular la venta {0}? Esta acción no se puede reversar.', $venta->id)]) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -54,3 +55,97 @@
     </div>
 </div>
 
+
+<div class="modal" id="anularVenta">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Anular Venta</h4>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <?php echo $this->Form->create('anular',['action'=>'delete']) ?>
+
+                <?php echo $this->Form->control('venta_id', ['type'=>'hidden','value' => '','label'=>false]); ?>
+
+                <div class="form-group">
+                    <label for="company" class=" form-control-label">Observación</label>
+                    <?php echo $this->Form->control('observacion_anulacion', ['type'=>'textarea','class'=>'form-control','value' => '','label'=>false]); ?>
+                </div>
+
+                <div class="form-group">
+                    <?php echo $this->Form->button('Anular',['type'=>'button','class'=>'btn btn-primary','id' => 'save']) ?>
+                </div>
+
+            <?= $this->Form->end() ?>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    var url1 = '<?php echo $url; ?>';
+    var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
+
+
+    (function( $ ) {
+
+            $('.cancelar').on("click", function() {
+
+                $('#anularVenta').modal('show');
+
+                var id = $(this).data('id');
+
+                $('#venta-id').val(id);
+                $('#observacion-anulacion').val('');
+
+            });
+
+
+            $('#save').on("click", function() {
+
+                if($('#observacion-anulacion').val() == ''){
+                    alert('Ingrese una observación');
+                    return;
+                }
+
+
+                var conf = confirm('Realmente deseas anular la venta? esta operación no se puede reversar.' );
+                if(!conf){
+                    return;
+                }
+                $('form').submit();
+                return;
+
+
+                // $.ajax({
+                //     url:url1+'ventas/detalles',
+                //     dataType: 'html',
+                //     type: 'POST',
+                //     headers: {
+                //         'X-CSRF-Token': csrfToken
+                //     },
+                //     data:{
+                //         tipo: 2,
+                //         index: id
+                //     },
+                //     success: function(response){
+                //         $('#grilla').html(response);
+                //     }
+                // });
+
+
+            });
+
+            
+    })(jQuery);
+</script>

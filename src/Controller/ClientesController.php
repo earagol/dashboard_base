@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Exception;
 
+
 /**
  * Clientes Controller
  *
@@ -54,7 +55,6 @@ class ClientesController extends AppController
         }
         $this->paginate = $options;
         $clientes = $this->paginate($this->Clientes);
-        //prx($clientes);
 
         $this->set(compact('clientes'));
     }
@@ -73,6 +73,16 @@ class ClientesController extends AppController
         ]);
 
         $this->set('cliente', $cliente);
+    }
+
+
+    
+    public function logCreditos($clienteId = null,$monto = null){
+        $value = ['cliente_id' => $clienteId,'monto'=>$monto,'usuario_id'=>$this->Auth->user('id')];
+        $credito = $this->Clientes->LogCreditos->newEntity();
+        $credito = $this->Clientes->LogCreditos->patchEntity($credito, $value);
+        $this->Clientes->LogCreditos->save($credito);
+
     }
 
 
@@ -102,6 +112,9 @@ class ClientesController extends AppController
                 $this->request->data('usuario_id',$this->Auth->user('id'));
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
                 if ($this->Clientes->save($cliente)) {
+                    if($this->request->data('credito_disponible') != null || $this->request->data('credito_disponible') !=0){
+                        $this->logCreditos($cliente->id,$this->request->data('credito_disponible'));
+                    }
                     $this->Flash->success(__('Registro exitoso.'));
                     return $this->redirect(['action' => 'index']);
                 }
@@ -130,11 +143,16 @@ class ClientesController extends AppController
         $cliente = $this->Clientes->get($id, [
             'contain' => []
         ]);
+        
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $auxCreditoDisponible = $cliente->credito_disponible;
             try {
                 $this->request->data('credito_disponible',str_replace('.','',$this->request->data('credito_disponible')));
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
                 if ($this->Clientes->save($cliente)) {
+                    if(($this->request->data('credito_disponible') != null || $this->request->data('credito_disponible') !=0) && ($this->request->data('credito_disponible') != $auxCreditoDisponible)){
+                        $this->logCreditos($cliente->id,$this->request->data('credito_disponible'));
+                    }
                     $this->Flash->success(__('Registro exitoso.'));
 
                     return $this->redirect(['action' => 'index']);
