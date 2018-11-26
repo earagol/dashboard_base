@@ -713,13 +713,18 @@ class VentasController extends AppController
             unset($detalles[$this->request->data('index')]);
             $session->write('detalles',$detalles);
 
-        }else{
+        }else if($tipo == 3){
 
             $aux = $session->read('detalles');
             $detalles = $aux;
             $detalles[$this->request->data('index')]['cantidad'] = $this->request->data('cantidad');
             $detalles[$this->request->data('index')]['total'] = $this->request->data('cantidad') * $detalles[$this->request->data('index')]['precio'];
             $session->write('detalles',$detalles);
+
+        }else{
+
+            $session->delete('detalles');
+            $detalles = [];
 
         }
 

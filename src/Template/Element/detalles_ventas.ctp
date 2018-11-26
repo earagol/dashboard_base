@@ -1,50 +1,66 @@
+<div>
+    <button type="button" id="clean" class="btn btn-danger btn-sm"><i class="fas fa-broom"></i> Limpar Lista</button>
+</div>
 <table class="table table-striped table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">Producto</th>
-            <th scope="col">Precio Unitario</th>
-            <th scope="col">Cantidad</th>
-            <th scope="col">Total</th>
-            <th >Acciones</th>
+            <th style="width:10%;" scope="col">#</th>
+            <th style="width:20%;" scope="col">Producto</th>
+            <th style="width:10%;" scope="col">Precio Unitario</th>
+            <th style="width:10%;" scope="col">Cantidad</th>
+            <th style="width:10%;" scope="col">Total</th>
+            <th style="width:20%;">Acciones</th>
         </tr>
     </thead>
     <tbody>
         <?php 
             $total = 0;
             $i = 1;
-            //prx($detalles);
-            foreach ($detalles as $key => $detalle): 
-                $total+=$detalle['total'];
-            ?>
-                <tr id="row_<?php echo $key; ?>">
-                    <td class="text-center"><?= $this->Number->format($i) ?></td>
-                    <td><?= h($detalle['producto']) ?></td>
-                    <td class="text-left"><?php echo number_format($detalle['precio'], 0, ",", ".");  ?> $</td>
-                    <td class="text-center" id="cantidad_<?php echo $key; ?>">
-                        <?php echo $this->Number->format($detalle['cantidad']) ?>
-                    </td>
-                    <td class="text-left"><?php echo number_format($detalle['total'], 0, ",", ".");  ?> $</td>
-                    <td class="text-center">
-                        <div id="always_<?php echo $key; ?>" class="always">
-                            <button data-id="<?php echo $key; ?>" type="button" class="btn btn-info editar" title="Editar"><i class="fa fa-edit"></i></button>
-                            <button data-id="<?php echo $key; ?>" type="button" class="btn btn-danger eliminar" title="Eliminar"><i class="fa fa-trash-o"></i></button>
-                        </div>
-                        <div id="noalways_<?php echo $key; ?>" class="d-none noalways">
-                            <button data-id="<?php echo $key; ?>" type="button" class="btn btn-success hidden saveEditar" title="Guardar"><i class="fa fa-save"></i></button>
-                            <button data-id="<?php echo $key; ?>" type="button" class="btn btn-danger hidden cancelar" title="Cancelar"><i class="fa fa-ban"></i></button>
-                        </div>
-                        
-                    </td>
+            if($detalles):
+                //prx($detalles);
+                foreach ($detalles as $key => $detalle): 
+                    $total+=$detalle['total'];
+                ?>
+                    <tr id="row_<?php echo $key; ?>">
+                        <td class="text-center"><?= $this->Number->format($i) ?></td>
+                        <td><?= h($detalle['producto']) ?></td>
+                        <td class="text-left"><?php echo number_format($detalle['precio'], 0, ",", ".");  ?> $</td>
+                        <td class="text-center" id="cantidad_<?php echo $key; ?>">
+                            <?php echo $this->Number->format($detalle['cantidad']) ?>
+                        </td>
+                        <td class="text-left"><?php echo number_format($detalle['total'], 0, ",", ".");  ?> $</td>
+                        <td class="text-center">
+                            <div id="always_<?php echo $key; ?>" class="always">
+                                <button data-id="<?php echo $key; ?>" type="button" class="btn btn-info editar" title="Editar"><i class="fa fa-edit"></i></button>
+                                <button data-id="<?php echo $key; ?>" type="button" class="btn btn-danger eliminar" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+                            </div>
+                            <div id="noalways_<?php echo $key; ?>" class="d-none noalways">
+                                <button data-id="<?php echo $key; ?>" type="button" class="btn btn-success hidden saveEditar" title="Guardar"><i class="fa fa-save"></i></button>
+                                <button data-id="<?php echo $key; ?>" type="button" class="btn btn-danger hidden cancelar" title="Cancelar"><i class="fa fa-ban"></i></button>
+                            </div>
+                            
+                        </td>
+                    </tr>
+            <?php 
+                    $i++;
+                endforeach; ?>
+                <tr>
+                    <td colspan="4" class="text-right"><b>Total:</b></td>
+                    <td class="text-left"><?php echo number_format($total, 0, ",", ".");  ?> $</td>
+                    <td>&nbsp;</td>
                 </tr>
-        <?php 
-                $i++;
-            endforeach; ?>
-            <tr>
-                <td colspan="4" class="text-right"><b>Total:</b></td>
-                <td class="text-left"><?php echo number_format($total, 0, ",", ".");  ?> $</td>
-                <td>&nbsp;</td>
-            </tr>
+            <?php else: ?>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            <?php endif; ?>
     </tbody>
 </table>
 
@@ -206,6 +222,26 @@
                         tipo: 3,
                         index: id,
                         cantidad: cantidad
+                    },
+                    success: function(response){
+                        $('#grilla').html(response);
+                    }
+                });
+
+            });
+
+            $('#clean').on("click", function() {
+
+           
+                $.ajax({
+                    url:url1+'ventas/detalles',
+                    dataType: 'html',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    },
+                    data:{
+                        tipo: 4,
                     },
                     success: function(response){
                         $('#grilla').html(response);
