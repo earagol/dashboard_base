@@ -43,8 +43,6 @@ class DashboardsController extends AppController
 
     private function vencerVisitas(){
 
-        // prx($this->Visitas->find()->where(['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P'])->toArray());
-        
         TableRegistry::get('Visitas')->updateAll(['status' => 'V'],['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P']);
 
     }
@@ -90,6 +88,7 @@ class DashboardsController extends AppController
             $clienteTransPen = $clienteTransPen->select([
                                     'Clientes.id',
                                     'Clientes.nombres',
+                                    'Clientes.rut',
                                     'Clientes.email',
                                     'Clientes.telefono1',
                                     'Clientes.telefono2',
@@ -111,8 +110,6 @@ class DashboardsController extends AppController
         }
                 
         $dataReal =  $control->first();
-
-        // prx($dataReal);
 
         $transferidas = TableRegistry::get('Ventas')->find();
         $transferidas = $transferidas->select([
@@ -150,9 +147,6 @@ class DashboardsController extends AppController
                 ->where([
                     'cuenta_porcobrar >'=>0
                 ])->first();
-//prx($cxc);
         $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes','clienteMorosos','cxc'));
-
-        // prx($transferidas);
     }
 }

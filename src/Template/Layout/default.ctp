@@ -40,14 +40,18 @@ $cakeDescription = 'Estrella';
         <?php echo $this->Html->css('charts/chartist.min') ?>
         <?php echo $this->Html->css('lib/vector-map/jqvmap.min') ?>
 
-
-        <?php echo $this->Html->script('vendor/jquery-2.1.4.min'); ?>
+        <?php //echo $this->Html->script('vendor/jquery-2.1.4.min'); ?>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <?php echo $this->Html->script('popper.min'); ?>
         <?php echo $this->Html->script('plugins'); ?>
         <?php echo $this->Html->script('main'); ?>
+
         <?php echo $this->Html->script('lib/moment/moment') ?>
         <?php echo $this->Html->script('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
         <?php echo $this->Html->css('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
+
+        <?php echo $this->Html->css('lib/chosen/chosen.min') ?>
+        <?php echo $this->Html->script('lib/chosen/chosen.jquery.min') ?>
 
 
         <?php //echo $this->Html->script('vendor/jquery-1.11.3.min'); ?>
@@ -429,7 +433,6 @@ $cakeDescription = 'Estrella';
         <?php //echo $this->Html->script('../vendors/weather/js/jquery.simpleWeather.min'); ?>   
         <?php //echo $this->Html->script('../vendors/weather/js/weather-init'); ?>   
 
-        <?php echo $this->Html->script('lib/moment/moment'); ?>
         <?php echo $this->Html->script('../vendors/calendar/fullcalendar.min'); ?>
         <?php echo $this->Html->script('../vendors/calendar/fullcalendar-init'); ?>
 

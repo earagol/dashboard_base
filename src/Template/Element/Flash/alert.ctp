@@ -22,8 +22,10 @@
 	</div>
 </div>
 
+ <?php echo $this->Html->script('bootstrap') ?> 
+
 <script type="text/javascript">
 	 (function( $ ) {
-		$('#errorModal').modal('show');
+		jQuery('#errorModal').modal();
 	})(jQuery);
 </script>

@@ -10,6 +10,16 @@
         border: 0;
         box-shadow: 0 10px 10px -10px #8c8b8b inset;
     }
+
+    .form-control-borderless {
+        border: none;
+    }
+
+    .form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+        border: none;
+        outline: none;
+        box-shadow: none;
+    }
 </style>
 
 
@@ -22,19 +32,28 @@
                 <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
             </div>
         </div>
+
         <div class="card-body card-block">
+
             <div class="form-group">
                 <label for="company" class=" form-control-label">Cliente</label>
-                <?php echo $this->Form->control('cliente_id', ['type'=>'hidden','value' => $cliente->id]); ?>
-                <?php echo $this->Form->control('cliente',['class'=>'form-control','value'=>$cliente->nombres,'label'=>false]); ?>
+                <?php echo $this->Form->control('cliente_id', [
+                                                    'default' => $cliente? $cliente->id : '',
+                                                    'empty' => 'Seleccione un cliente',
+                                                    'class' => 'form-control',
+                                                    'label' => false,
+                                                    'multiple' => false,
+                                                    'tabindex' => 1,
+                                                    ]); ?>
+                <?php //echo $this->Form->control('cliente',['class'=>'form-control','value'=>$cliente? $cliente->nombres: '','label'=>false]); ?>
             </div>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Credito Disponible</label>
-                <?php echo $this->Form->control('credito',['readonly'=>'readonly','class'=>'form-control','value'=>number_format($cliente->credito_disponible, 0, ",", "."),'label'=>false]); ?>
+                <?php echo $this->Form->control('credito',['readonly'=>'readonly','class'=>'form-control','value'=>$cliente? number_format($cliente->credito_disponible, 0, ",", "."):0,'label'=>false]); ?>
             </div>
 
-            <?php echo $this->Form->control('cuenta_porcobrar_cliente',['type'=>'hidden','class'=>'form-control','value'=>$cliente->cuenta_porcobrar,'label'=>false]); ?>
+            <?php echo $this->Form->control('cuenta_porcobrar_cliente',['type'=>'hidden','class'=>'form-control','value'=>$cliente?$cliente->cuenta_porcobrar:0,'label'=>false]); ?>
 
             <hr class="my-4">
 
@@ -173,7 +192,7 @@
                         <tr>
                             <td><div class="form-check"><?php echo $this->Form->control('pagar_cartera', ['type'=>'checkbox','class'=>'form-check-input','label'=>false,'checked'=>false]); ?></div></td>
                             <td>Cancela CarteraPendiente?</td>
-                            <td><?php echo $this->Form->control('monto_deuda', ['class'=>'form-control','value' => number_format($carteraPendiente, 0, ",", "."),'label'=>false,'readonly'=>'readonly']); ?></td>
+                            <td><?php echo $this->Form->control('monto_deuda', ['class'=>'form-control','value' =>$carteraPendiente? number_format($carteraPendiente, 0, ",", "."):0,'label'=>false,'readonly'=>'readonly']); ?></td>
 
                         </tr>
 
@@ -219,7 +238,7 @@
             </table>
 
 
-            <?php echo $this->Form->control('monto_deuda2', ['type'=>'hidden','class'=>'form-control','value' => number_format($carteraPendiente, 0, ",", "."),'label'=>false,'style'=>'width:20%','readonly'=>'readonly']); ?>
+            <?php echo $this->Form->control('monto_deuda2', ['type'=>'hidden','class'=>'form-control','value' => $carteraPendiente?number_format($carteraPendiente, 0, ",", "."):0,'label'=>false,'style'=>'width:20%','readonly'=>'readonly']); ?>
             <?php echo $this->Form->control('total_pago_deuda', ['type'=>'hidden','class'=>'form-control','value' => 0,'label'=>false,'style'=>'width:20%','readonly'=>'readonly']); ?>
 
 
@@ -257,6 +276,72 @@
 
     (function( $ ) {
 
+        $("#cliente-id").chosen({
+            disable_search_threshold: 1,
+            no_results_text: "No se encontraron datos..!",
+            width: "100%"
+        });
+
+        // $(".chosen-search input").on({
+        //   "change": function(event) {
+        //     $(event.target).select();
+
+        //     var cuentaCobrar = $('#cuenta-porcobrar2').val();
+        //     var efectivo = $('#monto-efectivo').val();
+        //     if(efectivo == ''){
+        //          alert('Debe ingresar el monto en efectivo');
+        //         $('#monto-efectivo').val('');
+        //         calculo();
+        //         return;
+        //     }
+        //     calculo();
+        //   },
+        //   "keyup": function(event) {
+        //     $(event.target).val(function(index, value) {
+
+        //         console.log(value);
+        //         return value;
+        //     //   return value.replace(/\D/g, "")
+        //     //     .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ".");
+        //     });
+        //   }
+        // });
+
+
+        $("#cliente-id").change(function(e){
+            var id = $("#cliente-id").val();
+
+            document.location.href=url1+"/ventas/add/"+id;
+
+            // $.ajax({
+            //     url:url1+'ventas/datosCliente',
+            //     dataType: 'json',
+            //     type: 'POST',
+            //     headers: {
+            //         'X-CSRF-Token': csrfToken
+            //     },
+            //     data:{
+            //         clienteId: id
+            //     },
+            //     success: function(response){
+
+            //         if(response.success){
+            //             $("#credito").val(response.data.credito_disponible);
+            //             $("#cuenta-porcobrar-cliente").val(response.data.cuenta_porcobrar);
+            //             $("#monto-deuda2").val(response.data.carteraPendiente);
+
+            //             if($("#monto-deuda")){
+            //                 $("#monto-deuda").val(response.data.carteraPendiente);
+            //             }
+            //         }
+
+            //     }
+            // });
+
+        });
+
+
+
         <?php if(isset($detalles)): ?>
             calculo();
         <?php endif; ?>
@@ -279,7 +364,6 @@
 
         $('#save').click(function(e){
             e.preventDefault();
-            console.log('save',eval($('#cuenta-porcobrar').val()));
 
             if(!$('#totales').val() && !$('#pagar-cartera').is(':checked')){
                 alert('No hay productos ingresados para la venta.');
@@ -542,6 +626,8 @@
 
             $('#monto-efectivo-cartera').val(0);
             $('#monto-transferencia-cartera').val(0);
+            $('#totalAllPago').html(0);
+            $('#restaDeuda').html(0);
 
             calculo();
         });
@@ -559,7 +645,6 @@
                 calculo2();
                 return;
             }
-            console.log(efectivo);
             calculo2();
           },
           "keyup": function(event) {

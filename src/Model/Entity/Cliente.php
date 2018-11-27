@@ -85,4 +85,10 @@ class Cliente extends Entity
         'ventas' => true,
         'visitas' => true
     ];
+
+    protected $_virtual = ['show_select'];
+
+    protected function _getShowSelect() {
+       return @$this->_properties['nombres'] . ' - ' . $this->_properties['rut'];
+    }
 }

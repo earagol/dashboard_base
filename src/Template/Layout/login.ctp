@@ -18,7 +18,7 @@
 
     <?php echo $this->Flash->render() ?>
 
-    <div class="container" style="padding-top: 10px">
+    <div class="container">
         <?php echo $this->fetch('content') ?>
     </div>
 

@@ -78,11 +78,6 @@ class VentasController extends AppController
     public function ventas()
     {
 
-        // $options = [
-        //     'contain' => ['Clientes','Usuarios','ControlDeudaPagos'],
-        //     'order' => ['Ventas.id'=>'DESC'],
-        // ];
-
         $query = $this->Ventas->find()
                      ->select([
                         'Ventas.id',
@@ -90,6 +85,8 @@ class VentasController extends AppController
                         'Usuarios.nombres',
                         'Usuarios.apellidos',
                         'Ventas.monto_total',
+                        'Ventas.cuenta_porcobrar',
+                        'Ventas.monto_cartera',
                      ])
                      ->join([
                         'Clientes' => [
@@ -103,11 +100,9 @@ class VentasController extends AppController
                             'conditions' => 'Usuarios.id = Ventas.usuario_id',
                         ]
                      ])
-                     // ->innerJoinWith('Clientes','Usuarios')
                      ->order(['Ventas.id'=>'DESC']);
 
         if(!is_null($this->request->data('buscar'))){
-            // $options['conditions'] = array_merge($options['conditions'],['nombres LIKE' => '%'.$this->request->data('buscar').'%']);
 
             $query->where(function (QueryExpression $exp) {
                     $orConditions = $exp->or_([
@@ -119,20 +114,9 @@ class VentasController extends AppController
                         ->add($orConditions);
                 });
 
-            // $query->orWhere([
-            //             'Clientes.nombres' => '%'.$this->request->data('buscar').'%',
-            //             'Usuarios.nombres' => '%'.$this->request->data('buscar').'%',
-            //             'Usuarios.apellidos' => '%'.$this->request->data('buscar').'%'
-            //         ]);
-
         }
 
-        // debug($query);
-
-
-        // $this->paginate = $options;
         $ventas = $this->paginate($query);
-        // prx($ventas);
         $this->set(compact('ventas'));
     }
 
@@ -209,16 +193,6 @@ class VentasController extends AppController
                                         'Ventas.monto_cartera IS NOT NULL'
                                     ])
                                 ->toArray();
-        //$valores = [];
-        /*if($ventas){
-            $valores['monto_total'] = $ventas->monto_total; 
-            $valores['monto_efectivo'] = $ventas->monto_efectivo; 
-            $valores['monto_transferencia'] = $ventas->monto_transferencia; 
-            $valores['cuenta_porcobrar'] = $ventas->cuenta_porcobrar; 
-            $valores['monto_cartera'] = $ventas->monto_cartera; 
-            $valores['deuda'] = $ventas->cuenta_porcobrar-$ventas->monto_cartera; 
-        }
-        */
         return $ventas;
     }
 
@@ -248,9 +222,6 @@ class VentasController extends AppController
                 $this->request->data('fecha',date('Y-m-d'));
             }
 
-            // $fechaFormat = new Time($this->request->data('fecha'));
-            // $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
-
             $fechaFormat = new Time($this->request->data('fecha'));
             $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
             $fecha = $this->request->data('fecha');
@@ -274,7 +245,6 @@ class VentasController extends AppController
                 foreach ($resultados as $key => $value) {
                     $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['nombre'] = $value->parametros_tipo->nombre;
                     $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'] = [];
-                    // $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'] = '';
 
                     foreach ($value->parametros_valores as $key2 => $value2) {
                         if($value->parametros_tipo->tipo == 'Diario'){
@@ -291,11 +261,9 @@ class VentasController extends AppController
                         }else{
 
                             if(!isset($valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'])){
-                                 // pr('a');
                                 $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'] = $value2->monto_o_cantidad;
 
                             }else{
-                                 // pr('b');
                                 $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad']+=$value2->monto_o_cantidad;
                             }
 
@@ -372,14 +340,6 @@ class VentasController extends AppController
 
             ///CARTERA RECOGIDA////
             $carteraRecogida = $this->getCarteraRecogida($this->request->data('usuario_id'),$this->request->data('fecha'));
-            //prx($carteraRecogida);
-
-            
-
-            // prx($valores); // Todo
-            // pr($diario); //Depende de valores, ya esta ordenado
-            // pr($ventas); //tOTALES DE MOVIMIENTO->TOTAL,EFECTIVO,TRANSFERENCIA
-            // prx($gasto); //Depende de valores, ya esta ordenado
 
             $excel = 1;
             $name = 'Reporte_diario_'.$fecha;
@@ -422,15 +382,6 @@ class VentasController extends AppController
 
             $ventas = $this->Ventas->find()
                                 ->contain([
-                                        // 'VentaDetalles'=> function($q) {
-                                        //                     return $q
-                                        //                         ->select([
-                                        //                             'id',
-                                        //                             'venta_id',
-                                        //                             'total_producto' => $q->func()->sum('cantidad')
-                                        //                         ])
-                                        //                         ->group(['VentaDetalles.id']);
-                                        //                 },
                                         'VentaDetalles',
                                         'Clientes'
                                      ])
@@ -448,7 +399,6 @@ class VentasController extends AppController
 
             $ventas = $ventas->toArray();
 
-             //prx($ventas);
             $header = ['Cliente',utf8_encode('Direccion')];
             $header = array_merge($header,$productos);
             $header = array_merge($header,['Monto Efectivo','Monto Transferencia','CXC',utf8_encode('Observacion')]);
@@ -480,10 +430,6 @@ class VentasController extends AppController
                 $detalle['productos'] = $producVenta;
                 $detallesVentas[] = $detalle;
             }
-
-     //       pr($header);
-       //     prx($detallesVentas);
-
 
             $excel = 1;
             $name = 'Ventas_'.$fecha;
@@ -537,11 +483,6 @@ class VentasController extends AppController
                                         'type' => 'INNER',
                                         'conditions' => 'Clientes.id = Ventas.cliente_id',
                                     ],
-                                    // 'Usuarios' => [
-                                    //     'table' => 'usuarios',
-                                    //     'type' => 'INNER',
-                                    //     'conditions' => 'Usuarios.id = Ventas.usuario_id',
-                                    // ],
                                     'Rutas' => [
                                         'table' => 'rutas',
                                         'type' => 'INNER',
@@ -569,16 +510,12 @@ class VentasController extends AppController
         $rutas = TableRegistry::get('Rutas')->find('list', ['limit' => 200]);
 
         $this->set(compact('rutas'));
-
-
-        
     }
 
 
     public function reporteConsolidadoVentasUsuario(){
 
         if($this->request->is('post')){
-
 
             $this->viewBuilder()->setLayout('excel');
 
@@ -623,11 +560,7 @@ class VentasController extends AppController
             $excel = 1;
             $name = 'Ventas_consolidados_vendedores_'.date('Y-m-d');
             $this->set(compact('consolidados','name','excel'));
-
         }
-
-        
-
         
         if($this->Auth->user('role') == 'admin'){
             $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
@@ -636,12 +569,7 @@ class VentasController extends AppController
         }
 
         $this->set(compact('usuarios'));
-        
-        
-        
     }
-
-    
 
     /**
      * View method
@@ -770,8 +698,6 @@ class VentasController extends AppController
                 $this->request->data('transferencia',true);
             }
 
-
-
             if(!$this->request->data('pago_cartera')){
                 $this->request->data('monto_cartera',null);
                 $this->request->data('monto_efectivo_cartera',null);
@@ -870,34 +796,73 @@ class VentasController extends AppController
 
                 $this->Flash->success(__($mensaje));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'add']);
             }
             $this->Flash->error(__('La venta no pudo ser procesada, intente nuevamente.'));
         }
 
         $session->delete('detalles');
-
-        
-        $cliente = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();
+       
         $productosTable = TableRegistry::get('Productos');
         $productos = $productosTable->find('list')->toArray();
         $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
+
+        $cliente = null;
+        $carteraPendiente = null;
+        if($id){
+            $cliente = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();
+
+            $carteraPendiente = $this->carteraPendiente($id);
+            $carteraPendiente = $carteraPendiente['sum'];
+        }
+        
 
         $compruebaVisita = $this->compruebaVisita($visitaId,$productos);
         if($session->read('detalles')){
             $this->set('detalles',$session->read('detalles'));
         }
 
+        // $clientes = $this->Ventas->Clientes->find('list')->toArray();
         
 
-        
+        if($this->Auth->user('role') === 'usuario'){
+            $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
+            if($usuario){
+                $rutas = [];
+                foreach ($usuario->rutas as $key => $value) {
+                    $rutas[$value->id]=$value->id;
+                }
+            }
+        }else{
+            $rutas = array_flip($this->Ventas->Clientes->Rutas->find('list')->toArray());
+        }
+
+        $clientes = $this->Ventas->Clientes->find('list', [
+                                        'keyField' => 'id',
+                                        'valueField' => 'show_select'
+                                    ])
+                                    ->where(['ruta_id IN'=>$rutas])
+                                    ->toArray();
+
+        $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente','clientes'));
+    }
+
+    public function datosCliente(){
+
+        $id = $this->request->data('clienteId');
+        $data = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();
 
         $carteraPendiente = $this->carteraPendiente($id);
         $carteraPendiente = $carteraPendiente['sum'];
+        // prx();
 
+        $flag = false;
+        if($data){
+            $flag = true;
+        }
+        die(json_encode(['success' => $flag,'data'=>$data,'carteraPendiente'=>$carteraPendiente]));
 
-        $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente'));
-    }
+    }//Fin datosCliente
 
 
     private function carteraPendiente($id){

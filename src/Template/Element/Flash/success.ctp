@@ -31,6 +31,6 @@
 </div>
 <script type="text/javascript">
     (function( $ ) {
-            $('#ModalFlashSuccess').modal('show');
+        jQuery('#ModalFlashSuccess').modal();
     })(jQuery);
 </script>

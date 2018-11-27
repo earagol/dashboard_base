@@ -46,6 +46,7 @@
                             <td><?= h($cliente->nombres) ?></td>
                             <td><?= $cliente->has('ruta') ? $cliente->ruta->nombre : '' ?></td>
                             <td class="text-center">
+                                <?php echo $this->Html->link(__('<i class="fa fa-arrow-right"></i>'), ['controller'=>'Ventas','action' => 'add', $cliente->id],['title'=>'Realizar Venta','escape' => false]) ?>
                                 <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $cliente->id],['title'=>'Editar','escape' => false]) ?>
                                 <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $cliente->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el registro {0}?', $cliente->nombres.' '.$cliente->apellidos)]) ?>
                             </td>

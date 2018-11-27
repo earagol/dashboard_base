@@ -21,9 +21,14 @@
 		</div>
 	</div>
 </div>
-
 <script type="text/javascript">
-	 (function( $ ) {
-		$('#errorModal').modal('show');
+	// $.noConflict();
+	// jQuery( document ).ready(function( $ ) {
+	// 	$('#errorModal').modal();
+	// });
+
+	(function( $ ) {
+		jQuery('#errorModal').modal();
 	})(jQuery);
 </script>
+
