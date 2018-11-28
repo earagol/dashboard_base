@@ -192,7 +192,7 @@
                     <?php if($carteraPendiente): ?>
                         <tr>
                             <td><div class="form-check"><?php echo $this->Form->control('pagar_cartera', ['type'=>'checkbox','class'=>'form-check-input','label'=>false,'checked'=>false]); ?></div></td>
-                            <td>Cancela CarteraPendiente?</td>
+                            <td>Cancela Cartera Pendiente?</td>
                             <td><?php echo $this->Form->control('monto_deuda', ['class'=>'form-control','value' =>$carteraPendiente? number_format($carteraPendiente, 0, ",", "."):0,'label'=>false,'readonly'=>'readonly']); ?></td>
 
                         </tr>
@@ -257,6 +257,31 @@
     </div>
 </div>
 
+<div class="modal fade" id="newClient">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title heading-primary text-left">
+                    Nuevo Cliente
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning mb-none">
+                    <p>En construcción</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <?= $this->Form->end() ?>
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
@@ -301,13 +326,23 @@
             // matcher: matchCustom
             language: {
                 noResults: function() {
-                    return "<a href='#' id='nuevo'>Nuevo Cliente</a>";
+                    return "<a href='#' data-toggle='modal' data-target='#newClient' >Nuevo Cliente</a>";
                 }
             },
             escapeMarkup: function (markup) {
                 return markup;
             }
         });
+
+        // $("#nuevoCliente").click(function(e){
+        //     console.log('jhkjhj');
+        //     $('#newClient').modal();
+        // });
+
+        // $( "#nuevoCliente" ).on( "click",, function() {
+        //   console.log('jhkjhj');
+        //     $('#newClient').modal();
+        // });
 
         // $(".chosen-search input").on({
         //   "change": function(event) {

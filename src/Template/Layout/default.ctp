@@ -199,10 +199,18 @@ $cakeDescription = 'Estrella';
             <nav class="navbar navbar-expand-sm navbar-default"> 
                 <div id="main-menu" class="main-menu collapse navbar-collapse">
                     <ul class="nav navbar-nav">
+
                         <li class="active">
                             <?php echo $this->Html->link(__(' <i class="menu-icon fa fa-laptop"></i>Dashboard'), ['controller'=>'dashboards','action' => 'index'],['title'=>'Dashboard','escape' => false]) ?>
                             <!-- <a href="index.html"><i class="menu-icon fa fa-laptop"></i>Dashboard </a> -->
                         </li>
+
+                        <li >
+                            <?php echo $this->Html->link(__(' <i class="menu-icon fa fa-exchange"></i>Ventas'), ['controller'=>'Ventas','action' => 'add'],['title'=>'Ventas','escape' => false]) ?>
+                            <!-- <a href="index.html"><i class="menu-icon fa fa-laptop"></i>Dashboard </a> -->
+                        </li>
+
+                        
 
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gear"></i>Parametros</a>
@@ -380,7 +388,7 @@ $cakeDescription = 'Estrella';
                             </a>
 
                             <div class="user-menu dropdown-menu">
-                                <?php echo $this->Html->link('<i class="fa fa-key"></i>Cmbiar clave</a>', ['controller'=>'usuarios','action'=>'cambio_clave'],['class'=>'nav-link','escape'=>false]); ?>
+                                <?php echo $this->Html->link('<i class="fa fa-key"></i>Cambiar clave</a>', ['controller'=>'usuarios','action'=>'cambio_clave'],['class'=>'nav-link','escape'=>false]); ?>
                                 <!-- <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a> -->
 
                                 <!-- <a class="nav-link" href="#"><i class="fa fa-bell-o"></i>Notifications <span class="count">13</span></a> -->
