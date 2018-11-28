@@ -29,19 +29,22 @@ $cakeDescription = 'Estrella';
 
         <?php echo $this->Html->css('normalize') ?>
         <?php echo $this->Html->css('bootstrap.min') ?>
+        <?php //echo $this->Html->css('../vendors/bootstrap/css/bootstrap') ?>
         <?php echo $this->Html->css('font-awesome.min') ?>
         <?php echo $this->Html->css('themify-icons') ?>
         <?php echo $this->Html->css('pe-icon-7-filled') ?>
 
         <?php echo $this->Html->css('../vendors/weather/css/weather-icons') ?>
         <?php echo $this->Html->css('../vendors/calendar/fullcalendar') ?>
+        
+
 
         <?php echo $this->Html->css('style') ?>
         <?php echo $this->Html->css('charts/chartist.min') ?>
         <?php echo $this->Html->css('lib/vector-map/jqvmap.min') ?>
 
-        <?php //echo $this->Html->script('vendor/jquery-2.1.4.min'); ?>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <?php echo $this->Html->script('vendor/jquery-2.1.4.min'); ?>
+        <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
         <?php echo $this->Html->script('popper.min'); ?>
         <?php echo $this->Html->script('plugins'); ?>
         <?php echo $this->Html->script('main'); ?>
@@ -50,8 +53,8 @@ $cakeDescription = 'Estrella';
         <?php echo $this->Html->script('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
         <?php echo $this->Html->css('../vendors/tempusdominus-datepicker/tempusdominus-bootstrap-4.min') ?>
 
-        <?php echo $this->Html->css('lib/chosen/chosen.min') ?>
-        <?php echo $this->Html->script('lib/chosen/chosen.jquery.min') ?>
+        <?php //echo $this->Html->css('lib/chosen/chosen.min') ?>
+        <?php //echo $this->Html->script('lib/chosen/chosen.jquery.min') ?>
 
 
         <?php //echo $this->Html->script('vendor/jquery-1.11.3.min'); ?>

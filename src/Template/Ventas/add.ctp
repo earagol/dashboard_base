@@ -22,6 +22,8 @@
     }
 </style>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
 
 <?php echo $this->Form->create($venta) ?>
 <div class="col-lg-12">
@@ -45,7 +47,6 @@
                                                     'multiple' => false,
                                                     'tabindex' => 1,
                                                     ]); ?>
-                <?php //echo $this->Form->control('cliente',['class'=>'form-control','value'=>$cliente? $cliente->nombres: '','label'=>false]); ?>
             </div>
 
             <div class="form-group">
@@ -260,7 +261,9 @@
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
 
-
+<?php echo $this->Html->css('../vendors/select2-bootstrap/dist/select2') ?>
+<?php echo $this->Html->css('../vendors/select2-bootstrap/dist/select2-bootstrap') ?>
+<?php echo $this->Html->script('../vendors/select2-bootstrap/dist/select2') ?>
 
 <script type="text/javascript">
     /*
@@ -276,10 +279,34 @@
 
     (function( $ ) {
 
-        $("#cliente-id").chosen({
-            disable_search_threshold: 1,
-            no_results_text: "No se encontraron datos..!",
-            width: "100%"
+        function matchCustom(params, data) {
+
+            if ($.trim(params.term) === '') {
+              return data;
+            }
+
+            // Do not display the item if there is no 'text' property
+            if (typeof data.text === 'undefined') {
+              return null;
+            }
+             
+            console.log(data);
+            return data;
+        }
+
+        $("#cliente-id").select2({
+            // theme: 'bootstrap4',
+            // minimumInputLength: 3,
+            // minimumResultsForSearch: 20,
+            // matcher: matchCustom
+            language: {
+                noResults: function() {
+                    return "<a href='#' id='nuevo'>Nuevo Cliente</a>";
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
         });
 
         // $(".chosen-search input").on({
