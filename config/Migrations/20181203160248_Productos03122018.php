@@ -19,5 +19,47 @@ class Productos03122018 extends AbstractMigration
                                 'after' => 'descripcion',
                             ])
                             ->update();
+
+        $tableRetornos = $this->table('embases_retornados')
+                            ->addColumn('producto_id', 'integer', [
+                                'default' => null,
+                                'null' => false,
+                            ])
+                            ->addColumn('cliente_id', 'integer', [
+                                'default' => null,
+                                'null' => false,
+                            ])
+                            ->addColumn('venta_id', 'integer', [
+                                'default' => null,
+                                'null' => true,
+                            ])
+                            ->addColumn('cantidad', 'integer', [
+                                'default' => null,
+                                'null' => false,
+                            ])
+                            ->addColumn('created', 'datetime', [
+                                'default' => null,
+                                'null' => false,
+                            ])
+                            ->addColumn('modified', 'datetime', [
+                                'default' => null,
+                                'null' => true,
+                            ])
+                            ->addColumn('deleted', 'datetime', [
+                                'default' => null,
+                                'null' => true,
+                            ])
+                            ->create();
+
+        $tableventas = $this->table('ventas')
+                            ->addColumn('tiene_retorno', 'boolean', [
+                                'default' => null,
+                                'null' => true,
+                                'after' => 'tiene_detalles',
+                            ])
+                            ->update();
+
     }
 }
+
+

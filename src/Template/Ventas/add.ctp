@@ -22,7 +22,7 @@
     }
 </style>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" /> -->
 
 
 <?php echo $this->Form->create($venta) ?>
@@ -137,7 +137,7 @@
             <table class="table table-bordered col-lg-6 col-lg-offset-3 col-xs-12 col-sm-12">
                 <thead class="thead-dark">
                     <tr>
-                        <th scope="col">Acciòn</th>
+                        <th scope="col">Acción</th>
                         <th scope="col">Descripción</th>
                         <th scope="col">Monto</th>
                     </tr>
@@ -242,7 +242,34 @@
             <?php echo $this->Form->control('monto_deuda2', ['type'=>'hidden','class'=>'form-control','value' => $carteraPendiente?number_format($carteraPendiente, 0, ",", "."):0,'label'=>false,'style'=>'width:20%','readonly'=>'readonly']); ?>
             <?php echo $this->Form->control('total_pago_deuda', ['type'=>'hidden','class'=>'form-control','value' => 0,'label'=>false,'style'=>'width:20%','readonly'=>'readonly']); ?>
 
+            <?php if($productosRetornables): ?>
 
+                    <div class = "page-header text-center col-lg-4 col-lg-offset-3 col-xs-12 col-sm-12">
+                       <h3>
+                          Retorno de Embases
+                       </h3>
+                    </div>
+
+                    <table class="table table-bordered col-lg-4 col-lg-offset-3 col-xs-12 col-sm-12" id="tablaRetornables">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($productosRetornables as $key => $value) : ?>
+                                <tr>
+                                    <td><?php echo $value; ?></td>
+                                    <td>
+                                        <?php echo $this->Form->control('retorna.retorna_'.$key, ['type'=>'numeric','class'=>'form-control','value' => 0,'label'=>false]); ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+            <?php endif; ?>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Observacion</label>
@@ -372,37 +399,8 @@
 
         $("#cliente-id").change(function(e){
             var id = $("#cliente-id").val();
-
             document.location.href=url1+"/ventas/add/"+id;
-
-            // $.ajax({
-            //     url:url1+'ventas/datosCliente',
-            //     dataType: 'json',
-            //     type: 'POST',
-            //     headers: {
-            //         'X-CSRF-Token': csrfToken
-            //     },
-            //     data:{
-            //         clienteId: id
-            //     },
-            //     success: function(response){
-
-            //         if(response.success){
-            //             $("#credito").val(response.data.credito_disponible);
-            //             $("#cuenta-porcobrar-cliente").val(response.data.cuenta_porcobrar);
-            //             $("#monto-deuda2").val(response.data.carteraPendiente);
-
-            //             if($("#monto-deuda")){
-            //                 $("#monto-deuda").val(response.data.carteraPendiente);
-            //             }
-            //         }
-
-            //     }
-            // });
-
         });
-
-
 
         <?php if(isset($detalles)): ?>
             calculo();
@@ -427,18 +425,31 @@
         $('#save').click(function(e){
             e.preventDefault();
 
-            if(!$('#totales').val() && !$('#pagar-cartera').is(':checked')){
+            if($("#cliente-id").val() == ''){
+                alert('Debe seleccionar un cliente.');
+                return;
+            }
+
+            var retorno = false;
+            $.each($("#tablaRetornables :input"), function( index, value ) {
+                console.log(value.value);
+                if(eval(value.value) > 0){
+                    retorno = true;
+                }
+            });
+            // return;
+
+            if(!$('#totales').val() && !$('#pagar-cartera').is(':checked') && !retorno){
                 alert('No hay productos ingresados para la venta.');
                 return;
-            }else if(!$('#totales').val() && ($('#pagar-cartera').is(':checked') && ($('#total-pago-deuda').val() == '' || eval($('#total-pago-deuda').val()) == 0))){
+            }else if(!$('#totales').val() && !retorno && ($('#pagar-cartera').is(':checked') && ($('#total-pago-deuda').val() == '' || eval($('#total-pago-deuda').val()) == 0))){
                 alert('El monto de pago de cartera es incorrecto');
                 return;
             }else if(eval($('#cuenta-porcobrar').val()) > 0){
+
                 var cuenta = $('#cuenta-porcobrar').val();
-                // cuenta = cuenta.replace('.', '');
                 var credito = $('#credito').val();
-                // credito = credito.replace('.', '');
-                console.log(credito,cuenta);
+
                 if(eval(cuenta) > eval(credito)){
                     alert('La cuenta por cobrar supera al credito disponible para este cliente, debes comunicarte con el administrador del sistema.');
                     return;
@@ -520,7 +531,6 @@
 
             var transferencia = 0;
             if($('#monto-transferencia').val() != ''){
-                console.log('aa');
                 transferencia = $('#monto-transferencia').val();
                 var transferencia = transferencia.replace('.', '');
                 if(transferencia <= cuentaAux){
@@ -538,8 +548,6 @@
             
             $('#cuenta-porcobrar').val(cuenta);
             $('#resta').html(cuenta);
-            // $('#cuentaCobrar').html(cuenta);
-            
 
             if(flag){
                 $('#monto-efectivo').val('');

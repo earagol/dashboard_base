@@ -667,9 +667,12 @@ class VentasController extends AppController
      */
     public function add($id = null,$visitaId=null)
     {
+        $productosTable = TableRegistry::get('Productos');
+        $productosRetornables = $productosTable->find('list')->where(['retorna_embase' => true])->toArray();
         $session = $this->request->session();
         $venta = $this->Ventas->newEntity();
         if ($this->request->is('post')) {
+            // prx($this->request->data);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('cuenta_porcobrar',str_replace('.','',$this->request->data('cuenta_porcobrar')));
             $this->request->data('monto_total',$this->request->data('totales'));
@@ -734,6 +737,29 @@ class VentasController extends AppController
                 $this->request->data('monto_total',null);
             }
 
+            $saveRetorna = false;
+            $valueRetorno = [];
+            $this->request->data('tiene_retorno',null);
+            if($this->request->data('retorna') != null){
+                foreach ($this->request->data('retorna') as $keyR => $valueR) {
+
+                    if(is_null($valueR) || $valueR == 0){
+                        continue;
+                    }
+
+                    $this->request->data('tiene_retorno',true);
+                    $saveRetorna = true;
+
+                    $auxR = explode('_',$keyR);
+                    $valueRetorno[] = [
+                            'producto_id' => $auxR[1],
+                            'cliente_id' => $this->request->data('cliente_id'),
+                            'venta_id' => null,
+                            'cantidad' => $valueR,
+                        ];
+                }
+            }
+
             $venta = $this->Ventas->patchEntity($venta, $this->request->getData());
             if ($this->Ventas->save($venta)) {
 
@@ -747,6 +773,16 @@ class VentasController extends AppController
                         $detalles = $this->Ventas->VentaDetalles->patchEntity($detalles, $value);
                         $this->Ventas->VentaDetalles->save($detalles);
                     }
+                } 
+
+                if($saveRetorna){
+                    foreach ($valueRetorno as $valueRR) {
+                        $valueRR['venta_id'] = $venta->id;
+                        $retorno = $this->Ventas->EmbasesRetornados->newEntity();
+                        $retorno = $this->Ventas->EmbasesRetornados->patchEntity($retorno, $valueRR);
+                        $this->Ventas->EmbasesRetornados->save($retorno);
+                    }
+
                 }
                 
                 $client['credito_disponible'] = $this->request->data('credito');
@@ -803,7 +839,6 @@ class VentasController extends AppController
 
         $session->delete('detalles');
        
-        $productosTable = TableRegistry::get('Productos');
         $productos = $productosTable->find('list')->toArray();
         $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
 
@@ -822,8 +857,6 @@ class VentasController extends AppController
             $this->set('detalles',$session->read('detalles'));
         }
 
-        // $clientes = $this->Ventas->Clientes->find('list')->toArray();
-        
 
         if($this->Auth->user('role') === 'usuario'){
             $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
@@ -843,8 +876,8 @@ class VentasController extends AppController
                                     ])
                                     ->where(['ruta_id IN'=>$rutas])
                                     ->toArray();
-
-        $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente','clientes'));
+        
+        $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente','clientes','productosRetornables'));
     }
 
     public function datosCliente(){
@@ -854,7 +887,6 @@ class VentasController extends AppController
 
         $carteraPendiente = $this->carteraPendiente($id);
         $carteraPendiente = $carteraPendiente['sum'];
-        // prx();
 
         $flag = false;
         if($data){

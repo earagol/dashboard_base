@@ -61,6 +61,10 @@ class VentasTable extends Table
         $this->hasMany('ControlDeudaPagos', [
             'foreignKey' => 'venta_id'
         ]);
+
+        $this->hasMany('EmbasesRetornados', [
+            'foreignKey' => 'venta_id'
+        ]);
     }
 
     /**
