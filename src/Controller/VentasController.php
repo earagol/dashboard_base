@@ -828,13 +828,28 @@ class VentasController extends AppController
                     ['status' => 'R'],
                     ['cliente_id' => $this->request->data('cliente_id'),'status' => 'P']
                 );
-                $mensaje = $session->read('detalles') != null?'Venta realizada con exito.':'Pago de cartera exitoso.';
+
+                if($session->read('detalles') != null){
+                    $mensaje="Venta realizada con exito.";
+                }else if($this->request->data('pago_cartera')){
+                    $mensaje="Pago de cartera exitoso.";
+                }else if($this->request->data('tiene_retorno')){
+                    $mensaje="Proceso de retorno de embases exitoso.";
+                }
+               
 
                 $this->Flash->success(__($mensaje));
 
                 return $this->redirect(['action' => 'add']);
             }
             $this->Flash->error(__('La venta no pudo ser procesada, intente nuevamente.'));
+        }
+
+        //Valida Cierre de operaciones..
+        $cierreTable = TableRegistry::get('CierreOperaciones');
+        if($cierreTable->find()->where(['vendedor_id'=>$this->Auth->user('id'),'fecha_cierre' => date('Y-m-d')])->first()){
+            $this->Flash->error('Operaciones diarias cerradas por el resto del dia.');
+            return $this->redirect('/');
         }
 
         $session->delete('detalles');

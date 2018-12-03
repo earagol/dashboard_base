@@ -238,6 +238,7 @@ $cakeDescription = 'Estrella';
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-users"></i>Usuarios</a>
                             <ul class="sub-menu children dropdown-menu">
                                 <li><i class="fa fa-user"></i><?php echo $this->Html->link(__('Usuarios'), ['controller'=>'usuarios','action' => 'index'],['title'=>'Usuarios','escape' => false]) ?></li>
+                                <li><i class="fa fa-user"></i><?php echo $this->Html->link(__('Cierre Operaciones'), ['controller'=>'usuarios','action' => 'cierreOperacionesDiario'],['title'=>'Usuarios','escape' => false]) ?></li>
                             </ul>
                         </li>
 

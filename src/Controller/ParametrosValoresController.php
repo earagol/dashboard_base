@@ -32,6 +32,12 @@ class ParametrosValoresController extends AppController
      */
     public function index()
     {
+        $cierreTable = TableRegistry::get('CierreOperaciones');
+        if($cierreTable->find()->where(['vendedor_id'=>$this->Auth->user('id'),'fecha_cierre' => date('Y-m-d')])->first()){
+            $this->Flash->error('Operaciones diarias cerradas por el resto del dia.');
+            return $this->redirect('/');
+        }
+
         $fecha = date('Y-m-d');
 
         $this->paginate = [

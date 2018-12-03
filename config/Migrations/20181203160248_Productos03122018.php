@@ -59,6 +59,33 @@ class Productos03122018 extends AbstractMigration
                             ])
                             ->update();
 
+        $tableCierre = $this->table('cierre_operaciones')
+                            ->addColumn('vendedor_id', 'integer', [
+                                'default' => null,
+                                'null' => false,
+                            ])
+                            ->addColumn('admin_id', 'integer', [
+                                'default' => null,
+                                'null' => false,
+                            ])
+                            ->addColumn('fecha_cierre', 'date', [
+                                'default' => null,
+                                'null' => true,
+                            ])
+                            ->addColumn('created', 'datetime', [
+                                'default' => null,
+                                'null' => false,
+                            ])
+                            ->addColumn('modified', 'datetime', [
+                                'default' => null,
+                                'null' => true,
+                            ])
+                            ->addColumn('deleted', 'datetime', [
+                                'default' => null,
+                                'null' => true,
+                            ])
+                            ->create();
+
     }
 }
 

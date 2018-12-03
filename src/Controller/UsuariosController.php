@@ -55,6 +55,73 @@ class UsuariosController extends AppController
     }
 
 
+    public function cierreOperacionesDiario(){
+
+        $cierreTable = TableRegistry::get('CierreOperaciones');
+        $cierres = $cierreTable->find()->contain(['Vendedor','Admin'])->where(['fecha_cierre' => date('Y-m-d')])->toArray();
+
+        $this->paginate = [
+            'contain' => ['Vendedor','Admin'],
+            'conditions' => ['fecha_cierre' => date('Y-m-d')]
+        ];
+
+        $cierres = $this->paginate($cierreTable);
+        $this->set(compact('cierres'));
+    }
+
+
+    public function addCierre(){
+
+        $cierreTable = TableRegistry::get('CierreOperaciones');
+        if($this->request->is('post')){
+
+            if($this->request->data('usuario_id') != null){
+
+                if(!$cierreTable->find()->where(['vendedor_id'=>$this->request->data('usuario_id'),'fecha_cierre' => date('Y-m-d')])->first()){
+
+                    $cierre = $cierreTable->newEntity();
+                    $cierre = $cierreTable->patchEntity($cierre, [
+                                    'vendedor_id'=>$this->request->data('usuario_id'),
+                                    'admin_id'=>$this->Auth->user('id'),
+                                    'fecha_cierre'=>date('Y-m-d')
+                                ]);
+                    if($cierreTable->save($cierre)){
+                        $this->Flash->success(__('Cierre de operaciones exitoso.'));
+                        return $this->redirect(['action' => 'cierreOperacionesDiario']);
+                    }
+
+                }else{
+                    $this->Flash->error('Ya se realizo el cierre para este vendedor.');
+                }
+
+               
+            }else{
+                $this->Flash->error('Seleccione al vendedor.');
+            }
+        }
+
+        $usuarios = $this->Usuarios->find('list', ['limit' => 200]);
+        $this->set(compact('usuarios'));
+    }
+
+
+
+    public function deleteCierre($id = null)
+    {
+        // prx('kljkjhkjhkjh');
+        $cierreTable = TableRegistry::get('CierreOperaciones');
+        $this->request->allowMethod(['post', 'delete']);
+        $cierre = $cierreTable->get($id);
+        if ($cierreTable->delete($cierre)) {
+            $this->Flash->success(__('El registro ha sido eliminado.'));
+        } else {
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
+        }
+
+        return $this->redirect(['action' => 'cierreOperacionesDiario']);
+    }
+
+
 
     public function cambioClave()
     {
