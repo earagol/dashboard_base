@@ -29,6 +29,10 @@
                 <?php echo $this->Form->control('descripcion',['class'=>'form-control','placeholder'=>'Descripción...','label'=>false]); ?>
             </div>
 
+            <div class="form-group form-check">
+                <?php echo $this->Form->control('retorna_embase',['class'=>'form-check-input']); ?>
+            </div>
+
             <div class="form-group">
                 <label for="company" class=" form-control-label">Precio</label>
                 <div class="input-group">

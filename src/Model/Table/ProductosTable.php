@@ -89,6 +89,10 @@ class ProductosTable extends Table
             ->notEmpty('descripcion');
 
         $validator
+            ->integer('retorna_embase')
+            ->allowEmpty('retorna_embase');
+
+        $validator
             ->dateTime('deleted')
             ->allowEmpty('deleted');
 

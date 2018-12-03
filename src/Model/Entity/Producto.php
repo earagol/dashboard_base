@@ -37,6 +37,7 @@ class Producto extends Entity
         'categoria_id' => true,
         'nombre' => true,
         'descripcion' => true,
+        'retorna_embase' => true,
         'usuario_id' => true,
         'created' => true,
         'modified' => true,
