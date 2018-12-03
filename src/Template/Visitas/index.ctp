@@ -21,13 +21,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($visitas as $visita): ?>
+                    <?php foreach ($visitas as $visita): 
+                        if($visita->status == 'P'){
+                            $status = 'Pendiente';
+                        }else if($visita->status == 'V'){
+                            $status = 'Vencida';
+                        }else if($visita->status == 'R'){
+                            $status = 'Realizada';
+                        }
+                    ?>
                         <tr>
                             <td><?= $this->Number->format($visita->id) ?></td>
                             <td><?= h($visita->usuario->full_name) ?></td>
                             <td><?= h($visita->cliente->nombres) ?></td>
                             <td><?= h($visita->fecha_vencimiento->format('Y-m-d')) ?></td>
-                            <td><?= h($visita->status) ?></td>
+                            <td><?= h($status) ?></td>
                             <td class="text-center">
                                 <?php if($currentUser['role'] === 'admin'): ?>
                                     <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $visita->id],['title'=>'Editar','escape' => false]) ?>
