@@ -196,6 +196,34 @@ class VentasController extends AppController
         return $ventas;
     }
 
+    public function unionDiarioVentasVendedor(){
+
+        if($this->request->is('post')){
+
+            $fechaFormat = new Time($this->request->data('fecha'));
+            $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
+            $fecha = $this->request->data('fecha');
+
+            $this->reporteClientesVentas();
+            $this->reporteDiarioVendedor();
+
+            $excel = 1;
+            $name = 'Consolidado_'.$fecha;
+            $this->set(compact('header','detallesVentas','excel','name'));
+
+        }
+
+        if($this->Auth->user('role') == 'admin'){
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+        
+        $this->set(compact('usuarios'));
+
+
+    }//Fin unionDiarioVentasVendedor
+
 
     public function reporteDiarioVendedor(){
 
@@ -399,9 +427,9 @@ class VentasController extends AppController
 
             $ventas = $ventas->toArray();
 
-            $header = ['Cliente',utf8_encode('Direccion')];
-            $header = array_merge($header,$productos);
-            $header = array_merge($header,['Monto Efectivo','Monto Transferencia','CXC',utf8_encode('Observacion')]);
+            $headerClientes = ['Cliente',utf8_encode('Direccion')];
+            $headerClientes = array_merge($headerClientes,$productos);
+            $headerClientes = array_merge($headerClientes,['Monto Efectivo','Monto Transferencia','CXC',utf8_encode('Observacion')]);
 
             $detallesVentas = [];
             foreach ($ventas as $key => $value) {
@@ -433,7 +461,7 @@ class VentasController extends AppController
 
             $excel = 1;
             $name = 'Ventas_'.$fecha;
-            $this->set(compact('header','detallesVentas','excel','name'));
+            $this->set(compact('headerClientes','detallesVentas','excel','name'));
 
         }
 

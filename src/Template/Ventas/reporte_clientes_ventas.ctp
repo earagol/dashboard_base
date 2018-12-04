@@ -60,7 +60,7 @@ if(!isset($excel)){
 <table>
     <thead>
          <tr>
-        <?php foreach ($header as $key => $value) { ?>
+        <?php foreach ($headerClientes as $key => $value) { ?>
            
                 <th><?php echo $value; ?></th>
             
@@ -71,10 +71,11 @@ if(!isset($excel)){
     <tbody>
         
             <?php 
+                $montoEfecTotal=0;
+                $montoTransTotal=0;
+                $cxcTotal=0;
                 if($detallesVentas){ 
-                    $montoEfecTotal=0;
-                    $montoTransTotal=0;
-                    $cxcTotal=0;
+                   
                     $prodcutTotal = $detalles['productos'];
                     foreach ($prodcutTotal  as $key => $value) {
                         $prodcutTotal[$key]=0;
