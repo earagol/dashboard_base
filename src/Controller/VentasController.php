@@ -225,117 +225,85 @@ class VentasController extends AppController
     }//Fin unionDiarioVentasVendedor
 
 
-    public function reporteDiarioVendedor(){
 
-        if($this->request->is('post')){
+    public function calculoReporteDiario($usuarioId = null, $fecha = null){
 
-            $this->viewBuilder()->setLayout('excel');
+        $valoresPadreTable = TableRegistry::get('ParametrosValoresPadre');
+        $paramsTipoTable = TableRegistry::get('ParametrosTipos');
+        $paramsTipoDiario = $paramsTipoTable->find('list')->where(['tipo'=>'Diario'])->toArray();
+        $paramsTipoGasto = $paramsTipoTable->find('list')->where(['tipo'=>'Gasto'])->toArray();
+        $productosTable = TableRegistry::get('Productos');
+        $productos = $productosTable->find('list')->toArray();
 
-            $valoresPadreTable = TableRegistry::get('ParametrosValoresPadre');
-            $paramsTipoTable = TableRegistry::get('ParametrosTipos');
-            $paramsTipoDiario = $paramsTipoTable->find('list')->where(['tipo'=>'Diario'])->toArray();
-            $paramsTipoGasto = $paramsTipoTable->find('list')->where(['tipo'=>'Gasto'])->toArray();
-            $productosTable = TableRegistry::get('Productos');
-            $productos = $productosTable->find('list')->toArray();
+        $usuario = $this->Ventas->Usuarios->find()->where(['Usuarios.id'=>$usuarioId])->first();
 
+        $fechaFormat = new Time($fecha);
+        $fechaUso = $fechaFormat->format('Y-m-d');
 
+        $ventas = $this->getVentas($usuarioId,$fechaUso);
+        
 
-            if($this->request->data('usuario_id') == null){
-                $this->request->data('usuario_id',$this->Auth->user('id'));
-            }
+        $resultados = $valoresPadreTable->find('all')
+                                        ->contain(['ParametrosValores','ParametrosTipos'])
+                                        ->where([
+                                            'ParametrosValoresPadre.fecha' => $fechaUso,
+                                            'ParametrosValoresPadre.usuario_id' => $usuarioId
+                                            ]
+                                        );
 
-            $usuario = $this->Ventas->Usuarios->find()->where(['Usuarios.id'=>$this->request->data('usuario_id')])->first();
+        $resultados = $resultados->toArray();
+        $valores = $diario = $gasto = [];
 
-            if($this->request->data('fecha') == null){
-                $this->request->data('fecha',date('Y-m-d'));
-            }
-
-            $fechaFormat = new Time($this->request->data('fecha'));
-            $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
-            $fecha = $this->request->data('fecha');
-
-            $ventas = $this->getVentas($this->request->data('usuario_id'),$this->request->data('fecha'));
-            
-
-            $resultados = $valoresPadreTable->find('all')
-                                            ->contain(['ParametrosValores','ParametrosTipos'])
-                                            ->where([
-                                                'ParametrosValoresPadre.fecha' => $this->request->data('fecha'),
-                                                'ParametrosValoresPadre.usuario_id' => $this->request->data('usuario_id')
-                                                ]
-                                            );
-
-            $resultados = $resultados->toArray();
-            $valores = $diario = $gasto = [];
-
-            if($resultados){
+        if($resultados){
                 
-                foreach ($resultados as $key => $value) {
-                    $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['nombre'] = $value->parametros_tipo->nombre;
-                    $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'] = [];
+            foreach ($resultados as $key => $value) {
+                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['nombre'] = $value->parametros_tipo->nombre;
+                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'] = [];
 
-                    foreach ($value->parametros_valores as $key2 => $value2) {
-                        if($value->parametros_tipo->tipo == 'Diario'){
+                foreach ($value->parametros_valores as $key2 => $value2) {
+                    if($value->parametros_tipo->tipo == 'Diario'){
 
-                            if(!isset($valores[$value->parametros_tipo_id]['valores'][$value2->producto_id])){
+                        if(!isset($valores[$value->parametros_tipo_id]['valores'][$value2->producto_id])){
 
-                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['cantidad'] = $value2->monto_o_cantidad;
-                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['nombre'] = $productos[$value2->producto_id];
-
-                            }else{
-                                 $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['cantidad']+=$value2->monto_o_cantidad;
-                            }
+                            $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['cantidad'] = $value2->monto_o_cantidad;
+                            $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['nombre'] = $productos[$value2->producto_id];
 
                         }else{
-
-                            if(!isset($valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'])){
-                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'] = $value2->monto_o_cantidad;
-
-                            }else{
-                                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad']+=$value2->monto_o_cantidad;
-                            }
-
+                             $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['cantidad']+=$value2->monto_o_cantidad;
                         }
-                        
-                    }
-                }
-                
-                
-            }
 
-            $productoTotal = [];
-            if($productos){
-                foreach ($productos as $keypp => $valuepp) {
-                    $productoTotal[$keypp] = 0;
-                }
-            }
-
-            foreach ($paramsTipoDiario as $keyT => $valueT) {
-                $newValor = [];
-                foreach ($productos as $keyP => $valueP) {
-
-                    if(isset($valores['Diario'][$keyT]['valores'][$keyP])){
-                        $newValor[$keyP] = $valores['Diario'][$keyT]['valores'][$keyP];
-                        $productoTotal[$keyP]+=$valores['Diario'][$keyT]['valores'][$keyP]['cantidad'];
                     }else{
-                        $newValor[$keyP] = [
-                                        'nombre' => $valueP,
-                                        'cantidad' => ''
-                                    ];
-                    }
-                }
-                $diario[$keyT]['nombre'] = $valueT;
-                $diario[$keyT]['valores'] = $newValor;
-            }
 
-            ////Cantidad de Ventas//////
-            $ventasCantidadProducto = $this->cantidadVentaPorProducto($this->request->data('usuario_id'),$this->request->data('fecha'));
+                        if(!isset($valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'])){
+                            $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad'] = $value2->monto_o_cantidad;
+
+                        }else{
+                            $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['cantidad']+=$value2->monto_o_cantidad;
+                        }
+
+                    }
+                    
+                }
+            }
+            
+            
+        }
+
+
+        $productoTotal = [];
+        if($productos){
+            foreach ($productos as $keypp => $valuepp) {
+                $productoTotal[$keypp] = 0;
+            }
+        }
+
+        foreach ($paramsTipoDiario as $keyT => $valueT) {
+            $newValor = [];
             foreach ($productos as $keyP => $valueP) {
 
-                if(isset($ventasCantidadProducto[$keyP])){
-                    $newValor[$keyP]['nombre'] = $productos[$keyP];
-                    $newValor[$keyP]['cantidad'] = $ventasCantidadProducto[$keyP];
-                    $productoTotal[$keyP] = $productoTotal[$keyP]-$ventasCantidadProducto[$keyP];
+                if(isset($valores['Diario'][$keyT]['valores'][$keyP])){
+                    $newValor[$keyP] = $valores['Diario'][$keyT]['valores'][$keyP];
+                    $productoTotal[$keyP]+=$valores['Diario'][$keyT]['valores'][$keyP]['cantidad'];
                 }else{
                     $newValor[$keyP] = [
                                     'nombre' => $valueP,
@@ -343,32 +311,83 @@ class VentasController extends AppController
                                 ];
                 }
             }
-            $numVentas = [
-                        'nombre' => 'Ventas',
-                        'valores' => $newValor
-                    ];
+            $diario[$keyT]['nombre'] = $valueT;
+            $diario[$keyT]['valores'] = $newValor;
+        }
 
-            array_push($diario,$numVentas);
-                
-            foreach ($paramsTipoGasto as $keyT => $valueT) {
-                $newValor = [];
 
-                    if(isset($valores['Gasto'][$keyT])){
-                        $newValor = $valores['Gasto'][$keyT]['cantidad'];
-                    }else{
-                        $newValor = '';
-                    }
-                $gasto[$keyT]['nombre'] = $valueT;
-                $gasto[$keyT]['cantidad'] = $newValor;
+        ////Cantidad de Ventas//////
+        $ventasCantidadProducto = $this->cantidadVentaPorProducto($usuarioId,$fechaUso);
+        foreach ($productos as $keyP => $valueP) {
+
+            if(isset($ventasCantidadProducto[$keyP])){
+                $newValor[$keyP]['nombre'] = $productos[$keyP];
+                $newValor[$keyP]['cantidad'] = $ventasCantidadProducto[$keyP];
+                $productoTotal[$keyP] = $productoTotal[$keyP]-$ventasCantidadProducto[$keyP];
+            }else{
+                $newValor[$keyP] = [
+                                'nombre' => $valueP,
+                                'cantidad' => ''
+                            ];
+            }
+        }
+        $numVentas = [
+                    'nombre' => 'Ventas',
+                    'valores' => $newValor
+                ];
+
+        array_push($diario,$numVentas);
+            
+        foreach ($paramsTipoGasto as $keyT => $valueT) {
+            $newValor = [];
+
+                if(isset($valores['Gasto'][$keyT])){
+                    $newValor = $valores['Gasto'][$keyT]['cantidad'];
+                }else{
+                    $newValor = '';
+                }
+            $gasto[$keyT]['nombre'] = $valueT;
+            $gasto[$keyT]['cantidad'] = $newValor;
+        }
+
+        $header[] = '';
+        $header = array_merge($header,$productos);
+
+
+        ///CARTERA RECOGIDA////
+        $carteraRecogida = $this->getCarteraRecogida($usuarioId,$fechaUso);
+
+        return [
+            'header' => $header,
+            'diario' => $diario,
+            'ventas' => $ventas,
+            'gasto' => $gasto,
+            'usuario' => $usuario,
+            'carteraRecogida' => $carteraRecogida,
+            'productoTotal' => $productoTotal,
+            'fecha' => $fechaUso,
+        ];
+
+
+    }//Fin calculoReporteDiario
+
+    public function reporteDiarioVendedor(){
+
+        if($this->request->is('post')){
+
+            $this->viewBuilder()->setLayout('excel');
+
+            if($this->request->data('usuario_id') == null){
+                $this->request->data('usuario_id',$this->Auth->user('id'));
+            }
+            
+
+            if($this->request->data('fecha') == null){
+                $this->request->data('fecha',date('Y-m-d'));
             }
 
-            $header[] = '';
-            $header = array_merge($header,$productos);
-
-
-            ///CARTERA RECOGIDA////
-            $carteraRecogida = $this->getCarteraRecogida($this->request->data('usuario_id'),$this->request->data('fecha'));
-
+            $calculo = $this->calculoReporteDiario($this->request->data('usuario_id'),$this->request->data('fecha'));
+            extract($calculo);
             $excel = 1;
             $name = 'Reporte_diario_'.$fecha;
             $this->set(compact('header','diario','excel','name','ventas','gasto','usuario','carteraRecogida','productoTotal'));
@@ -472,7 +491,6 @@ class VentasController extends AppController
         }
         
         $this->set(compact('usuarios'));
-        
     }
 
 

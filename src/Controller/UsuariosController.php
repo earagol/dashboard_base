@@ -3,6 +3,10 @@ namespace App\Controller;
 use Cake\ORM\TableRegistry;
 use App\Controller\AppController;
 use Exception;
+use Cake\I18n\Time;
+
+use App\Controller\VentasController;
+
 
 /**
  * Usuarios Controller
@@ -78,14 +82,55 @@ class UsuariosController extends AppController
             if($this->request->data('usuario_id') != null){
 
                 if(!$cierreTable->find()->where(['vendedor_id'=>$this->request->data('usuario_id'),'fecha_cierre' => date('Y-m-d')])->first()){
+                    $userId = $this->request->data('usuario_id');
+                    $cierreFecha = date('Y-m-d');
+
+                    $fechaFormat = new Time($cierreFecha);
+                    $fechaManana = $fechaFormat->modify('+1 days');
 
                     $cierre = $cierreTable->newEntity();
                     $cierre = $cierreTable->patchEntity($cierre, [
-                                    'vendedor_id'=>$this->request->data('usuario_id'),
+                                    'vendedor_id'=> $userId,
                                     'admin_id'=>$this->Auth->user('id'),
-                                    'fecha_cierre'=>date('Y-m-d')
+                                    'fecha_cierre'=>$cierreFecha
                                 ]);
                     if($cierreTable->save($cierre)){
+                        $controller = new VentasController();
+                        $calculo = $controller->calculoReporteDiario($userId, $cierreFecha);
+                        // prx($calculo['productoTotal']);
+                        if($calculo['productoTotal']){
+                            $padre['parametros_tipo_id'] = 1;
+                            $padre['usuario_id'] = $userId;
+                            $padre['fecha'] = $fechaManana;
+                            $padre['observacion'] = 'automatico';
+                            $padre['cierre_id'] = $cierre->id;
+
+                            $padreTable = TableRegistry::get('ParametrosValoresPadre');
+                            $padreValore = $padreTable->newEntity();
+                            $padreValore = $padreTable->patchEntity($padreValore, $padre);
+                            if($padreTable->save($padreValore)){
+
+                                
+                                $parametrosValoresTable = TableRegistry::get('ParametrosValores');
+                                foreach ($calculo['productoTotal'] as $key => $value) {
+                                    $parametrosValore = $parametrosValoresTable->newEntity();
+                                    $valor['parametros_tipo_id'] = 1;
+                                    $valor['padre_id'] = $padreValore->id;
+                                    $valor['producto_id'] = $key;
+                                    $valor['monto_o_cantidad'] = $value;
+                                    $valor['usuario_id'] = $userId;
+                                    $valor['fecha'] = $fechaManana;
+                                    $valor['tipo'] = 'Diario';
+                                    $parametrosValore = $parametrosValoresTable->patchEntity($parametrosValore, $valor);
+                                    if($parametrosValoresTable->save($parametrosValore)){
+                                        $flag = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        // $controller->admin_cron_cierre(true);
+
                         $this->Flash->success(__('Cierre de operaciones exitoso.'));
                         return $this->redirect(['action' => 'cierreOperacionesDiario']);
                     }
@@ -113,6 +158,13 @@ class UsuariosController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $cierre = $cierreTable->get($id);
         if ($cierreTable->delete($cierre)) {
+            $padreTable = TableRegistry::get('ParametrosValoresPadre');
+
+            $padre = $padreTable->find()->where(['cierre_id' => $id])->first();
+            $padreTable->deleteAll(['cierre_id' => $id]);
+
+            $parametrosValoresTable = TableRegistry::get('ParametrosValores');
+            $parametrosValoresTable->deleteAll(['padre_id' => $padre->id]);
             $this->Flash->success(__('El registro ha sido eliminado.'));
         } else {
             $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));

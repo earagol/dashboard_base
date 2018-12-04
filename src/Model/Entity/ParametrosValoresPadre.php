@@ -32,6 +32,7 @@ class ParametrosValoresPadre extends Entity
         'fecha' => true,
         'usuario_id' => true,
         'observacion' => true,
+        'cierre_id' => true,
         'created' => true,
         'modified' => true,
         'deleted' => true,
