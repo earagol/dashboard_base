@@ -284,19 +284,17 @@
     </div>
 </div>
 
+
+<?= $this->Form->end() ?>
+
 <div class="modal fade" id="newClient">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title heading-primary text-left">
-                    Nuevo Cliente
-                </h4>
             </div>
             <div class="modal-body">
-                <div class="alert alert-warning mb-none">
-                    <p>En construcción</p>
-                </div>
+                <?php echo $this->cell('Clientes::add', ['where'=>'venta']); ?>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">
@@ -309,7 +307,7 @@
 
 
 
-<?= $this->Form->end() ?>
+
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
 
@@ -327,7 +325,7 @@
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
     var precios = '<?php echo $precios ?>';
-    
+
 
     (function( $ ) {
 
@@ -346,6 +344,7 @@
             return data;
         }
 
+
         $("#cliente-id").select2({
             // theme: 'bootstrap4',
             // minimumInputLength: 3,
@@ -353,7 +352,7 @@
             // matcher: matchCustom
             language: {
                 noResults: function() {
-                    return "<a href='#' data-toggle='modal' data-target='#newClient' >Nuevo Cliente</a>";
+                    return "<a href='#' class='btn btn-sm btn-success nuevoCliente' id='nuevoCliente' data-toggle='modal' data-target='#newClient' >Nuevo Cliente</a>";
                 }
             },
             escapeMarkup: function (markup) {
@@ -361,14 +360,12 @@
             }
         });
 
-        // $("#nuevoCliente").click(function(e){
-        //     console.log('jhkjhj');
-        //     $('#newClient').modal();
-        // });
 
-        // $( "#nuevoCliente" ).on( "click",, function() {
+        
+
+        // $("#nuevoCliente").on( "click", "a", function() {
         //   console.log('jhkjhj');
-        //     $('#newClient').modal();
+        //     // $('#newClient').modal();
         // });
 
         // $(".chosen-search input").on({

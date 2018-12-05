@@ -95,6 +95,7 @@ class ClientesController extends AppController
     {
         $cliente = $this->Clientes->newEntity();
         if ($this->request->is('post')) {
+            // prx($this->request->data);
             $validator = new \Cake\Validation\Validator();
             try {
                 // pr($this->request->data);
@@ -116,6 +117,9 @@ class ClientesController extends AppController
                         $this->logCreditos($cliente->id,$this->request->data('credito_disponible'));
                     }
                     $this->Flash->success(__('Registro exitoso.'));
+                    if($this->request->data('where') == 'venta'){
+                        return $this->redirect(['controller'=>'ventas','action' => 'add',$cliente->id]);
+                    }
                     return $this->redirect(['action' => 'index']);
                 }
                 $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
