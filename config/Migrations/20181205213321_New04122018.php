@@ -19,5 +19,13 @@ class New04122018 extends AbstractMigration
                                 'after' => 'observacion',
                             ])
                             ->update();
+
+         $tableparametrostipos = $this->table('parametros_tipos')
+                            ->addColumn('modificable', 'boolean', [
+                                'default' => true,
+                                'null' => true,
+                                'after' => 'usuario_id'
+                            ])
+                            ->update();
     }
 }

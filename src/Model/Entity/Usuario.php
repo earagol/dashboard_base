@@ -54,7 +54,9 @@ class Usuario extends Entity
     protected $_virtual = ['full_name'];
 
     protected function _getFullName() {
-        return $this->_properties['nombres'] . ' ' . $this->_properties['apellidos'];
+        if(isset($this->_properties['nombres']) && isset($this->_properties['apellidos'])){
+            return $this->_properties['nombres'] . ' ' . $this->_properties['apellidos'];
+        }
     }
 
 }

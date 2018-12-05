@@ -88,6 +88,11 @@ class UsuariosController extends AppController
                     $fechaFormat = new Time($cierreFecha);
                     $fechaManana = $fechaFormat->modify('+1 days');
 
+                    if(date('w', strtotime($fechaManana)) == 0){
+                        $fechaManana = $fechaFormat->modify('+1 days');
+                    }
+
+
                     $cierre = $cierreTable->newEntity();
                     $cierre = $cierreTable->patchEntity($cierre, [
                                     'vendedor_id'=> $userId,
@@ -97,7 +102,6 @@ class UsuariosController extends AppController
                     if($cierreTable->save($cierre)){
                         $controller = new VentasController();
                         $calculo = $controller->calculoReporteDiario($userId, $cierreFecha);
-                        // prx($calculo['productoTotal']);
                         if($calculo['productoTotal']){
                             $padre['parametros_tipo_id'] = 1;
                             $padre['usuario_id'] = $userId;

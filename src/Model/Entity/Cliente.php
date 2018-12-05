@@ -85,10 +85,18 @@ class Cliente extends Entity
         'ventas' => true,
         'visitas' => true
     ];
+    
+    /**
+     * Fields that are excluded from JSON versions of the entity.
+     *
+     * @var array
+     */
 
     protected $_virtual = ['show_select'];
 
     protected function _getShowSelect() {
-       return @$this->_properties['nombres'] . ' - ' . $this->_properties['rut'];
+        if(isset($this->_properties['nombres']) && isset($this->_properties['rut'])){
+            return $this->_properties['nombres'] . ' - ' . $this->_properties['rut'];
+        }
     }
 }

@@ -32,6 +32,7 @@ class ParametrosTipo extends Entity
         'tipo' => true,
         'nombre' => true,
         'usuario_id' => true,
+        'modificable' => true,
         'created' => true,
         'modified' => true,
         'deleted' => true,

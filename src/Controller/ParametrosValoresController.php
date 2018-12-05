@@ -35,14 +35,14 @@ class ParametrosValoresController extends AppController
         $cierreTable = TableRegistry::get('CierreOperaciones');
         if($cierreTable->find()->where(['vendedor_id'=>$this->Auth->user('id'),'fecha_cierre' => date('Y-m-d')])->first()){
             $this->Flash->error('Operaciones diarias cerradas por el resto del dia.');
-            return $this->redirect('/');
+            return $this->redirect(['controller' => 'dashboard','action' => 'index',1]);
         }
 
         $fecha = date('Y-m-d');
 
         $this->paginate = [
             'contain' => ['ParametrosValores','ParametrosTipos'],
-            'conditions' => ['ParametrosValoresPadre.fecha' => $fecha]
+            'conditions' => ['ParametrosValoresPadre.fecha' => $fecha,'ParametrosValoresPadre.usuario_id'=>$this->Auth->user('id')]
         ];
 
         $parametrosValores = $this->paginate(TableRegistry::get('ParametrosValoresPadre'));
@@ -62,7 +62,6 @@ class ParametrosValoresController extends AppController
                                                     ->contain(['Productos','ParametrosTipos'])
                                                     ->where(['ParametrosValores.padre_id' => $id])
                                                     ->toArray();
-        // prx($parametrosValores);
         $this->set('parametrosValores', $parametrosValores);
     }
 
@@ -80,48 +79,49 @@ class ParametrosValoresController extends AppController
             $productos = $productosTable->find('list', ['limit' => 200]);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('fecha',date('Y-m-d'));
-            //prx($this->request->data);
-            $padreValore = $padreTable->newEntity();
-            $padreValore = $padreTable->patchEntity($padreValore, $this->request->getData());
-            if($padreTable->save($padreValore)){
+            if($this->request->data('parametros_tipo_id') == 1 && $padreTable->find()->where(['parametros_tipo_id' => $this->request->data('parametros_tipo_id'),'fecha' => $this->request->data('fecha')])->first()){
+                $this->Flash->error(__('El parametro de inicio ya existe registrado.'));
+            }else{
+                $padreValore = $padreTable->newEntity();
+                $padreValore = $padreTable->patchEntity($padreValore, $this->request->getData());
+                if($padreTable->save($padreValore)){
 
-                if($this->request->data('tipo') == 'Diario'){
-                    $valor = [];
-                    $flag = false;
-                    foreach ($productos as $key => $value) {
+                    if($this->request->data('tipo') == 'Diario'){
+                        $valor = [];
+                        $flag = false;
+                        foreach ($productos as $key => $value) {
+                            $parametrosValore = $this->ParametrosValores->newEntity();
+                            $valor['parametros_tipo_id'] = $this->request->data('parametros_tipo_id');
+                            $valor['padre_id'] = $padreValore->id;
+                            $valor['producto_id'] = $key;
+                            $valor['monto_o_cantidad'] = str_replace('.','',$this->request->data('producto_id_'.$key));
+                            $valor['usuario_id'] = $this->request->data('usuario_id');
+                            $valor['fecha'] = $this->request->data('fecha');
+                            $valor['tipo'] = $this->request->data('tipo');
+                            $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $valor);
+                            if($this->ParametrosValores->save($parametrosValore)){
+                                $flag = true;
+                            }
+                        }
+                        if ($flag) {
+                            $this->Flash->success(__('Registro exitoso.'));
+                            return $this->redirect(['action' => 'index']);
+                        }
+                    }else{
+                        $this->request->data('monto_o_cantidad',str_replace('.','',$this->request->data('monto_o_cantidad')));
+                        $this->request->data('padre_id',$padreValore->id);
                         $parametrosValore = $this->ParametrosValores->newEntity();
-                        $valor['parametros_tipo_id'] = $this->request->data('parametros_tipo_id');
-                        $valor['padre_id'] = $padreValore->id;
-                        $valor['producto_id'] = $key;
-                        $valor['monto_o_cantidad'] = str_replace('.','',$this->request->data('producto_id_'.$key));
-                        $valor['usuario_id'] = $this->request->data('usuario_id');
-                        $valor['fecha'] = $this->request->data('fecha');
-                        $valor['tipo'] = $this->request->data('tipo');
-                        $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $valor);
-                        if($this->ParametrosValores->save($parametrosValore)){
-                            $flag = true;
+                        $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $this->request->getData());
+                        if ($this->ParametrosValores->save($parametrosValore)) {
+                            $this->Flash->success(__('Registro exitoso.'));
+
+                            return $this->redirect(['action' => 'index']);
                         }
                     }
-                    if ($flag) {
-                        $this->Flash->success(__('Registro exitoso.'));
-                        return $this->redirect(['action' => 'index']);
-                    }
-                }else{
-                    $this->request->data('monto_o_cantidad',str_replace('.','',$this->request->data('monto_o_cantidad')));
-                    $this->request->data('padre_id',$padreValore->id);
-                    $parametrosValore = $this->ParametrosValores->newEntity();
-                    $parametrosValore = $this->ParametrosValores->patchEntity($parametrosValore, $this->request->getData());
-                    if ($this->ParametrosValores->save($parametrosValore)) {
-                        $this->Flash->success(__('Registro exitoso.'));
-
-                        return $this->redirect(['action' => 'index']);
-                    }
+                    $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
                 }
-                // prx($this->request->data);
                 $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
             }
-            // prx($this->request->data);
-            $this->Flash->error(__('El registro no pudo realizarse, por favor intenta nuevamente.'));
         }
 
         $parametrosTiposTable = TableRegistry::get('ParametrosTipos');

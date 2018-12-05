@@ -42,8 +42,32 @@ class DashboardsController extends AppController
     }
 
     private function vencerVisitas(){
+        $visitasTable = tableRegistry::get('Visitas');
+        $query = $visitasTable->find()->contain('VisitaDetalles')->where(['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P']);
+        if($query){
 
-        TableRegistry::get('Visitas')->updateAll(['status' => 'V'],['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P']);
+            foreach ($query as $key => $value) {
+                $value = $value->toArray();
+                unset($value['created'],$value['modified']);
+                $value['fecha_vencimiento'] = date('Y-m-d');
+                // prx($value);
+                $visita = $visitasTable->newEntity();
+                $visita = $visitasTable->patchEntity($visita, $value);
+                $visitasTable->save($visita);
+                if($value['visita_detalles']){
+                    foreach ($value['visita_detalles'] as $keyV => $valueV) {
+                        unset($valueV['created'],$valueV['modified']);
+                        $valueV['visita_id'] = $visita->id;
+                        $detalles = $visitasTable->VisitaDetalles->newEntity();
+                        $detalles = $visitasTable->VisitaDetalles->patchEntity($detalles, $valueV);
+                        $visitasTable->VisitaDetalles->save($detalles);
+                    }
+                }
+            }
+
+            $visitasTable->updateAll(['status' => 'V'],['fecha_vencimiento <' => date('Y-m-d'),'status'=> 'P']);
+
+        }
 
     }
 
@@ -56,8 +80,12 @@ class DashboardsController extends AppController
      * @throws \Cake\Http\Exception\NotFoundException When the view file could not
      *   be found or \Cake\View\Exception\MissingTemplateException in debug mode.
      */
-    public function index()
+    public function index($flag = false)
     {
+        if(!$flag && $this->Auth->user('role') === 'usuario'){
+            return $this->redirect(['controller'=>'ventas','action' => 'add']);
+        }
+        
         $clientes = null;
         $fecha = date('Y-m-d');
         $control = TableRegistry::get('Ventas')->find();

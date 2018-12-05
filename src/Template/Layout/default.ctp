@@ -201,7 +201,7 @@ $cakeDescription = 'Estrella';
                     <ul class="nav navbar-nav">
 
                         <li class="active">
-                            <?php echo $this->Html->link(__(' <i class="menu-icon fa fa-laptop"></i>Dashboard'), ['controller'=>'dashboards','action' => 'index'],['title'=>'Dashboard','escape' => false]) ?>
+                            <?php echo $this->Html->link(__(' <i class="menu-icon fa fa-laptop"></i>Dashboard'), ['controller'=>'dashboards','action' => 'index',1],['title'=>'Dashboard','escape' => false]) ?>
                             <!-- <a href="index.html"><i class="menu-icon fa fa-laptop"></i>Dashboard </a> -->
                         </li>
 
