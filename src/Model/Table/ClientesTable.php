@@ -6,6 +6,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use SoftDelete\Model\Table\SoftDeleteTrait;
+use Cake\ORM\TableRegistry;
 
 /**
  * Clientes Model
@@ -148,6 +149,17 @@ class ClientesTable extends Table
             ->notEmpty('observacion');
 
         $validator
+            ->scalar('region_id')
+            ->requirePresence('region_id', 'create')
+            ->notEmpty('region_id');
+
+        $validator
+            ->scalar('comuna_id')
+            ->requirePresence('comuna_id', 'create')
+            ->notEmpty('comuna_id');
+
+
+        $validator
             ->scalar('calle')
             ->maxLength('calle', 200)
             ->requirePresence('calle', 'create')
@@ -180,7 +192,8 @@ class ClientesTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        // $rules->add($rules->isUnique(['email']));
+        // $rules->add($rules->isUnique(['rut'],['message'=>'El RUT ya existe registrado.']));
+        // $rules->add($rules->isUnique(['email'],'correo existe'));
         $rules->add($rules->existsIn(['ruta_id'], 'Rutas'));
         $rules->add($rules->existsIn(['clasificacion_id'], 'Clasificaciones'));
         $rules->add($rules->existsIn(['region_id'], 'Regiones'));
@@ -188,5 +201,46 @@ class ClientesTable extends Table
         // $rules->add($rules->existsIn(['usuario_id'], 'Usuarios'));
 
         return $rules;
+    }
+
+    //Retorna listado de clientes morosos
+    public function clientesMorosos($usuarioId=null){
+
+        $clienteMorosos = $this->find()->where(['cuenta_porcobrar >'=>0]);
+
+        if($usuarioId){
+
+            $usuario = $this->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $usuarioId ]])->first();
+
+            if($usuario->role === 'usuario'){
+            
+                if($usuario->rutas){
+                    $rutas = [];
+                    foreach ($usuario->rutas as $key => $value) {
+                        $rutas[$value->id]=$value->id;
+                    }
+                    $clienteMorosos->where(['Clientes.ruta_id IN' => array_keys($rutas)]);
+                }
+            }
+
+        }
+
+        return $clienteMorosos->toArray();
+    }
+
+
+    // Adaptar esta funcion para pasar id del vendedor y retorne el cxc por vendedor
+    public function totalCXC($usuarioId=null){
+
+        $cxc = $this->find();
+        $cxc = $cxc->select([
+                    'total_cxc' => $cxc->func()->count('id'),
+                    'monto_cxc' => $cxc->func()->sum('cuenta_porcobrar')
+                ])
+                ->where([
+                    'cuenta_porcobrar >'=>0
+                ])->first();
+
+        return $cxc;
     }
 }

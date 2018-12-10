@@ -95,20 +95,10 @@ class ClientesController extends AppController
     {
         $cliente = $this->Clientes->newEntity();
         if ($this->request->is('post')) {
-            // prx($this->request->data);
-            $validator = new \Cake\Validation\Validator();
-            try {
-                // pr($this->request->data);
 
-                // $errors = $validator->errors($this->request->data);
+            if(!$this->Clientes->find()->where(['rut'=>trim($this->request->data('rut'))])->first()){
+                $this->request->data('rut',trim($this->request->data('rut')));
 
-                // if ($errors) {
-                //     foreach ($errors as $key => $values) {
-                //         foreach ($values as $field => $error) {
-                //             throw new Exception($error);
-                //         }
-                //     }
-                // }
                 $this->request->data('credito_disponible',str_replace('.','',$this->request->data('credito_disponible')));
                 $this->request->data('usuario_id',$this->Auth->user('id'));
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
@@ -123,9 +113,9 @@ class ClientesController extends AppController
                     return $this->redirect(['action' => 'index']);
                 }
                 $this->Flash->error(__('El registro no pudo realizarse, por favor intente nuevamente.'));
-            } catch (Exception $e) {
-                $message = $e->getMessage();
-                $this->Flash->error($message);
+
+            }else{
+                $this->Flash->error(__('El rut ya existe registrado.'));
             }
         }
         $rutas = $this->Clientes->Rutas->find('list', ['limit' => 200]);
@@ -195,6 +185,17 @@ class ClientesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
+
+    public function exportarMorosos()
+    {
+        $this->viewBuilder()->setLayout('excel');
+        $clienteMorosos = $this->Clientes->clientesMorosos($this->Auth->user('id'));
+        $name = 'Reporte_morosos';
+        $this->set(compact('clienteMorosos','name'));
+    }
+
 
     
 }

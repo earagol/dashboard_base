@@ -20,12 +20,19 @@
         outline: none;
         box-shadow: none;
     }
+
+    .modal {
+        position: absolute;
+        /*left: 0px;
+        top: 0px;*/
+        z-index: 10000;
+    }
 </style>
 
 <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" /> -->
 
 
-<?php echo $this->Form->create($venta) ?>
+<?php echo $this->Form->create($venta,['id'=>'formVentas']) ?>
 <div class="col-lg-12">
     <div class="card">
         <div class="card-header">
@@ -272,7 +279,7 @@
             <?php endif; ?>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Observacion</label>
+                <label for="company" class=" form-control-label">Observación</label>
                 <?php echo $this->Form->control('observacion', ['type'=>'textarea','class'=>'form-control','value' => '','label'=>false]); ?>
             </div>
 
@@ -288,7 +295,7 @@
 <?= $this->Form->end() ?>
 
 <div class="modal fade" id="newClient">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -455,7 +462,7 @@
                     if(!conf){
                         return;
                     }
-                    $('form').submit();
+                    $('#formVentas').submit();
                     return;
                 }
             }
@@ -465,7 +472,7 @@
                 return;
             }
 
-            $('form').submit();
+            $('#formVentas').submit();
         });
 
         function number_format(amount, decimals) {

@@ -149,32 +149,19 @@ class DashboardsController extends AppController
                     'Ventas.monto_transferencia IS NOT NULL'
                 ])->first();
 
-        $clientTabla = TableRegistry::get('Clientes');
-        $clienteMorosos = $clientTabla->find()->where(['cuenta_porcobrar >'=>0]);
-        if($this->Auth->user('role') === 'usuario'){
-            $usuario = $clientTabla->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
-            if($usuario->rutas){
-                $rutas = [];
-                foreach ($usuario->rutas as $key => $value) {
-                    $rutas[$value->id]=$value->id;
-                }
-                $clienteMorosos->where(['Clientes.ruta_id IN' => array_keys($rutas)]);
-            }
-        }
 
-        $clienteMorosos = $clienteMorosos->toArray();
+        $clientesTable = TableRegistry::get('Clientes');
+
+
+        ///////////////////MOROSOS/////////////////////////
+
+        $clienteMorosos = $clientesTable->clientesMorosos($this->Auth->user('id'));
 
 
         //////////////////CXC////////////////////////////
+
+        $cxc = $clientesTable->totalCXC($this->Auth->user('id'));
         
-        $cxc = TableRegistry::get('Clientes')->find();
-        $cxc = $cxc->select([
-                    'total_cxc' => $cxc->func()->count('id'),
-                    'monto_cxc' => $cxc->func()->sum('cuenta_porcobrar')
-                ])
-                ->where([
-                    'cuenta_porcobrar >'=>0
-                ])->first();
         $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes','clienteMorosos','cxc'));
     }
 }

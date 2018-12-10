@@ -27,11 +27,11 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col"><?= $this->Paginator->sort('id','Id <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('clasificacion_id','Clasificación <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('tipo','Tipo <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('Nombres','Razon social o Nombres <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('ruta_id','Ruta <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('id','Id <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('clasificacion_id','Clasificación <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('tipo','Tipo <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('Nombres','Razon social o Nombres <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                        <th scope="col"><?php echo $this->Paginator->sort('ruta_id','Ruta <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                         <th >Acciones</th>
                     </tr>
                 </thead>
@@ -40,11 +40,11 @@
                         $tipo = $cliente->tipo == 1?'Empresa':'Persona';
                         ?>
                         <tr>
-                            <td><?= $this->Number->format($cliente->id) ?></td>
-                            <td><?= h($cliente->clasificacione->nombre) ?></td>
-                            <td><?= h($tipo) ?></td>
-                            <td><?= h($cliente->nombres) ?></td>
-                            <td><?= $cliente->has('ruta') ? $cliente->ruta->nombre : '' ?></td>
+                            <td><?php echo $cliente->id ?></td>
+                            <td><?php echo h($cliente->clasificacione->nombre) ?></td>
+                            <td><?php echo h($tipo) ?></td>
+                            <td><?php echo h($cliente->nombres) ?></td>
+                            <td><?php echo $cliente->has('ruta') ? $cliente->ruta->nombre : '' ?></td>
                             <td class="text-center">
                                 <?php echo $this->Html->link(__('<i class="fa fa-arrow-right"></i>'), ['controller'=>'Ventas','action' => 'add', $cliente->id],['title'=>'Realizar Venta','escape' => false]) ?>
                                 <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $cliente->id],['title'=>'Editar','escape' => false]) ?>

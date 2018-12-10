@@ -207,6 +207,9 @@
             <div class="card nocard">
                 <div class="card-body">
                     <h4 class="box-title">Clientes con cartera pendiente</h4>
+                    <span class="pull-right">
+                            <?php echo $this->Html->link(__('Exportar'), ['controller' => 'clientes','action' => 'exportarMorosos'],['class'=>'btn btn-sm btn-success','title'=>'Realizar Venta','escape' => false]) ?>
+                    </span>
                 </div>
                 <div class="card-body--">
                     <div class="table-stats order-table ov-h">

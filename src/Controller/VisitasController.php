@@ -133,11 +133,10 @@ class VisitasController extends AppController
         $session = $this->request->session();
         $visita = $this->Visitas->newEntity();
         if ($this->request->is('post')) {
-            //prx($this->request->data);
+            prx($this->request->data());
             $flag = true;
             $validator = new \Cake\Validation\Validator();
             try {
-                // throw new Exception($error);
                 $now = new Time($this->request->data('fecha_vencimiento'));
                 $this->request->data('fecha_vencimiento',$now->format('Y-m-d'));
 
@@ -202,11 +201,22 @@ class VisitasController extends AppController
         }
         $usuarios = $this->Visitas->Usuarios->find('list', ['limit' => 200]);
 
-        $clientes = $this->Visitas->Clientes->find('list')->notMatching(
-            'Visitas', function ($q) {
-                return $q->where(['Visitas.status' => 'P']);
-            }
-        );
+        $clientesAll = $this->Visitas->Clientes->find('all')
+                                            ->select(['ruta_id','nombres','rut'])
+                                            ->notMatching(
+                                                'Visitas', function ($q) {
+                                                    return $q->where(['Visitas.status' => 'P']);
+                                                }
+                                            )
+                                            ->toArray();
+
+        // $clientes = $this->Visitas->Clientes->find('list')->notMatching(
+        //     'Visitas', function ($q) {
+        //         return $q->where(['Visitas.status' => 'P']);
+        //     }
+        // );
+
+        $usuariosRutas = $this->Visitas->Usuarios->find()->contain(['Rutas'])->toArray();
 
         $session->delete('detalles');
 
@@ -214,7 +224,7 @@ class VisitasController extends AppController
         $productos = $productosTable->find('list')->toArray();
         $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
 
-        $this->set(compact('visita', 'usuarios', 'clientes', 'usuarios','productos','productosPrecios'));
+        $this->set(compact('visita', 'usuarios', 'clientesAll', 'usuarios','productos','productosPrecios','usuariosRutas'));
     }
 
 
@@ -320,4 +330,39 @@ class VisitasController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
+
+    public function reporteVisitasDiferentesAVentas(){
+
+        if($this->request->is('post')){
+
+            $this->viewBuilder()->setLayout('excel');
+
+            if($this->request->data('usuario_id') == null){
+                $this->request->data('usuario_id',$this->Auth->user('id'));
+            }
+            
+
+            if($this->request->data('fecha') == null){
+                $this->request->data('fecha',date('Y-m-d'));
+            }
+
+            $calculo = $this->calculoReporteDiario($this->request->data('usuario_id'),$this->request->data('fecha'));
+            extract($calculo);
+            $excel = 1;
+            $name = 'Reporte_diario_'.$fecha;
+            $this->set(compact('header','diario','excel','name','ventas','gasto','usuario','carteraRecogida','productoTotal'));
+
+        }
+
+        if($this->Auth->user('role') == 'admin'){
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+        
+        $this->set(compact('usuarios'));
+
+    }//Fin reporteVisitasDiferentesAVentas
 }

@@ -21,7 +21,15 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Cliente</label>
-                <?php echo $this->Form->control('cliente_id',['class'=>'form-control','empty' => '--Selecciones al cliente--','label'=>false]); ?>
+                <?php echo $this->Form->control('cliente_id', [
+                                                    // 'default' => $cliente? $cliente->id : '',
+                                                    'empty' => 'Seleccione un cliente',
+                                                    'class' => 'form-control',
+                                                    'label' => false,
+                                                    'multiple' => false,
+                                                    'tabindex' => 1,
+                                                    ]); ?>
+                <!-- <?php echo $this->Form->control('cliente_id',['class'=>'form-control','empty' => '--Selecciones el cliente--','label'=>false]); ?> -->
             </div>
 
             <div class="form-group" >
@@ -156,16 +164,101 @@
 </div>
 
 <?= $this->Form->end() ?>
+<?php echo $this->Html->css('../vendors/select2-bootstrap/dist/select2') ?>
+<?php echo $this->Html->css('../vendors/select2-bootstrap/dist/select2-bootstrap') ?>
+<?php echo $this->Html->script('../vendors/select2-bootstrap/dist/select2') ?>
+
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
 
+
+<?php $clientesAll = json_encode($clientesAll,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>
+<?php $usuariosRutas = json_encode($usuariosRutas,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>
+
+
+
+
 <script>
+    var clientes = '<?php echo $clientesAll ?>';
+    var rutas = '<?php echo $usuariosRutas ?>';
+
+    function inArray(needle, haystack) {
+        var length = haystack.length;
+        for(var i = 0; i < length; i++) {
+            if(haystack[i] == needle) return true;
+        }
+        return false;
+    }
+
     var url1 = '<?php echo $url; ?>';
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
     var precios = '<?php echo $precios ?>';
 
     (function( $ ) {
+
+        var jsonRutas = $.parseJSON(rutas);
+        var jsonClientes = $.parseJSON(clientes);
+
+         $("#cliente-id").select2({
+            language: {
+                noResults: function() {
+                    return "<b>No se encontraron coincidencias.</b>";
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+        
+        $('#usuario-id').change(function() {
+            if($(this).val() == ''){
+                return;
+            }
+            cargarClientes($(this).val());
+        });
+
+        function cargarClientes(usuario){
+            // $('#cliente-id').empty();
+            $("#cliente-id").select2("val", "");
+            
+            var rutasUser = [];
+
+            $.each(jsonRutas,function(i,user){
+                if(eval(usuario) == user.id ){
+                    $.each(user.rutas,function(i,ru){
+                        rutasUser.push(ru.id);
+                    });
+                }
+            });
+
+            if(!rutasUser){
+                alert('El vendedor seleccionado no tiene ruta(s) asociada(s).');
+                return;
+            }
+            var data = [];
+            // $('#cliente-id').append('<option value="">--Seleccione el cliente--</option>');
+            // data.push({ id:"", text:"--Seleccione un cliente--" });
+
+            var $newOption = $("<option></option>").val("").text("--Seleccione un cliente--");
+            $("#cliente-id").append($newOption).trigger('change');
+
+            $.each(jsonClientes,function(i,valp){
+                if(inArray(valp.ruta_id,rutasUser)){
+                    // data.push({ id:valp.id, text:valp.show_select });
+                    // $('#cliente-id').append('<option value="'+valp.id+'">'+valp.show_select+'</option>');
+                    var $newOption = $("<option></option>").val(valp.id).text(valp.show_select);
+                    $("#cliente-id").append($newOption).trigger('change');
+                }
+            });
+
+            // $("#cliente-id").select2({
+            //   placeholder: "--Seleccione un cliente--",
+            //   data: data
+            // });
+        }
+
+
 
         var jsonPrecios = $.parseJSON(precios);
 
@@ -205,7 +298,7 @@
                     alert('La fecha de vencimiento no debe ser menor a la fecha actual.');
                     return;
                 } */
-
+                console.log($("#cliente-id").val(),$('form').serialize());
             if($("#usuario-id").val() == ''){
                 alert('Debe seleccionar al vendedor');
                 return;

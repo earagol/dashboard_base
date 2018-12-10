@@ -919,7 +919,7 @@ class VentasController extends AppController
         }
 
 
-        if($this->Auth->user('role') === 'usuario'){
+        /*if($this->Auth->user('role') === 'usuario'){
             $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
             if($usuario){
                 $rutas = [];
@@ -929,6 +929,14 @@ class VentasController extends AppController
             }
         }else{
             $rutas = array_flip($this->Ventas->Clientes->Rutas->find('list')->toArray());
+        }*/
+
+        $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
+        if($usuario){
+            $rutas = [];
+            foreach ($usuario->rutas as $key => $value) {
+                $rutas[$value->id]=$value->id;
+            }
         }
 
         $clientes = $this->Ventas->Clientes->find('list', [
