@@ -291,6 +291,8 @@
     </div>
 </div>
 
+<?php echo $this->Form->control('visita_id', ['type'=>'hidden','class'=>'form-check-input','label'=>false,'value'=>$visitaId]); ?> 
+
 
 <?= $this->Form->end() ?>
 
@@ -577,6 +579,8 @@
                 alert('Ingrese la cantidad');
                 return;
             }
+
+            $('#grilla').html('<h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3>');
 
             $.ajax({
                 url:url1+'ventas/detalles',

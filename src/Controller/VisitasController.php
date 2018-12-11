@@ -103,10 +103,6 @@ class VisitasController extends AppController
         $this->set(compact('productos','visitas', 'productoTotal','total','name'));
     }//Fin reporteVisitas
 
-
-    
-
-
     /**
      * View method
      *
@@ -133,7 +129,6 @@ class VisitasController extends AppController
         $session = $this->request->session();
         $visita = $this->Visitas->newEntity();
         if ($this->request->is('post')) {
-            prx($this->request->data());
             $flag = true;
             $validator = new \Cake\Validation\Validator();
             try {
@@ -201,30 +196,52 @@ class VisitasController extends AppController
         }
         $usuarios = $this->Visitas->Usuarios->find('list', ['limit' => 200]);
 
-        $clientesAll = $this->Visitas->Clientes->find('all')
-                                            ->select(['ruta_id','nombres','rut'])
-                                            ->notMatching(
-                                                'Visitas', function ($q) {
-                                                    return $q->where(['Visitas.status' => 'P']);
-                                                }
-                                            )
-                                            ->toArray();
-
-        // $clientes = $this->Visitas->Clientes->find('list')->notMatching(
-        //     'Visitas', function ($q) {
-        //         return $q->where(['Visitas.status' => 'P']);
-        //     }
-        // );
-
-        $usuariosRutas = $this->Visitas->Usuarios->find()->contain(['Rutas'])->toArray();
-
         $session->delete('detalles');
 
         $productosTable = TableRegistry::get('Productos');
         $productos = $productosTable->find('list')->toArray();
         $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
 
-        $this->set(compact('visita', 'usuarios', 'clientesAll', 'usuarios','productos','productosPrecios','usuariosRutas'));
+        $this->set(compact('visita', 'usuarios', 'usuarios','productos','productosPrecios'));
+    }
+
+
+     /**
+     * Select method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function select()
+    {
+
+        $usuarioId = $this->request->data('usuarioId');
+        $usuariosRutas = $this->Visitas->Usuarios->find()->contain(['Rutas'])->where(['Usuarios.id'=>$usuarioId])->first();
+        $rutas = [];
+        if($usuariosRutas){
+            foreach ($usuariosRutas->rutas as $key => $value) {
+                $rutas[] = $value->id;
+            }
+        }
+
+        $clientes = [];
+
+        if($rutas){
+
+            $clientes = $this->Visitas->Clientes->find('list',[
+                                                    'keyField' => 'id',
+                                                    'valueField' => 'show_select'
+                                                ])
+                                                ->notMatching(
+                                                    'Visitas', function ($q) {
+                                                        return $q->where(['Visitas.status' => 'P']);
+                                                    }
+                                                )
+                                                ->where(['ruta_id IN' => $rutas])
+                                                ->toArray();
+
+        }
+        
+        $this->set(compact('clientes'));
     }
 
 

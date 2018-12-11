@@ -14,7 +14,7 @@
                             <div class="stat-text"><span class="count"><?php echo $cxc->total_cxc?$cxc->total_cxc:0; ?></span></div>
                             <div class="stat-heading">N° Clientes con CXC</div>
 
-                            <div class="stat-text">$<span class="count1"><?php echo $cxc->monto_cxc?$cxc->monto_cxc:0; ?></span></div>
+                            <div class="stat-text">$<span class="count1"><?php echo number_format($cxc->monto_cxc?$cxc->monto_cxc:0, 0, ",", "."); ?></span></div>
                             <div class="stat-heading">Monto total CXC</div>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib"> 
-                            <div class="stat-text">$<span class="count"><?php echo $dataReal->monto_total?$dataReal->monto_total:0; ?></span></div>
+                            <div class="stat-text">$<span class="count1"><?php echo number_format($dataReal->monto_total?$dataReal->monto_total:0, 0, ",", "."); ?></span></div>
                             <div class="stat-heading">Monto Venta <small><?php echo $fecha; ?></small></div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                             <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:0; ?></span></div>
                             <div class="stat-heading">N° Trans por Confirmar</div>
 
-                            <div class="stat-text"><span class="count1"><?php echo $transferidas->monto_transferencia?$transferidas->monto_transferencia:0; ?></span></div>
+                            <div class="stat-text"><span class="count1"><?php echo number_format($transferidas->monto_transferencia?$transferidas->monto_transferencia:0, 0, ",", "."); ?> </span></div>
                             <div class="stat-heading">Monto Trans por Confirmar</div>
                         </div>
                     </div>
@@ -119,6 +119,7 @@
                                         <th scope="col">Email</th>
                                         <th scope="col">Telefono 1</th>
                                         <th scope="col">Telefono 2</th>
+                                        <th scope="col">Fecha</th>
                                         <th scope="col">Monto</th>
                                         <th scope="col">Acción</th>
                                     </tr>
@@ -132,6 +133,7 @@
                                                     <td><span><?php echo $value->email; ?></span> </td> 
                                                     <td><span><?php echo $value->telefono1; ?></span> </td>
                                                     <td><?php echo $value->telefono2; ?></td>
+                                                    <td><?php echo $value->_matchingData['Ventas']->fecha->format('Y-m-d'); ?></td>
                                                     <td><span ><?php echo number_format($value->_matchingData['Ventas']->monto_transferencia, 0, ",", "."); ?></span></td>
                                                     <td> 
                                                         <button class="change badge badge-complete" data-id="<?php echo $value->_matchingData['Ventas']->id; ?>">Confirmar</button>

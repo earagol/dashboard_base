@@ -918,7 +918,7 @@ class VentasController extends AppController
             $this->set('detalles',$session->read('detalles'));
         }
 
-
+        
         /*if($this->Auth->user('role') === 'usuario'){
             $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
             if($usuario){
@@ -946,7 +946,7 @@ class VentasController extends AppController
                                     ->where(['ruta_id IN'=>$rutas])
                                     ->toArray();
         
-        $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente','clientes','productosRetornables'));
+        $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente','clientes','productosRetornables','visitaId'));
     }
 
     public function datosCliente(){

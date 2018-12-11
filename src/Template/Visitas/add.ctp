@@ -19,7 +19,7 @@
                 <?php echo $this->Form->control('usuario_id',['class'=>'form-control','label'=>false,'empty' => '--Seleccione al vendedor--']); ?>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="cargaSelect">
                 <label for="company" class=" form-control-label">Cliente</label>
                 <?php echo $this->Form->control('cliente_id', [
                                                     // 'default' => $cliente? $cliente->id : '',
@@ -171,16 +171,7 @@
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
 
-
-<?php $clientesAll = json_encode($clientesAll,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>
-<?php $usuariosRutas = json_encode($usuariosRutas,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>
-
-
-
-
 <script>
-    var clientes = '<?php echo $clientesAll ?>';
-    var rutas = '<?php echo $usuariosRutas ?>';
 
     function inArray(needle, haystack) {
         var length = haystack.length;
@@ -197,9 +188,6 @@
 
     (function( $ ) {
 
-        var jsonRutas = $.parseJSON(rutas);
-        var jsonClientes = $.parseJSON(clientes);
-
          $("#cliente-id").select2({
             language: {
                 noResults: function() {
@@ -215,11 +203,26 @@
             if($(this).val() == ''){
                 return;
             }
-            cargarClientes($(this).val());
+
+            $('#cargaSelect').html('<h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3>');
+
+            $.ajax({
+                url:url1+'visitas/select',
+                dataType: 'html',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-Token': csrfToken
+                },
+                data:{
+                    usuarioId: $(this).val()
+                },
+                success: function(response){
+                    $('#cargaSelect').html(response);
+                }
+            });
         });
 
         function cargarClientes(usuario){
-            // $('#cliente-id').empty();
             $("#cliente-id").select2("val", "");
             
             var rutasUser = [];
@@ -237,25 +240,15 @@
                 return;
             }
             var data = [];
-            // $('#cliente-id').append('<option value="">--Seleccione el cliente--</option>');
-            // data.push({ id:"", text:"--Seleccione un cliente--" });
-
             var $newOption = $("<option></option>").val("").text("--Seleccione un cliente--");
             $("#cliente-id").append($newOption).trigger('change');
 
             $.each(jsonClientes,function(i,valp){
                 if(inArray(valp.ruta_id,rutasUser)){
-                    // data.push({ id:valp.id, text:valp.show_select });
-                    // $('#cliente-id').append('<option value="'+valp.id+'">'+valp.show_select+'</option>');
                     var $newOption = $("<option></option>").val(valp.id).text(valp.show_select);
                     $("#cliente-id").append($newOption).trigger('change');
                 }
             });
-
-            // $("#cliente-id").select2({
-            //   placeholder: "--Seleccione un cliente--",
-            //   data: data
-            // });
         }
 
 
@@ -446,6 +439,8 @@
                     alert('Ingrese la cantidad');
                     return;
                 }
+
+                $('#grilla').html('<h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3>');
 
                 $.ajax({
                     url:url1+'visitas/detalles',

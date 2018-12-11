@@ -123,6 +123,7 @@ class DashboardsController extends AppController
                                     'Ventas.id',
                                     'Ventas.monto_total',
                                     'Ventas.monto_transferencia',
+                                    'Ventas.fecha',
                                     // 'total' => $clienteTransPen->func()->count('Ventas.id')
                                 ])
                        ->innerJoinWith('Ventas', function ($q) {
@@ -158,7 +159,7 @@ class DashboardsController extends AppController
         $clienteMorosos = $clientesTable->clientesMorosos($this->Auth->user('id'));
 
 
-        //////////////////CXC////////////////////////////
+        //////////////////CXC////////////////////////////Adaptar esta funcion para pasar id del vendedor y retorne el cxc por vendedor
 
         $cxc = $clientesTable->totalCXC($this->Auth->user('id'));
         
