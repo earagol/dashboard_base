@@ -210,84 +210,138 @@ $cakeDescription = 'Estrella';
                             <!-- <a href="index.html"><i class="menu-icon fa fa-laptop"></i>Dashboard </a> -->
                         </li>
 
-                        
+                        <?php if($currentUser['role'] == 'admin') : ?>
 
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gear"></i>Parametros</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <!-- <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li> -->
-                                <li><i class="fa fa-arrow-circle-right"></i><?php echo $this->Html->link(__('Regiones'), ['controller'=>'Regiones','action' => 'index'],['title'=>'Regiones','escape' => false]) ?></li>
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gear"></i>Parametros</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <!-- <li><i class="fa fa-puzzle-piece"></i><a href="ui-buttons.html"></a></li> -->
+                                    <li><i class="fa fa-arrow-circle-right"></i><?php echo $this->Html->link(__('Regiones'), ['controller'=>'Regiones','action' => 'index'],['title'=>'Regiones','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-arrow-right"></i><?php echo $this->Html->link(__('Comunas'), ['controller'=>'Comunas','action' => 'index'],['title'=>'Comunas','escape' => false]) ?></li>
+                                    <li><i class="fa fa-arrow-right"></i><?php echo $this->Html->link(__('Comunas'), ['controller'=>'Comunas','action' => 'index'],['title'=>'Comunas','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-bars"></i><?php echo $this->Html->link(__('Tipos Parametros'), ['controller'=>'parametrosTipos','action' => 'index'],['title'=>'Tipos Parametros','escape' => false]) ?></li>
+                                    <li><i class="fa fa-bars"></i><?php echo $this->Html->link(__('Tipos Parametros'), ['controller'=>'parametrosTipos','action' => 'index'],['title'=>'Tipos Parametros','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-asterisk"></i><?php echo $this->Html->link(__('Parametros Valores'), ['controller'=>'parametrosValores','action' => 'index'],['title'=>'Parametros Valores','escape' => false]) ?></li>
-                            </ul>
-                        </li>
+                                    <li><i class="fa fa-asterisk"></i><?php echo $this->Html->link(__('Parametros Valores'), ['controller'=>'parametrosValores','action' => 'index'],['title'=>'Parametros Valores','escape' => false]) ?></li>
+                                </ul>
+                            </li>
 
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-truck"></i>Productos</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-barsa-user"></i><?php echo $this->Html->link(__('Categorias'), ['controller'=>'categorias','action' => 'index'],['title'=>'Categorias','escape' => false]) ?></li>
-                                <li><i class="fa fa-truck"></i><?php echo $this->Html->link(__('Productos'), ['controller'=>'Productos','action' => 'index'],['title'=>'Productos','escape' => false]) ?></li>
-                            </ul>
-                        </li>
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-truck"></i>Productos</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-barsa-user"></i><?php echo $this->Html->link(__('Categorias'), ['controller'=>'categorias','action' => 'index'],['title'=>'Categorias','escape' => false]) ?></li>
+                                    <li><i class="fa fa-truck"></i><?php echo $this->Html->link(__('Productos'), ['controller'=>'Productos','action' => 'index'],['title'=>'Productos','escape' => false]) ?></li>
+                                </ul>
+                            </li>
 
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-users"></i>Usuarios</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-user"></i><?php echo $this->Html->link(__('Usuarios'), ['controller'=>'usuarios','action' => 'index'],['title'=>'Usuarios','escape' => false]) ?></li>
-                                <li><i class="fa fa-user"></i><?php echo $this->Html->link(__('Cierre Operaciones'), ['controller'=>'usuarios','action' => 'cierreOperacionesDiario'],['title'=>'Usuarios','escape' => false]) ?></li>
-                            </ul>
-                        </li>
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-users"></i>Usuarios</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-user"></i><?php echo $this->Html->link(__('Usuarios'), ['controller'=>'usuarios','action' => 'index'],['title'=>'Usuarios','escape' => false]) ?></li>
+                                    <li><i class="fa fa-user"></i><?php echo $this->Html->link(__('Cierre Operaciones'), ['controller'=>'usuarios','action' => 'cierreOperacionesDiario'],['title'=>'Usuarios','escape' => false]) ?></li>
+                                </ul>
+                            </li>
 
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-male"></i>Clientes</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-caret-square-o-up"></i><?php echo $this->Html->link(__('Clasif. Clientes'), ['controller'=>'Clasificaciones','action' => 'index'],['title'=>'Clasificacion','escape' => false]) ?></li>
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-male"></i>Clientes</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-caret-square-o-up"></i><?php echo $this->Html->link(__('Clasif. Clientes'), ['controller'=>'Clasificaciones','action' => 'index'],['title'=>'Clasificacion','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-th-large"></i><?php echo $this->Html->link(__('Clientes'), ['controller'=>'Clientes','action' => 'index'],['title'=>'Clientes','escape' => false]) ?></li>
-                            </ul>
-                        </li>
+                                    <li><i class="fa fa-th-large"></i><?php echo $this->Html->link(__('Clientes'), ['controller'=>'Clientes','action' => 'index'],['title'=>'Clientes','escape' => false]) ?></li>
+                                </ul>
+                            </li>
 
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-home"></i>Visitas</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-th-large"></i><?php echo $this->Html->link(__('Visitas'), ['controller'=>'visitas','action' => 'index'],['title'=>'Visitas','escape' => false]) ?></li>
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-home"></i>Visitas</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-th-large"></i><?php echo $this->Html->link(__('Visitas'), ['controller'=>'visitas','action' => 'index'],['title'=>'Visitas','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Visitas'), ['controller'=>'Visitas','action' => 'reporteVisitas'],['title'=>'Visitas Pendientes','escape' => false]) ?></li>
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Visitas'), ['controller'=>'Visitas','action' => 'reporteVisitas'],['title'=>'Visitas Pendientes','escape' => false]) ?></li>
 
-                            </ul>
-                        </li>
+                                </ul>
+                            </li>
 
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-money"></i>Ventas</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-road"></i><?php echo $this->Html->link(__('Rutas'), ['controller'=>'Rutas','action' => 'index'],['title'=>'Rutas','escape' => false]) ?></li>
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-money"></i>Ventas</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-road"></i><?php echo $this->Html->link(__('Rutas'), ['controller'=>'Rutas','action' => 'index'],['title'=>'Rutas','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-road"></i><?php echo $this->Html->link(__('Listado Ventas'), ['controller'=>'Ventas','action' => 'ventas'],['title'=>'Listado de Ventas','escape' => false]) ?></li>
+                                    <li><i class="fa fa-road"></i><?php echo $this->Html->link(__('Listado Ventas'), ['controller'=>'Ventas','action' => 'ventas'],['title'=>'Listado de Ventas','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-exchange"></i><?php echo $this->Html->link(__('Ventas'), ['controller'=>'Ventas','action' => 'index'],['title'=>'Ventas','escape' => false]) ?></li>
-                            </ul>
-                        </li>
+                                    <li><i class="fa fa-exchange"></i><?php echo $this->Html->link(__('Ventas'), ['controller'=>'Ventas','action' => 'index'],['title'=>'Ventas','escape' => false]) ?></li>
+                                </ul>
+                            </li>
 
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-inbox"></i>Reportes</a>
-                            <ul class="sub-menu children dropdown-menu">
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-inbox"></i>Reportes</a>
+                                <ul class="sub-menu children dropdown-menu">
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Diario'), ['controller'=>'Ventas','action' => 'reporteDiarioVendedor'],['title'=>'Reporte Diario','escape' => false]) ?></li>
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Diario'), ['controller'=>'Ventas','action' => 'reporteDiarioVendedor'],['title'=>'Reporte Diario','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Clientes'), ['controller'=>'Ventas','action' => 'reporteClientesVentas'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Clientes'), ['controller'=>'Ventas','action' => 'reporteClientesVentas'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
 
-                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado'), ['controller'=>'Ventas','action' => 'unionDiarioVentasVendedor'],['title'=>'Reporte Consolidado','escape' => false]) ?></li>
+                                     <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado'), ['controller'=>'Ventas','action' => 'unionDiarioVentasVendedor'],['title'=>'Reporte Consolidado','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Vendedor'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasUsuario'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Vendedor'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasUsuario'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Rutas'), ['controller'=>'Ventas','action' => 'reporteConsolidadoRutas'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Rutas'), ['controller'=>'Ventas','action' => 'reporteConsolidadoRutas'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
 
-                            </ul>
-                        </li>
+                                </ul>
+                            </li>
+
+                        <?php else: ?>
+
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gear"></i>Parametros</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-asterisk"></i><?php echo $this->Html->link(__('Parametros Valores'), ['controller'=>'parametrosValores','action' => 'index'],['title'=>'Parametros Valores','escape' => false]) ?></li>
+                                </ul>
+                            </li>
+
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-male"></i>Clientes</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-th-large"></i><?php echo $this->Html->link(__('Clientes'), ['controller'=>'Clientes','action' => 'index'],['title'=>'Clientes','escape' => false]) ?></li>
+                                </ul>
+                            </li>
+
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-home"></i>Visitas</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-th-large"></i><?php echo $this->Html->link(__('Visitas'), ['controller'=>'visitas','action' => 'index'],['title'=>'Visitas','escape' => false]) ?></li>
+
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Visitas'), ['controller'=>'Visitas','action' => 'reporteVisitas'],['title'=>'Visitas Pendientes','escape' => false]) ?></li>
+                                </ul>
+                            </li>
+
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-money"></i>Ventas</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-road"></i><?php echo $this->Html->link(__('Listado Ventas'), ['controller'=>'Ventas','action' => 'ventas'],['title'=>'Listado de Ventas','escape' => false]) ?></li>
+                                    <li><i class="fa fa-exchange"></i><?php echo $this->Html->link(__('Ventas'), ['controller'=>'Ventas','action' => 'index'],['title'=>'Ventas','escape' => false]) ?></li>
+                                </ul>
+                            </li>
+
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-inbox"></i>Reportes</a>
+                                <ul class="sub-menu children dropdown-menu">
+
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Diario'), ['controller'=>'Ventas','action' => 'reporteDiarioVendedor'],['title'=>'Reporte Diario','escape' => false]) ?></li>
+
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Clientes'), ['controller'=>'Ventas','action' => 'reporteClientesVentas'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
+
+                                     <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado'), ['controller'=>'Ventas','action' => 'unionDiarioVentasVendedor'],['title'=>'Reporte Consolidado','escape' => false]) ?></li>
+
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Vendedor'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasUsuario'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
+
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Rutas'), ['controller'=>'Ventas','action' => 'reporteConsolidadoRutas'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
+
+                                </ul>
+                            </li>
+
+
+
+                        <?php endif; ?>
 
                     </ul>
                 </div><!-- /.navbar-collapse -->
@@ -393,7 +447,7 @@ $cakeDescription = 'Estrella';
 
                             <div class="user-menu dropdown-menu">
                                 <?php echo $this->Html->link('<i class="fa fa-key"></i>Cambiar clave</a>', ['controller'=>'usuarios','action'=>'cambio_clave'],['class'=>'nav-link','escape'=>false]); ?>
-                                <!-- <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a> -->
+                                <?php echo $this->Html->link('<i class="fa fa-user"></i>Editar perfil</a>', ['controller'=>'usuarios','action'=>'perfil',$currentUser['id']],['class'=>'nav-link','escape'=>false]); ?>
 
                                 <!-- <a class="nav-link" href="#"><i class="fa fa-bell-o"></i>Notifications <span class="count">13</span></a> -->
 

@@ -59,28 +59,28 @@
             </div>
         </div>
     </div>
+    <?php if($currentUser['role'] == 'admin'): ?>
+        <div class="col-lg-3 col-md-6">
+            <div class="card nocard">
+                <div class="card-body">
+                    <div class="stat-widget-five">
+                        <div class="stat-icon dib flat-color-3">
+                            <i class="pe-7f-browser"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="text-left dib"> 
+                                <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:0; ?></span></div>
+                                <div class="stat-heading">N° Trans por Confirmar</div>
 
-    <div class="col-lg-3 col-md-6">
-        <div class="card nocard">
-            <div class="card-body">
-                <div class="stat-widget-five">
-                    <div class="stat-icon dib flat-color-3">
-                        <i class="pe-7f-browser"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="text-left dib"> 
-                            <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:0; ?></span></div>
-                            <div class="stat-heading">N° Trans por Confirmar</div>
-
-                            <div class="stat-text"><span class="count1"><?php echo number_format($transferidas->monto_transferencia?$transferidas->monto_transferencia:0, 0, ",", "."); ?> </span></div>
-                            <div class="stat-heading">Monto Trans por Confirmar</div>
+                                <div class="stat-text"><span class="count1"><?php echo number_format($transferidas->monto_transferencia?$transferidas->monto_transferencia:0, 0, ",", "."); ?> </span></div>
+                                <div class="stat-heading">Monto Trans por Confirmar</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <?php if($currentUser['role'] == 'admin'): ?>
+    
         <div class="col-lg-3 col-md-6">
             <div class="card nocard">
                 <div class="card-body">

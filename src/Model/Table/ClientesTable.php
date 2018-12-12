@@ -230,7 +230,7 @@ class ClientesTable extends Table
 
 
     // Adaptar esta funcion para pasar id del vendedor y retorne el cxc por vendedor
-    public function totalCXC($usuarioId=null){
+    public function totalCXC($usuarioId=null,$role = null){
 
         $cxc = $this->find();
         $cxc = $cxc->select([

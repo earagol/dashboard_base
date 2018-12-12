@@ -21,7 +21,7 @@ class UsuariosController extends AppController
     public function isAuthorized($user){
 
         if(isset($user['role']) && $user['role'] === 'usuario'){
-            if(in_array($this->request->action, ['home','logout','login','cambioClave'])){
+            if(in_array($this->request->action, ['home','logout','login','cambioClave','perfil','edit'])){
                 return true;
             }
         }
@@ -318,6 +318,11 @@ class UsuariosController extends AppController
      */
     public function edit($id = null)
     {
+        if($this->Auth->user('role') === 'usuario' && $this->Auth->user('id') != $id){
+            $this->Flash->error(__('Acción invalida.'));
+            return $this->redirect(['action' => 'perfil',$this->Auth->user('id')]);
+        }
+
         $usuario = $this->Usuarios->get($id, [
             'contain' => ['Rutas']
         ]);
@@ -364,7 +369,12 @@ class UsuariosController extends AppController
                             $usuariosRutasTable->save($usuarioRuta);
                         }
                     }
+
                     $this->Flash->success(__('Registro exitoso.'));
+
+                    if(isset($this->request->data['redirect'])){
+                        return $this->redirect(['action' => 'perfil',$id]);
+                    }
 
                     return $this->redirect(['action' => 'index']);
                 }
@@ -395,6 +405,21 @@ class UsuariosController extends AppController
 
         $rutas = TableRegistry::get('Rutas')->find('list')->toArray();
         $this->set(compact('usuario','rutas'));
+    }
+
+    public function perfil($id = null)
+    {
+        if($this->Auth->user('role') === 'usuario' && $this->Auth->user('id') != $id){
+            $this->Flash->error(__('Acción invalida. No tienes privilegios para editar otros perfiles.'));
+            return $this->redirect(['action' => 'perfil',$this->Auth->user('id')]);
+        }
+
+        $usuario = $this->Usuarios->get($id, [
+            'contain' => ['Rutas']
+        ]);
+
+        $this->set(compact('usuario'));
+
     }
 
     /**

@@ -43,8 +43,10 @@
                             <td><?php echo $this->Number->format($venta->cuenta_porcobrar) ?></td>
                             <td><?php echo $this->Number->format($venta->monto_cartera) ?></td>
                             <td class="text-center">
-                                <button data-id="<?php echo $venta->id; ?>" type="button" class="btn btn-danger cancelar" title="Anular"><i class="fa fa-ban"></i></button>
-                                <?php //echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $venta->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas anular la venta {0}? Esta acción no se puede reversar.', $venta->id)]) ?>
+                                <?php if($currentUser['role'] == 'admin') : ?>
+                                    <button data-id="<?php echo $venta->id; ?>" type="button" class="btn btn-danger cancelar" title="Anular"><i class="fa fa-ban"></i></button>
+                                    <?php //echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $venta->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas anular la venta {0}? Esta acción no se puede reversar.', $venta->id)]) ?>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

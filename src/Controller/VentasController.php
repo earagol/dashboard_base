@@ -30,7 +30,7 @@ class VentasController extends AppController
     public function isAuthorized($user){
 
         if(isset($user['role']) && $user['role'] === 'usuario'){
-            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','detalles'])){
+            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','detalles','ventas'])){
                 return true;
             }
         }
@@ -113,6 +113,12 @@ class VentasController extends AppController
                     return $exp
                         ->add($orConditions);
                 });
+
+        }
+
+        if($this->Auth->user('role') === 'usuario'){
+
+            $query->where(['Ventas.usuario_id'=>$this->Auth->user('id')]);
 
         }
 
@@ -437,12 +443,13 @@ class VentasController extends AppController
                                         'Ventas.monto_total IS NOT NULL'
                                     ]);
 
-
             if($this->request->data('usuario_id') == null && $this->Auth->user('role') == 'usuario'){
                  $ventas->where([
                                 'Ventas.usuario_id' => $this->Auth->user('id')
                             ]);
             }
+
+
 
             $ventas = $ventas->toArray();
 
@@ -487,7 +494,7 @@ class VentasController extends AppController
         if($this->Auth->user('role') == 'admin'){
             $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
         }else{
-            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuario.id' => $this->Auth->user('id')] ,'limit' => 200]);
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
         }
         
         $this->set(compact('usuarios'));

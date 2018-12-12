@@ -161,7 +161,7 @@ class DashboardsController extends AppController
 
         //////////////////CXC////////////////////////////Adaptar esta funcion para pasar id del vendedor y retorne el cxc por vendedor
 
-        $cxc = $clientesTable->totalCXC($this->Auth->user('id'));
+        $cxc = $clientesTable->totalCXC($this->Auth->user('id'),$this->Auth->user('role'));
         
         $this->set(compact('dataReal','clientes','transferidas','fecha','clienteTransPen','visitasPendientes','clienteMorosos','cxc'));
     }

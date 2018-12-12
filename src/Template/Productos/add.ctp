@@ -30,7 +30,7 @@
             </div>
 
             <div class="form-group form-check">
-                <?php echo $this->Form->control('retorna_embase',['class'=>'form-check-input']); ?>
+                <?php echo $this->Form->control('retorna_embase',['type'=>'checkbox','class'=>'form-check-input']); ?>
             </div>
 
             <div class="form-group">
