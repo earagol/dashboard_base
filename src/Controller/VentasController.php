@@ -902,7 +902,7 @@ class VentasController extends AppController
         $cierreTable = TableRegistry::get('CierreOperaciones');
         if($cierreTable->find()->where(['vendedor_id'=>$this->Auth->user('id'),'fecha_cierre' => date('Y-m-d')])->first()){
             $this->Flash->error('Operaciones diarias cerradas por el resto del dia.');
-            return $this->redirect('/');
+            return $this->redirect(['controller' => 'dashboards','action' => 'index',1]);
         }
 
         $session->delete('detalles');

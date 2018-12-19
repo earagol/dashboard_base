@@ -82,12 +82,12 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Número</label>
-                <?php echo $this->Form->control('numero_calle',['value' =>'','class'=>'form-control','placeholder'=>'Número','label'=>false]); ?>
+                <?php echo $this->Form->control('numero_calle',['value' =>'','type'=>'number','class'=>'form-control','placeholder'=>'Número','label'=>false]); ?>
             </div>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Número casa/dept/oficina</label>
-                <?php echo $this->Form->control('dept_casa_oficina_numero',['value' =>'','class'=>'form-control','placeholder'=>'Número casa/dept/oficina ...','label'=>false]); ?>
+                <?php echo $this->Form->control('dept_casa_oficina_numero',['value' =>'','type'=>'number','class'=>'form-control','placeholder'=>'Número casa/dept/oficina ...','label'=>false]); ?>
             </div>
 
             
