@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * EmbasesRetornados Model
@@ -26,6 +27,7 @@ use Cake\Validation\Validator;
  */
 class EmbasesRetornadosTable extends Table
 {
+    use SoftDeleteTrait;
 
     /**
      * Initialize method
