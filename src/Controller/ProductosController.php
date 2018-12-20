@@ -61,7 +61,7 @@ class ProductosController extends AppController
                     // prx($this->request->data);
                     foreach ($this->request->data('arreglo') as $key => $value) {
                         $precio = $this->Productos->ProductosPrecios->newEntity();
-                        $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$producto->id,'precio'=>str_replace('.','',$value)]);
+                        $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$producto->id,'precio'=>str_replace('.','',$value),'created' => date('Y-m-d')]);
                         $this->Productos->ProductosPrecios->save($precio);
                     }
                 }
@@ -94,7 +94,7 @@ class ProductosController extends AppController
             if ($this->Productos->save($producto)) {
                 if(!empty($this->request->data['precio'])){
                     $precio = $this->Productos->ProductosPrecios->newEntity();
-                    $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$id,'precio'=>str_replace('.','',$this->request->data['precio'])]);
+                    $precio = $this->Productos->ProductosPrecios->patchEntity($precio, ['usuario_id'=>$this->Auth->user('id'),'producto_id'=>$id,'precio'=>str_replace('.','',$this->request->data['precio']),'created' => date('Y-m-d')]);
                     $this->Productos->ProductosPrecios->save($precio);
                     $producto = $this->Productos->get($id, [
                         'contain' => ['ProductosPrecios']
