@@ -1,99 +1,104 @@
 <!-- Widgets  -->
+
 <div class="row">
 
-    <div class="col-lg-3 col-md-6">
-        <div class="card nocard">
-            <div class="card-body">
-                <div class="stat-widget-five">
-                    <div class="stat-icon dib flat-color-1">
-                        <i class="pe-7f-cash"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="text-left dib"> 
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-white bg-flat-color-1">
+            <div class="card-body pb-0">
+                <h4 class="mb-0">
+                    <span class=""><?php echo $cxc->total_cxc?$cxc->total_cxc:0; ?></span>
+                </h4>
+                <p class="text-light">N° Clientes con CXC</p>
 
-                            <div class="stat-text"><span class="count"><?php echo $cxc->total_cxc?$cxc->total_cxc:0; ?></span></div>
-                            <div class="stat-heading">N° Clientes con CXC</div>
+                <h4 class="mb-0">
+                    <span class=""><?php echo number_format($cxc->monto_cxc?$cxc->monto_cxc:0, 0, ",", "."); ?></span>
+                </h4>
+                <p class="text-light">Monto total CXC</p>
 
-                            <div class="stat-text">$<span class="count1"><?php echo number_format($cxc->monto_cxc?$cxc->monto_cxc:0, 0, ",", "."); ?></span></div>
-                            <div class="stat-heading">Monto total CXC</div>
-                        </div>
-                    </div>
-                </div>
+                <!--<div class="chart-wrapper px-0" style="height:70px;" height="70">
+                    <canvas id="widgetChart1"></canvas>
+                </div>-->
+
             </div>
+
         </div>
     </div>
 
 
-    <div class="col-lg-3 col-md-6">
-        <div class="card nocard">
-            <div class="card-body">
-                <div class="stat-widget-five">
-                    <div class="stat-icon dib flat-color-1">
-                        <i class="pe-7f-cash"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="text-left dib"> 
-                            <div class="stat-text">$<span class="count1"><?php echo number_format($dataReal->monto_total?$dataReal->monto_total:0, 0, ",", "."); ?></span></div>
-                            <div class="stat-heading">Monto Venta <small><?php echo $fecha; ?></small></div>
-                        </div>
-                    </div>
-                </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-white bg-flat-color-2">
+            <div class="card-body pb-0">
+                <h4 class="mb-0">
+                    <span class=""><?php echo number_format($dataReal->monto_total?$dataReal->monto_total:0, 0, ",", "."); ?></span>
+                </h4>
+                <p class="text-light">Monto Venta <small><?php echo $fecha; ?></p>
+
+                <!--<div class="chart-wrapper px-0" style="height:70px;" height="70">
+                    <canvas id="widgetChart1"></canvas>
+                </div>-->
+
             </div>
+
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6">
-        <div class="card nocard">
-            <div class="card-body">
-                <div class="stat-widget-five">
-                    <div class="stat-icon dib flat-color-2">
-                        <i class="pe-7f-cart"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="text-left dib">
-                            <div class="stat-text"><span class="count1"><?php echo $dataReal->total_ventas?$dataReal->total_ventas:0; ?></span></div>
-                            <div class="stat-heading">Ventas</div> 
-                        </div>
-                    </div>
-                </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-white bg-flat-color-3">
+            <div class="card-body pb-0">
+                <h4 class="mb-0">
+                    <span class=""><?php echo $dataReal->total_ventas?$dataReal->total_ventas:0; ?></span>
+                </h4>
+                <p class="text-light">Ventas</p>
+
+                <!--<div class="chart-wrapper px-0" style="height:70px;" height="70">
+                    <canvas id="widgetChart1"></canvas>
+                </div>-->
+
             </div>
+
         </div>
     </div>
+
     <?php if($currentUser['role'] == 'admin'): ?>
-        <div class="col-lg-3 col-md-6">
-            <div class="card nocard">
-                <div class="card-body">
-                    <div class="stat-widget-five">
-                        <div class="stat-icon dib flat-color-3">
-                            <i class="pe-7f-browser"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="text-left dib"> 
-                                <div class="stat-text"><span class="count"><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:0; ?></span></div>
-                                <div class="stat-heading">N° Trans por Confirmar</div>
 
-                                <div class="stat-text"><span class="count1"><?php echo number_format($transferidas->monto_transferencia?$transferidas->monto_transferencia:0, 0, ",", "."); ?> </span></div>
-                                <div class="stat-heading">Monto Trans por Confirmar</div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card text-white bg-flat-color-4">
+                <div class="card-body pb-0">
+                    <h4 class="mb-0">
+                        <span class=""><?php echo $transferidas->total_transferencia?$transferidas->total_transferencia:0; ?></span>
+                    </h4>
+                    <p class="text-light">N° Trans por Confirmar</p>
+
+                    <h4 class="mb-0">
+                        <span class=""><?php echo number_format($transferidas->monto_transferencia?$transferidas->monto_transferencia:0, 0, ",", "."); ?></span>
+                    </h4>
+                    <p class="text-light">Monto Trans por Confirmar</p>
+
+                    <!--<div class="chart-wrapper px-0" style="height:70px;" height="70">
+                        <canvas id="widgetChart1"></canvas>
+                    </div>-->
+
                 </div>
+
             </div>
         </div>
-    
-        <div class="col-lg-3 col-md-6">
-            <div class="card nocard">
-                <div class="card-body">
-                    <div class="stat-widget-five">
-                        <div class="stat-icon dib flat-color-4">
-                            <i class="pe-7f-users"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-text"><span class="count"><?php echo $clientes->total_clientes?$clientes->total_clientes:0; ?></span></div>
-                                <div class="stat-heading">N° Clientes</div>
-                        </div>
-                    </div>
+
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="card text-white bg-flat-color-5">
+                <div class="card-body pb-0">
+                    <h4 class="mb-0">
+                        <span class=""><?php echo $clientes->total_clientes?$clientes->total_clientes:0; ?></span>
+                    </h4>
+                    <p class="text-light">N° Clientes</p>
+
+                    <!--<div class="chart-wrapper px-0" style="height:70px;" height="70">
+                        <canvas id="widgetChart1"></canvas>
+                    </div>-->
+
                 </div>
+
             </div>
         </div>
     <?php endif; ?>

@@ -105,7 +105,7 @@
             </div>
            
 
-            <div id="grilla" style="margin-top: 5px;max-height: 300px;">
+            <div id="grilla" style="margin-top: 5px;min-height: 300px;">
                 <?php if(isset($detalles)): ?>
 
                     <?php echo $this->element('detalles_ventas', array('detalles' => $detalles) ); ?>

@@ -134,8 +134,14 @@ class AppController extends Controller
             $this->set('_serialize', true);
         }
 
+        if(!$this->request->is('ajax') && $this->request->params['action'] != 'login'){
+           $this->viewBuilder()->layout('tema2'); 
+        }
 
 
+        
         $this->set('url',Configure::read('relative'));
+
+        //prx($this->request->getParam('controller'));_
     }
 }
