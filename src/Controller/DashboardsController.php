@@ -71,6 +71,9 @@ class DashboardsController extends AppController
 
     }
 
+
+
+
     /**
      * Displays a view
      *
@@ -96,6 +99,8 @@ class DashboardsController extends AppController
                     'monto_transferencia' => $control->func()->sum('monto_transferencia')
                 ])
                 ->where(['Ventas.fecha'=>date('Y-m-d'),'Ventas.monto_total IS NOT NULL']);
+
+        
 
         if($this->Auth->user('role') == 'usuario'){
             $visitasPendientes = TableRegistry::get('Visitas')->find()->contain(['Usuarios', 'Clientes', 'Usuarios'])->where(['Visitas.status'=> 'P','Visitas.usuario_id'=>$this->Auth->user('id')])->toArray();

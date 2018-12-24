@@ -677,8 +677,7 @@ class VentasController extends AppController
                     if($value['producto_id'] == $producto){
                         $flag = true;
                         break;
-                    }
-                }
+                    } }
                 if(!$flag){
                     array_push($aux,$detalles[0]);
                     $session->write('detalles',$aux);
@@ -710,6 +709,65 @@ class VentasController extends AppController
         }
 
         $this->set(compact('detalles','mensaje'));
+    }
+
+
+
+    public function verificaParametriInicial(){
+
+        $padreTable = TableRegistry::get('ParametrosValoresPadre');
+
+        if(!$padreTable->find()->where(['parmetros_tipo_id'=>1,'fecha'=>date('Y-m-d','usuario_id'=>$this->Auth->user('id'))])->first()){
+
+            $last = $padreTable->find()->where(['parmetros_tipo_id'=>1,'usuario_id'=>$this->Auth->user('id'))])->order(['id'=>'desc'])->first();
+            if($last){
+
+                if(!$this->Ventas->find()->where(['usuario_id'=>$this->Auth->user('id'),'fecha'=>$last->fecha])->first()){
+
+                    $padre['parametros_tipo_id'] = 1;
+                    $padre['usuario_id'] = $this->Auth->user('id');
+                    $padre['fecha'] = date('Y-m-d');
+                    $padre['observacion'] = 'automatico..';
+                    $padre['cierre_id'] = $last->cierre_id;
+
+                    $padreValore = $padreTable->newEntity();
+                    $padreValore = $padreTable->patchEntity($padreValore, $padre);
+                    if($padreTable->save($padreValore)){
+
+                        
+                        $parametrosValoresTable = TableRegistry::get('ParametrosValores');
+                        foreach ($last->parametros_valores as $key => $value) {
+                            $parametrosValore = $parametrosValoresTable->newEntity();
+                            $valor['parametros_tipo_id'] = 1;
+                            $valor['padre_id'] = $padreValore->id;
+                            $valor['producto_id'] = $value->producto_id;
+                            $valor['monto_o_cantidad'] = $value->monto_o_cantidad;
+                            $valor['usuario_id'] = $this->Auth->user('id');
+                            $valor['fecha'] = date('Y-m-d');
+                            $valor['tipo'] = 'Diario';
+                            $parametrosValore = $parametrosValoresTable->patchEntity($parametrosValore, $valor);
+                            if($parametrosValoresTable->save($parametrosValore)){
+                                $flag = true;
+                            }
+                        }
+                    }
+
+
+                }else{
+
+                    $this->Flash->success(__('Registre los parametros de inicio.'));
+                    return $this->redirect(['controller'=>'parametrosValores','action' => 'add']);
+                }
+
+
+            }else{
+
+                $this->Flash->success(__('Registre los parametros de inicio.'));
+                return $this->redirect(['controller'=>'parametrosValores','action' => 'add']);
+            }
+
+        }
+
     }
 
 
@@ -896,6 +954,8 @@ class VentasController extends AppController
                 return $this->redirect(['action' => 'add']);
             }
             $this->Flash->error(__('La venta no pudo ser procesada, intente nuevamente.'));
+        }else{
+            $this->verificaParametriInicial();
         }
 
         //Valida Cierre de operaciones..

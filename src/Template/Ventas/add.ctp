@@ -405,7 +405,7 @@
 
         $("#cliente-id").change(function(e){
             var id = $("#cliente-id").val();
-            document.location.href=url1+"/ventas/add/"+id;
+            document.location.href=url1+"ventas/add/"+id;
         });
 
         <?php if(isset($detalles)): ?>

@@ -195,5 +195,7 @@ if(!isset($excel)){
 </table>
 
 
+<h3>GRAN TOTAL : <?php echo (($ventas['monto_total'] + $granTotal)- $totalGasto)?></h3>
+
 <?php } ?>
 
