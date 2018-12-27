@@ -31,11 +31,17 @@
                             <th scope="col"><?php echo $this->Paginator->sort('Monto Total','Monto Total <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('CXC','CXC <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('Monto Cartera','Monto Cartera <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th scope="col"><?php echo $this->Paginator->sort('tiene_retorno','Retorno embases <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th >Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($ventas as $venta): ?>
+                        <?php foreach ($ventas as $venta): 
+                            $retorno = '';
+                            if($venta->tiene_retorno){
+                                $retorno = 'Si';
+                            }
+                            ?>
                             <tr>
                                 <td><?php echo $this->Number->format($venta->id) ?></td>
                                 <td><?php echo h($venta->Usuarios['nombres'].' '.$venta->Usuario['apellidos']) ?></td>
@@ -43,6 +49,7 @@
                                 <td><?php echo $this->Number->format($venta->monto_total) ?></td>
                                 <td><?php echo $this->Number->format($venta->cuenta_porcobrar) ?></td>
                                 <td><?php echo $this->Number->format($venta->monto_cartera) ?></td>
+                                <td><?php echo $retorno ?></td>
                                 <td class="text-center">
                                     <?php if($currentUser['role'] == 'admin') : ?>
                                         <button data-id="<?php echo $venta->id; ?>" type="button" class="btn btn-danger cancelar" title="Anular"><i class="fa fa-ban"></i></button>

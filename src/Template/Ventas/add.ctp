@@ -109,27 +109,28 @@
                 <?php if(isset($detalles)): ?>
                     <?php echo $this->element('detalles_ventas', array('detalles' => $detalles) ); ?>
                 <?php else: ?>
-
-                    <table class="table table-striped table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Producto</th>
-                                <th scope="col">Precio Unitario</th>
-                                <th scope="col">Cantidad</th>
-                                <th scope="col">Total</th>
-                                <th >Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Producto</th>
+                                    <th scope="col">Precio Unitario</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Total</th>
+                                    <th >Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
             

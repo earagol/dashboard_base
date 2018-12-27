@@ -9,7 +9,7 @@ if(!isset($excel)){
  <div class="col-lg-12 ">
     <div class="card">
         <div class="card-header">
-            <strong>Reporte Clientes Ventas</strong>
+            <strong>Reporte Clientes Embases</strong>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
             </div>
@@ -29,7 +29,7 @@ if(!isset($excel)){
                 <?php echo $this->Form->button(__('Ver',['class'=>'btn btn-primary'])) ?>
             </div>
 
-            <?php if(isset($detallesVentas)): ?>
+            <?php if(isset($detallesEmbases)): ?>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -43,32 +43,25 @@ if(!isset($excel)){
                         </thead>
                         <tbody>
                             <?php 
-                                $montoEfecTotal=0;
-                                $montoTransTotal=0;
-                                $cxcTotal=0;
-                                if($detallesVentas){ 
+                                if($detallesEmbases){ 
                                    
-                                    $prodcutTotal = $detalles['productos'];
+                                    $prodcutTotal = $productos;
                                     foreach ($prodcutTotal  as $key => $value) {
                                         $prodcutTotal[$key]=0;
                                     }
+                                    // pr($prodcutTotal);
 
-                                    foreach ($detallesVentas as $detalle => $detalles) { 
-                                        $montoEfecTotal+=$detalles['monto_efectivo'];
-                                        $montoTransTotal+=$detalles['monto_transferencia'];
-                                        $cxcTotal+=$detalles['cuenta_porcobrar'];
+                                    foreach ($detallesEmbases as $detalle => $detalles) { 
+                                        // prx($detalles['productos']);
                                     ?>
                                         <tr>
                                             <td><?php echo utf8_encode($detalles['nombre']); ?></td>
                                             <td><?php echo utf8_encode($detalles['direccion']); ?></td>
                                             <?php foreach ($detalles['productos'] as $pro => $pros) { 
-                                                    $prodcutTotal[$pro]+=$pros;
+                                                    $prodcutTotal[$pro]+= $pros?$pros:0;
                                                 ?>
                                                 <td><?php echo $pros; ?></td>
                                             <?php } ?>
-                                            <td><?php echo utf8_encode($detalles['monto_efectivo']); ?></td>
-                                            <td><?php echo utf8_encode($detalles['monto_transferencia']); ?></td>
-                                            <td><?php echo utf8_encode($detalles['cuenta_porcobrar']); ?></td>
                                             <td><?php echo utf8_encode($detalles['observacion']); ?></td>
                                         </tr>
                              <?php }  ?>
@@ -77,9 +70,6 @@ if(!isset($excel)){
                                         <?php foreach ($prodcutTotal as $key => $value) { ?>
                                             <td><?php echo $value; ?></td>
                                         <?php } ?>
-                                        <td><?php echo $montoEfecTotal; ?></td>
-                                        <td><?php echo $montoTransTotal; ?></td>
-                                        <td><?php echo $cxcTotal; ?></td>
                                         <td></td>
                                     </tr>
                             <?php  } ?>
@@ -129,20 +119,14 @@ if(!isset($excel)){
     <tbody>
         
             <?php 
-                $montoEfecTotal=0;
-                $montoTransTotal=0;
-                $cxcTotal=0;
-                if($detallesVentas){ 
+                if($detallesEmbases){ 
                    
                     $prodcutTotal = $detalles['productos'];
                     foreach ($prodcutTotal  as $key => $value) {
                         $prodcutTotal[$key]=0;
                     }
 
-                    foreach ($detallesVentas as $detalle => $detalles) { 
-                        $montoEfecTotal+=$detalles['monto_efectivo'];
-                        $montoTransTotal+=$detalles['monto_transferencia'];
-                        $cxcTotal+=$detalles['cuenta_porcobrar'];
+                    foreach ($detallesEmbases as $detalle => $detalles) { 
                     ?>
                         <tr>
                             <td><?php echo utf8_encode($detalles['nombre']); ?></td>
@@ -152,9 +136,6 @@ if(!isset($excel)){
                                 ?>
                                 <td><?php echo $pros; ?></td>
                             <?php } ?>
-                            <td><?php echo utf8_encode($detalles['monto_efectivo']); ?></td>
-                            <td><?php echo utf8_encode($detalles['monto_transferencia']); ?></td>
-                            <td><?php echo utf8_encode($detalles['cuenta_porcobrar']); ?></td>
                             <td><?php echo utf8_encode($detalles['observacion']); ?></td>
                         </tr>
                     <?php } 
@@ -167,9 +148,6 @@ if(!isset($excel)){
                 <?php foreach ($prodcutTotal as $key => $value) { ?>
                     <td><?php echo $value; ?></td>
                 <?php } ?>
-                <td><?php echo $montoEfecTotal; ?></td>
-                <td><?php echo $montoTransTotal; ?></td>
-                <td><?php echo $cxcTotal; ?></td>
                 <td></td>
             </tr>
     

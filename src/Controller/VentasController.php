@@ -34,7 +34,7 @@ class VentasController extends AppController
     public function isAuthorized($user){
 
         if(isset($user['role']) && $user['role'] === 'usuario'){
-            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','detalles','ventas'])){
+            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','reporteClientesEmbases','detalles','ventas'])){
                 return true;
             }
         }
@@ -91,6 +91,7 @@ class VentasController extends AppController
                         'Ventas.monto_total',
                         'Ventas.cuenta_porcobrar',
                         'Ventas.monto_cartera',
+                        'Ventas.tiene_retorno',
                      ])
                      ->join([
                         'Clientes' => [
@@ -473,10 +474,6 @@ class VentasController extends AppController
 
         if($this->request->is('post')){
 
-            if($this->Auth->user('role') == 'admin'){
-                $this->viewBuilder()->setLayout('excel');
-            }
-
             if($this->request->data('fecha') == null){
                 $this->request->data('fecha',date('Y-m-d'));
             }
@@ -502,7 +499,11 @@ class VentasController extends AppController
                                         'Ventas.monto_total IS NOT NULL'
                                     ]);
 
-            if($this->request->data('usuario_id') == null && $this->Auth->user('role') == 'usuario'){
+            if($this->request->data('usuario_id') != null){
+                 $ventas->where([
+                                'Ventas.usuario_id' => $this->request->data('usuario_id')
+                            ]);
+            }else if($this->request->data('usuario_id') == null && $this->Auth->user('role') == 'usuario'){
                  $ventas->where([
                                 'Ventas.usuario_id' => $this->Auth->user('id')
                             ]);
@@ -537,7 +538,7 @@ class VentasController extends AppController
                             break;
                         }
                     }
-                    $producVenta[]=$detail;
+                    $producVenta[$keyP]=$detail;
                 }
 
                 $detalle['productos'] = $producVenta;
@@ -545,8 +546,107 @@ class VentasController extends AppController
             }
 
             $excel = 1;
+            if($this->Auth->user('role') == 'admin'){
+                $this->viewBuilder()->setLayout('excel');
+                $this->set(compact('excel'));
+            }
             $name = 'Ventas_'.$fecha;
-            $this->set(compact('headerClientes','detallesVentas','excel','name'));
+            $this->set(compact('headerClientes','detallesVentas','name'));
+
+        }
+
+        if($this->Auth->user('role') == 'admin'){
+            $vista = 1;
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $vista = 2;
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+        
+        $this->set(compact('usuarios','vista'));
+    }
+
+
+    public function reporteClientesEmbases(){
+
+
+        if($this->request->is('post')){
+
+            if($this->request->data('fecha') == null){
+                $this->request->data('fecha',date('Y-m-d'));
+            }
+
+            $fechaFormat = new Time($this->request->data('fecha'));
+            $this->request->data('fecha',$fechaFormat->format('Y-m-d'));
+            $fecha = $this->request->data('fecha');
+
+
+            $productosTable = TableRegistry::get('Productos');
+            $productos = $productosTable->find('list')->toArray();
+
+            $comunasTable = TableRegistry::get('Comunas');
+            $comunas = $comunasTable->find('list')->toArray();
+
+            $ventas = $this->Ventas->find()
+                                ->contain([
+                                        'EmbasesRetornados',
+                                        'Clientes'
+                                     ])
+                                ->where([
+                                        'Ventas.fecha' => $fecha,
+                                        'Ventas.tiene_retorno'=> true
+                                    ]);
+
+            if($this->request->data('usuario_id') != null){
+                 $ventas->where([
+                                'Ventas.usuario_id' => $this->request->data('usuario_id')
+                            ]);
+            }else if($this->request->data('usuario_id') == null && $this->Auth->user('role') == 'usuario'){
+                 $ventas->where([
+                                'Ventas.usuario_id' => $this->Auth->user('id')
+                            ]);
+            }
+
+
+
+            $ventas = $ventas->toArray();
+
+            $headerClientes = ['Cliente',utf8_encode('Direccion')];
+            $headerClientes = array_merge($headerClientes,$productos);
+            $headerClientes = array_merge($headerClientes,[utf8_encode('Observación')]);
+
+            $detallesEmbases = [];
+            foreach ($ventas as $key => $value) {
+                $detalle = [
+                            'id' => $value->cliente->id,
+                            'nombre' => $value->cliente->nombres,
+                            'direccion' => $value->cliente->calle." ".$value->cliente->numero_calle." ".$value->cliente->dept_casa_oficina_numero." (".$comunas[$value->cliente->comuna_id].")",
+                            'observacion' => $value->cliente->observacion
+                        ];
+                $productEmbases = [];
+                foreach ($productos as $keyP => $valueP) {
+                    $detail = '';
+                    foreach ($value->embases_retornados as $keyV => $valueV) {
+                        if($valueV->producto_id === $keyP){
+                            $detail = $valueV->cantidad;
+                            break;
+                        }
+                    }
+                    $productEmbases[$keyP]=$detail;
+                }
+
+                $detalle['productos'] = $productEmbases;
+                $detallesEmbases[] = $detalle;
+            }
+
+            $excel = 1;
+            if($this->Auth->user('role') == 'admin'){
+                $this->viewBuilder()->setLayout('excel');
+                $this->set(compact('excel'));
+            }
+            $name = 'Embases_'.$fecha;
+            // prx($productos);
+            $this->set(compact('headerClientes','detallesEmbases','name','productos'));
 
         }
 
