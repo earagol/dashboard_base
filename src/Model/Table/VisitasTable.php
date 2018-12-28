@@ -58,6 +58,10 @@ class VisitasTable extends Table
         $this->hasMany('VisitaDetalles', [
             'foreignKey' => 'visita_id'
         ]);
+
+        $this->hasOne('Ventas', [
+            'foreignKey' => 'visita_id'
+        ]);
     }
 
     /**

@@ -149,6 +149,8 @@
 
                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Visitas'), ['controller'=>'Visitas','action' => 'reporteVisitas'],['title'=>'Visitas Pendientes','escape' => false]) ?></li>
 
+                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Dif. VisitasVsVentas'), ['controller'=>'Visitas','action' => 'reporteVisitasVentasDiferentes'],['title'=>'Visitas Pendientes','escape' => false]) ?></li>
+
                             </ul>
                         </li>
 

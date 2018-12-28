@@ -65,6 +65,11 @@ class VentasTable extends Table
         $this->hasMany('EmbasesRetornados', [
             'foreignKey' => 'venta_id'
         ]);
+
+        $this->belongsTo('Visitas', [
+            'foreignKey' => 'visita_id',
+            'joinType' => 'INNER'
+        ]);
     }
 
     /**
