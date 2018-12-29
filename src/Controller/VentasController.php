@@ -17,6 +17,10 @@ use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Border;
 use Box\Spout\Writer\Style\BorderBuilder;
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 /**
  * Ventas Controller
  *
@@ -190,6 +194,26 @@ class VentasController extends AppController
     }
 
 
+    public function cantidadEmbasesRetornados($usuarioId=null,$fecha=null){
+        $producto = [];
+        $consolidado = $this->Ventas->EmbasesRetornados->find();
+        $consolidados = $consolidado->select([
+                                'EmbasesRetornados.producto_id',
+                                'total' => $consolidado->func()->sum('EmbasesRetornados.cantidad')
+                            ])
+                   ->innerJoinWith('Ventas')
+                   ->where(['Ventas.fecha'=>$fecha,'Ventas.usuario_id'=>$usuarioId])
+                   ->group(['EmbasesRetornados.producto_id'])
+                   ->toArray();
+        if($consolidados){
+            foreach ($consolidados as $key => $value) {
+                $producto[$value->producto_id] = $value->total;
+            }
+        }
+        return $producto;
+    }
+
+
     public function getCarteraRecogida($usuario_id,$fecha){
         $ventas = $this->Ventas->find()
                                 ->contain('Clientes')
@@ -343,6 +367,30 @@ class VentasController extends AppController
                 ];
 
         array_push($diario,$numVentas);
+
+        ////Cantidad embases retornados//////
+        
+
+        $ventasEmbasesRetornados = $this->cantidadEmbasesRetornados($usuarioId,$fechaUso);
+        foreach ($productos as $keyP => $valueP) {
+
+            if(isset($ventasEmbasesRetornados[$keyP])){
+                $newValor[$keyP]['nombre'] = $productos[$keyP];
+                $newValor[$keyP]['cantidad'] = $ventasEmbasesRetornados[$keyP];
+                $productoTotal[$keyP] = $productoTotal[$keyP]-$ventasEmbasesRetornados[$keyP];
+            }else{
+                $newValor[$keyP] = [
+                                'nombre' => $valueP,
+                                'cantidad' => ''
+                            ];
+            }
+        }
+        $numRetornos = [
+                    'nombre' => 'Embases',
+                    'valores' => $newValor
+                ];
+
+        // array_push($diario,$numRetornos);
             
         foreach ($paramsTipoGasto as $keyT => $valueT) {
             $newValor = [];
@@ -372,6 +420,7 @@ class VentasController extends AppController
             'carteraRecogida' => $carteraRecogida,
             'productoTotal' => $productoTotal,
             'fecha' => $fechaUso,
+            'retornos' => $numRetornos
         ];
 
 
@@ -380,8 +429,6 @@ class VentasController extends AppController
     public function reporteDiarioVendedor(){
 
         if($this->request->is('post')){
-
-            $this->viewBuilder()->setLayout('excel');
 
             if($this->request->data('usuario_id') == null){
                 $this->request->data('usuario_id',$this->Auth->user('id'));
@@ -393,20 +440,30 @@ class VentasController extends AppController
             }
 
             $calculo = $this->calculoReporteDiario($this->request->data('usuario_id'),$this->request->data('fecha'));
-            extract($calculo);
+            extract($calculo);  
+
             $excel = 1;
             $name = 'Reporte_diario_'.$fecha;
-            $this->set(compact('header','diario','excel','name','ventas','gasto','usuario','carteraRecogida','productoTotal'));
+
+            if($this->Auth->user('role') == 'admin'){
+                $this->viewBuilder()->setLayout('excel');
+                $this->set(compact('excel'));
+            }
+            // prx($retornos);
+
+            $this->set(compact('header','diario','name','ventas','gasto','usuario','carteraRecogida','productoTotal','retornos'));
 
         }
 
         if($this->Auth->user('role') == 'admin'){
+            $vista = 1;
             $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
         }else{
+            $vista = 2;
             $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
         }
         
-        $this->set(compact('usuarios'));
+        $this->set(compact('usuarios','vista'));
 
     }//Fin reporteDiarioVendedor
 
@@ -416,7 +473,9 @@ class VentasController extends AppController
 
         if($this->request->is('post')){
 
-            $this->viewBuilder()->setLayout('excel');
+            if($this->Auth->user('role') == 'admin'){
+                $this->viewBuilder()->setLayout('excel');
+            }
 
             if($this->request->data('fecha') == null){
                 $this->request->data('fecha',date('Y-m-d'));
@@ -492,12 +551,14 @@ class VentasController extends AppController
         }
 
         if($this->Auth->user('role') == 'admin'){
+            $vista = 1;
             $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
         }else{
+            $vista = 2;
             $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
         }
         
-        $this->set(compact('usuarios'));
+        $this->set(compact('usuarios','vista'));
     }
 
 
@@ -717,9 +778,10 @@ class VentasController extends AppController
 
         $padreTable = TableRegistry::get('ParametrosValoresPadre');
 
-        if(!$padreTable->find()->where(['parmetros_tipo_id'=>1,'fecha'=>date('Y-m-d','usuario_id'=>$this->Auth->user('id'))])->first()){
+        if( !$padreTable->find()->where(['parametros_tipo_id'=>1,'fecha'=> date('Y-m-d'),'usuario_id'=> $this->Auth->user('id') ])->first() ){
 
-            $last = $padreTable->find()->where(['parmetros_tipo_id'=>1,'usuario_id'=>$this->Auth->user('id'))])->order(['id'=>'desc'])->first();
+
+            $last = $padreTable->find()->contain(['ParametrosValores'])->where(['parametros_tipo_id'=>1,'usuario_id'=>$this->Auth->user('id')])->order(['id'=>'desc'])->first();
             if($last){
 
                 if(!$this->Ventas->find()->where(['usuario_id'=>$this->Auth->user('id'),'fecha'=>$last->fecha])->first()){
@@ -758,7 +820,6 @@ class VentasController extends AppController
                     $this->Flash->success(__('Registre los parametros de inicio.'));
                     return $this->redirect(['controller'=>'parametrosValores','action' => 'add']);
                 }
-
 
             }else{
 

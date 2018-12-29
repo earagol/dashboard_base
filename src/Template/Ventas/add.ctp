@@ -103,11 +103,10 @@
                   Detalle de Venta
                </h3>
             </div>
-           
+            <br>
 
-            <div id="grilla" style="margin-top: 5px;min-height: 300px;">
+            <div class="row text-center col-lg-12 col-md-12 col-sm-12"  id="grilla" style="margin-top: 5px;min-height: 300px;">
                 <?php if(isset($detalles)): ?>
-
                     <?php echo $this->element('detalles_ventas', array('detalles' => $detalles) ); ?>
                 <?php else: ?>
 
@@ -131,15 +130,8 @@
                             <td ></td>
                         </tbody>
                     </table>
-
-
                 <?php endif; ?>
-
-                
-                
             </div>
-
-
             
             <table class="table table-bordered col-lg-6 col-lg-offset-3 col-xs-12 col-sm-12">
                 <thead class="thead-dark">
@@ -251,12 +243,16 @@
 
             <?php if($productosRetornables): ?>
 
-                    <div class = "page-header text-center col-lg-4 col-lg-offset-3 col-xs-12 col-sm-12">
+                    <hr class="my-4">
+
+                     <div class = "page-header text-center col-lg-4 col-lg-offset-3 col-xs-12 col-sm-12">
                        <h3>
                           Retorno de Embases
                        </h3>
                     </div>
 
+                    <div class = "col-lg-12">   </div>
+                    <br>
                     <table class="table table-bordered col-lg-4 col-lg-offset-3 col-xs-12 col-sm-12" id="tablaRetornables">
                         <thead class="thead-dark">
                             <tr>
@@ -269,7 +265,7 @@
                                 <tr>
                                     <td><?php echo $value; ?></td>
                                     <td>
-                                        <?php echo $this->Form->control('retorna.retorna_'.$key, ['type'=>'numeric','class'=>'form-control','value' => 0,'label'=>false]); ?>
+                                        <?php echo $this->Form->control('retorna.retorna_'.$key, ['type'=>'number','class'=>'form-control','value' => 0,'label'=>false]); ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -580,7 +576,7 @@
                 return;
             }
 
-            $('#grilla').html('<h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3>');
+            $('#grilla').html('<div class="col-lg-12 text-center"><h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3></div>');
 
             $.ajax({
                 url:url1+'ventas/detalles',

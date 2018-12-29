@@ -78,8 +78,8 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="./"><?php echo $this->Html->image('images/logo.png', ['alt' => 'Logo']); ?> </a>
-                <a class="navbar-brand hidden" href="./"><?php echo $this->Html->image('images/logo2.png', ['alt' => 'Logo']); ?></a> 
+               <!--  <a class="navbar-brand" href="./"><?php echo $this->Html->image('images/logo.png', ['alt' => 'Logo']); ?> </a>
+                <a class="navbar-brand hidden" href="./"><?php echo $this->Html->image('images/logo2.png', ['alt' => 'Logo']); ?></a>  -->
 
                 <!--<a class="navbar-brand" href="./"><img src="images/logo.png" alt="Logo"></a>
                 <a class="navbar-brand hidden" href="./"><img src="images/logo2.png" alt="Logo"></a>-->
@@ -174,9 +174,9 @@
 
                             <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado'), ['controller'=>'Ventas','action' => 'unionDiarioVentasVendedor'],['title'=>'Reporte Consolidado','escape' => false]) ?></li>
 
-                            <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Vendedor'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasUsuario'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
+                            <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Ventas Vendedor'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasUsuario'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
 
-                            <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Rutas'), ['controller'=>'Ventas','action' => 'reporteConsolidadoRutas'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
+                            <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Ventas Rutas'), ['controller'=>'Ventas','action' => 'reporteConsolidadoRutas'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
 
                         </ul>
                     </li>

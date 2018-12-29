@@ -79,7 +79,7 @@ class ParametrosValoresController extends AppController
             $productos = $productosTable->find('list', ['limit' => 200]);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('fecha',date('Y-m-d'));
-            if($this->request->data('parametros_tipo_id') == 1 && $padreTable->find()->where(['parametros_tipo_id' => $this->request->data('parametros_tipo_id'),'fecha' => $this->request->data('fecha')])->first()){
+            if($this->request->data('parametros_tipo_id') == 1 && $padreTable->find()->where(['parametros_tipo_id' => $this->request->data('parametros_tipo_id'),'fecha' => $this->request->data('fecha'),'usuario_id' => $this->Auth->user('id')])->first()){
                 $this->Flash->error(__('El parametro de inicio ya existe registrado.'));
             }else{
                 $padreValore = $padreTable->newEntity();

@@ -13,29 +13,31 @@
             </div>
         </div>
         <div class="card-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th><?php echo $this->Paginator->sort('id','Id <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th><?php echo $this->Paginator->sort('categoria_id','Categoria <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th><?php echo $this->Paginator->sort('nombre','Nombre <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                        <th >Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($productos as $producto): ?>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td><?php echo $this->Number->format($producto->id) ?></td>
-                            <td><?php echo h($producto->categoria->nombre) ?></td>
-                            <td><?php echo h($producto->nombre) ?></td>
-                            <td class="text-center">
-                                <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $producto->id],['title'=>'Editar','escape' => false]) ?>
-                                <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $producto->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el registro {0}?', $producto->nombre)]) ?>
-                            </td>
+                            <th><?php echo $this->Paginator->sort('id','Id <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th><?php echo $this->Paginator->sort('categoria_id','Categoria <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th><?php echo $this->Paginator->sort('nombre','Nombre <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th >Acciones</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($productos as $producto): ?>
+                            <tr>
+                                <td><?php echo $this->Number->format($producto->id) ?></td>
+                                <td><?php echo h($producto->categoria->nombre) ?></td>
+                                <td><?php echo h($producto->nombre) ?></td>
+                                <td class="text-center">
+                                    <?php echo $this->Html->link(__('<i class="fa fa-edit"></i>'), ['action' => 'edit', $producto->id],['title'=>'Editar','escape' => false]) ?>
+                                    <?php echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $producto->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas eliminar el registro {0}?', $producto->nombre)]) ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="paginator">
