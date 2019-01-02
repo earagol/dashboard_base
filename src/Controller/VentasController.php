@@ -810,8 +810,8 @@ class VentasController extends AppController
     public function detalles()
     {
         extract($this->request->data);
-        
         $session = $this->request->session();
+        // pr($session->read('detalles'));
         $mensaje = false;
         if($tipo == 1){
 
@@ -851,12 +851,15 @@ class VentasController extends AppController
         }else if($tipo == 2){
 
             $detalles = $session->read('detalles');
+            pr($detalles);
             unset($detalles[$this->request->data('index')]);
+            prx($detalles);
             $session->write('detalles',$detalles);
 
         }else if($tipo == 3){
 
             $aux = $session->read('detalles');
+            // prx($aux);
             $detalles = $aux;
             $detalles[$this->request->data('index')]['cantidad'] = $this->request->data('cantidad');
             $detalles[$this->request->data('index')]['total'] = $this->request->data('cantidad') * $detalles[$this->request->data('index')]['precio'];
@@ -1140,12 +1143,13 @@ class VentasController extends AppController
             $carteraPendiente = $carteraPendiente['sum'];
         }
         
-
+        pr($session->read('detalles'));
         $compruebaVisita = $this->compruebaVisita($visitaId,$productos);
+        // sleep(2);
         if($session->read('detalles')){
-            $this->set('detalles',$session->read('detalles'));
+            $this->set('details',$session->read('detalles'));
         }
-
+// prx($session->read('detalles'));
         
         /*if($this->Auth->user('role') === 'usuario'){
             $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
@@ -1209,6 +1213,7 @@ class VentasController extends AppController
     private function compruebaVisita($visitaId = null,$productos=null){
         if($visitaId){
             $visitas = TableRegistry::get('Visitas')->VisitaDetalles->find()->where(['visita_id'=>$visitaId])->toArray();
+            $detalles = [];
             if($visitas){
                 $session = $this->request->session();
                 $productosTable = TableRegistry::get('Productos');
@@ -1222,7 +1227,9 @@ class VentasController extends AppController
                     $detallesVentas['cantidad'] = $value->cantidad;
                     $detallesVentas['total'] = $value->cantidad*$detallesVentas['precio'];
 
-                    $detalles[] = $detallesVentas;
+                    // $detalles[] = $detallesVentas;
+                    array_push($detalles,$detallesVentas);
+                    // $session->write('detalles',$aux);
                 }
 
                 $session->write('detalles',$detalles);

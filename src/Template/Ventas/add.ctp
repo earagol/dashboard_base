@@ -106,8 +106,8 @@
             <br>
 
             <div class="row text-center col-lg-12 col-md-12 col-sm-12"  id="grilla" style="margin-top: 5px;min-height: 300px;">
-                <?php if(isset($detalles)): ?>
-                    <?php echo $this->element('detalles_ventas', array('detalles' => $detalles) ); ?>
+                <?php if(isset($details)): ?>
+                    <?php echo $this->element('detalles_ventas', array('detalles' => $details) ); ?>
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
@@ -312,7 +312,7 @@
 </div>
 
 
-
+<?php //prx($_SESSION['detalles']); ?>
 
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
