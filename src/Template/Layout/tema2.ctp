@@ -261,6 +261,7 @@
 
             <?php endif; ?>
         </nav>
+        <?php echo $this->element('version'); ?>
     </aside><!-- /#left-panel -->
 
     <!-- Left Panel -->

@@ -197,7 +197,8 @@ input, textarea, select, button, meter, progress {
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <p>Page © - 2018</p>
+                <p>Estrella © - 2018</p><br>
+                <?php echo $this->element('version'); ?>
             </div>
         </div>
     </div>
