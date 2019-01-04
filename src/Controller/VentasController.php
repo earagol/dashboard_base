@@ -34,7 +34,7 @@ class VentasController extends AppController
     public function isAuthorized($user){
 
         if(isset($user['role']) && $user['role'] === 'usuario'){
-            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','reporteClientesEmbases','detalles','ventas'])){
+            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','reporteClientesEmbases','detalles','ventas','detalleListadoVentas'])){
                 return true;
             }
         }
@@ -79,9 +79,23 @@ class VentasController extends AppController
     }
 
 
+    public function validaAnulacion(){
+
+        $venta = $this->Ventas->get($this->request->data('ventaId'));
+        $cierreTable = TableRegistry::get('CierreOperaciones');
+        $flag = true;
+        $mensaje = '';
+        if($cierreTable->find()->where(['vendedor_id'=>$venta->usuario_id,'fecha_cierre' => $venta->fecha])->first()){
+            $flag = false;
+            $mensaje = 'No se podra anular! Las operaciones para la fecha de la venta seleccionada fueron cerradas para el vendedor.';
+        }
+
+        die(json_encode(['success'=>$flag,'message'=>$mensaje]));
+    }
+
+
     public function ventas()
     {
-
         $query = $this->Ventas->find()
                      ->select([
                         'Ventas.id',
@@ -92,6 +106,9 @@ class VentasController extends AppController
                         'Ventas.cuenta_porcobrar',
                         'Ventas.monto_cartera',
                         'Ventas.tiene_retorno',
+                        'Ventas.tiene_detalles',
+                        'Ventas.fecha',
+                        'Ventas.created',
                      ])
                      ->join([
                         'Clientes' => [
@@ -551,7 +568,8 @@ class VentasController extends AppController
                 $this->set(compact('excel'));
             }
             $name = 'Ventas_'.$fecha;
-            $this->set(compact('headerClientes','detallesVentas','name'));
+
+            $this->set(compact('headerClientes','detallesVentas','name','productos'));
 
         }
 
@@ -797,6 +815,19 @@ class VentasController extends AppController
         $venta = $this->Ventas->get($id, [
             'contain' => ['Clientes', 'Usuarios', 'VentaDetalles']
         ]);
+
+        $this->set('venta', $venta);
+    }
+
+
+    public function detalleListadoVentas()
+    {
+        $ventaId = $this->request->data('ventaId');
+        $venta = $this->Ventas->get($ventaId, [
+            'contain' => ['VentaDetalles'=>['Productos']]
+        ]);
+
+        // prx($venta);
 
         $this->set('venta', $venta);
     }

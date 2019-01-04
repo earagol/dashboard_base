@@ -191,7 +191,9 @@
                                                     <td><?php echo h($visita->cliente->nombres) ?></td>
                                                     <td><?php echo h($visita->fecha_vencimiento->format('Y-m-d')) ?></td>
                                                     <td> 
-                                                        <?php echo $this->Html->link(__('<small class="badge badge-pending">Pendiente</small>'), ['controller' => 'ventas','action' => 'add', $visita->cliente_id,$visita->id],['title'=>'Realizar Venta','escape' => false]) ?>
+                                                        <?php if($currentUser['id'] == $visita->usuario->id): ?>
+                                                            <?php echo $this->Html->link(__('<small class="badge badge-pending">Pendiente</small>'), ['controller' => 'ventas','action' => 'add', $visita->cliente_id,$visita->id],['title'=>'Realizar Venta','escape' => false]) ?>
+                                                        <?php endif; ?>
                                                     </td> 
                                                 </tr>
                                         <?php endforeach; ?>

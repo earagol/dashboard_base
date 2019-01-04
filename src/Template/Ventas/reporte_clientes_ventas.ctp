@@ -48,7 +48,7 @@ if(!isset($excel)){
                                 $cxcTotal=0;
                                 if($detallesVentas){ 
                                    
-                                    $prodcutTotal = $detalles['productos'];
+                                    $prodcutTotal = $productos;
                                     foreach ($prodcutTotal  as $key => $value) {
                                         $prodcutTotal[$key]=0;
                                     }

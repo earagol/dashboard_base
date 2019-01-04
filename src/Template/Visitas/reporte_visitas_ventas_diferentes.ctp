@@ -58,34 +58,66 @@ if(!isset($excel)){
     tr:nth-child(even) {background-color: #f2f2f2}
 </style>
 
-
 <table>
     <thead>
          <tr>
-            <th>Ruta</th>
-            <th>Monto Venta</th>
-            <th>Monto CXC</th>
-            <th>Monto Cartera Recogida</th>
+                <th>Vendedor</th>
+                <th>Cliente</th>
+                <th>Direccion</th>
+                <th>Detalle</th>
+        <?php foreach ($productos as $key => $value) { ?>
+           
+                <th><?php echo $value; ?></th>
+            
+        <?php } ?>
+                <th>Monto</th>
         </tr>
         
     </thead>
     <tbody>
 
-            <?php 
-                if($consolidados){ 
-                    foreach ($consolidados as $key => $consolidado) { ?>
-                        <tr>
-                            <td><?php echo utf8_encode($consolidado->Rutas['nombre']); ?></td>
-                            <td><?php echo number_format($consolidado->monto_total, 0, ",", "."); ?></td>
-                            <td><?php echo number_format($consolidado->cuenta_porcobrar, 0, ",", "."); ?></td>
-                            <td><?php echo number_format($consolidado->monto_cartera, 0, ",", "."); ?></td>
-                        </tr>
-                    <?php }
-                }
-            ?>
+        <?php if($ventas): ?>
+        
+            <?php foreach ($ventas as $detalle => $detalles) { ?>
+                <tr>
+                    <td><?php echo utf8_encode($detalles['vendedor']); ?></td>
+                    <td><?php echo utf8_encode($detalles['cliente']); ?></td>
+                    <td><?php echo utf8_encode($detalles['direccion']); ?></td>
+                    <td>Visita</td>
+                    <?php if($detalles['productos_visita']): ?>
+                        <?php foreach ($detalles['productos_visita'] as $pro => $pros) { ?>
+                                <td><?php echo $pros; ?></td>
+                        <?php } ?>
+                    <?php else: ?>
+                        <?php foreach ($productos as $key => $value) { ?>
+                                <th></th>
+                        <?php } ?>
+                    <?php endif; ?>
+                    <td><?php echo utf8_encode($detalles['monto_visita']); ?></td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Venta</td>
+                    <?php if($detalles['productos_venta']): ?>
+                        <?php foreach ($detalles['productos_venta'] as $pro => $pros) { ?>
+                                <td><?php echo $pros; ?></td>
+                        <?php } ?>
+                    <?php else: ?>
+                        <?php foreach ($productos as $key => $value) { ?>
+                                <th></th>
+                        <?php } ?>
+                    <?php endif; ?>
+                    <td><?php echo utf8_encode($detalles['monto_venta']); ?></td>
+                </tr>
+            <?php } ?>
+
+        <?php endif; ?>
+    
     </tbody>
 </table>
 
 
 <?php } ?>
-

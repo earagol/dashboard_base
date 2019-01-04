@@ -30,16 +30,22 @@
                             <th scope="col"><?php echo $this->Paginator->sort('Cliente','Cliente <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('Monto Total','Monto Total <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('CXC','CXC <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                            <th scope="col"><?php echo $this->Paginator->sort('Monto Cartera','Monto Cartera <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th scope="col"><?php echo $this->Paginator->sort('Monto Cartera','Pago Cartera <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('tiene_retorno','Retorno embases <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th scope="col"><?php echo $this->Paginator->sort('fecha','Fecha <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th >Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($ventas as $venta): 
                             $retorno = '';
+                            $disabled = 'disabled';
                             if($venta->tiene_retorno){
                                 $retorno = 'Si';
+                            }
+
+                            if($venta->tiene_detalles){
+                                $disabled = '';
                             }
                             ?>
                             <tr>
@@ -50,7 +56,9 @@
                                 <td><?php echo $this->Number->format($venta->cuenta_porcobrar) ?></td>
                                 <td><?php echo $this->Number->format($venta->monto_cartera) ?></td>
                                 <td><?php echo $retorno ?></td>
+                                <td><?php echo $venta->created->format('Y-m-d H:i:s') ?></td>
                                 <td class="text-center">
+                                    <button data-id="<?php echo $venta->id; ?>" type="button" class="btn btn-info detalle" <?php echo $disabled; ?> title="Detalles"><i class="fa fa-eye"></i></button>
                                     <?php if($currentUser['role'] == 'admin') : ?>
                                         <button data-id="<?php echo $venta->id; ?>" type="button" class="btn btn-danger cancelar" title="Anular"><i class="fa fa-ban"></i></button>
                                         <?php //echo $this->Form->postLink(__('<i class="fa fa-trash-o"></i>'), ['action' => 'delete', $venta->id], ['title'=>'Eliminar','escape' => false,'confirm' => __('Realmente deseas anular la venta {0}? Esta acción no se puede reversar.', $venta->id)]) ?>
@@ -100,7 +108,33 @@
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="detalleVenta">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Detalle de Venta</h4>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body" id="detalle_ventas">
+
+        <div class="col-lg-12 text-center"><h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3></div>
+        
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
       </div>
 
     </div>
@@ -116,49 +150,69 @@
 
             $('.cancelar').on("click", function() {
 
-                $('#anularVenta').modal('show');
+                $.ajax({
+                    url:url1+'ventas/validaAnulacion',
+                    dataType: 'json',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    },
+                    data:{
+                        ventaId: $(this).data('id')
+                    },
+                    success: function(response){
+                        if(response.success){
 
-                var id = $(this).data('id');
+                            $('#anularVenta').modal('show');
+                            var id = $(this).data('id');
 
-                $('#venta-id').val(id);
-                $('#observacion-anulacion').val('');
+                            $('#venta-id').val(id);
+                            $('#observacion-anulacion').val('');
+                           
+                        }else{
+                            alert(response.message);
+                        }
+                    }
+                });
 
+                
             });
 
-
             $('#save').on("click", function() {
-
                 if($('#observacion-anulacion').val() == ''){
                     alert('Ingrese una observación');
                     return;
                 }
-
-
                 var conf = confirm('Realmente deseas anular la venta? esta operación no se puede reversar.' );
                 if(!conf){
                     return;
                 }
+
                 $('form').submit();
                 return;
+            });
 
+            $('.detalle').on("click", function() {
 
-                // $.ajax({
-                //     url:url1+'ventas/detalles',
-                //     dataType: 'html',
-                //     type: 'POST',
-                //     headers: {
-                //         'X-CSRF-Token': csrfToken
-                //     },
-                //     data:{
-                //         tipo: 2,
-                //         index: id
-                //     },
-                //     success: function(response){
-                //         $('#grilla').html(response);
-                //     }
-                // });
+                var ventaId = $(this).data('id');
+                $('#detalle_ventas').html('<div class="col-lg-12 text-center"><h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3></div>');
+        
+                $('#detalleVenta').modal('show');
 
-
+                $.ajax({
+                    url:url1+'ventas/detalleListadoVentas',
+                    dataType: 'html',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    },
+                    data:{
+                        ventaId: $(this).data('id')
+                    },
+                    success: function(response){
+                        $('#detalle_ventas').html(response);
+                    }
+                });
             });
 
             

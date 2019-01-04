@@ -103,137 +103,6 @@ class VisitasController extends AppController
         $this->set(compact('productos','visitas', 'productoTotal','total','name'));
     }//Fin reporteVisitas
 
-
-
-    public function reporteVisitasVentasDiferentes(){
-
-        if($this->request->is('post')){
-
-            $this->viewBuilder()->setLayout('excel');
-
-            if($this->request->data('desde') == null){
-                $this->request->data('desde',date('Y-m-d'));
-            }
-
-            if($this->request->data('hasta') == null){
-                $this->request->data('hasta',date('Y-m-d'));
-            }
-
-            $productosTable = TableRegistry::get('Productos');
-            $productos = $productosTable->find('list')->toArray();
-            $productoTotal = [];
-            if($productos){
-                foreach ($productos as $keypp => $valuepp) {
-                    $productosAll[$keypp] = 0;
-                }
-            }
-            
-
-            $fechaFormat = new Time($this->request->data('desde'));
-            $this->request->data('desde',$fechaFormat->format('Y-m-d'));
-            $desde = $this->request->data('desde');
-
-            $fechaFormat = new Time($this->request->data('hasta'));
-            $this->request->data('hasta',$fechaFormat->format('Y-m-d'));
-            $hasta = $this->request->data('hasta');
-
-            $visitasDiferentes = $this->Visitas->Ventas->find()
-                                               ->contain(['Usuarios', 'Clientes'=>['Regiones','Comunas'],'Visitas'=>['visitaDetalles'],'VentaDetalles'])
-                                               ->innerJoinWith('Visitas')
-                                               ->where([
-                                                    'Ventas.fecha >='=>$desde,
-                                                    'Ventas.fecha <='=>$hasta,
-                                                    'Visitas.monto_total !='=> false,
-                                                    'Ventas.monto_total !='=> 'Visitas.monto_total',
-                                                ])
-                                               ->toArray();
-            // pr($productosAll);
-            // prx($visitasDiferentes);
-            $ventas = [];
-
-            if($visitasDiferentes){
-
-                foreach ($visitasDiferentes as $key => $value) {
-
-                    $valor = [
-                                'vendedor' => $value->usuario->full_name,
-                                'cliente' => $value->cliente->regione->nombres,
-                                'direccion' => $value->cliente->regione->nombre." ".$value->cliente->comuna->nombre." ".$value->cliente->calle." ".$value->cliente->numero_calle." ".$value->cliente->dept_casa_oficina_numero,
-                                'productos_visita' => $productosAll,
-                                'productos_venta' => $productosAll,
-                            ];
-                    if($value->visita->visita_detalles){
-                        // prx($valor['productos_visita']);
-                        foreach ($value->visita->visita_detalles as $keyv => $valuev) {
-                            $valor['productos_visita'][$valuev->producto_id] = $valuev->cantidad;
-                        }
-                    }
-                    
-                    if($value->venta_detalles){
-                        foreach ($value->venta_detalles as $keyvv => $valuevv) {
-                            $valor['productos_venta'][$valuevv->producto_id] = $valuevv->cantidad;
-                        }
-                    }
-
-                    $ventas[] = $valor;
-                }
-
-            }
-            prx($ventas);
-
-
-            $this->set(compact('visitasDiferentes','productosAll'));
-        }
-        
-
-        // $visitas = [];
-        // $total = 0;
-        // $name = 'visitas_pendientes_'.date('Y-m-d');
-
-        // if($visitasPendientes){
-        //     $productosTable = TableRegistry::get('Productos');
-        //     $productos = $productosTable->find('list')->toArray();
-        //     $productoTotal = [];
-        //     if($productos){
-        //         foreach ($productos as $keypp => $valuepp) {
-        //             $productoTotal[$keypp] = 0;
-        //         }
-        //     }
-
-        //     foreach ($visitasPendientes as $key => $value) {
-        //         $visita = [
-        //             'cliente' => $value->cliente->nombres,
-        //             'vendedor' => $value->usuario->full_name,
-        //             'total' => $value->monto_total,
-        //         ];
-
-        //         $total+=$value->monto_total;
-        //         // $monto = 
-        //         $producto = [];
-        //         foreach ($productos as $keyp => $valuep) {
-        //            $producto[$keyp] = '';
-        //            // prx($value);
-        //            if(isset($value->visita_detalles) && $value->visita_detalles){
-        //                 foreach ($value->visita_detalles as $keyv => $valuev) {
-        //                     if($valuev->producto_id == $keyp){
-        //                         $producto[$keyp] = $valuev->cantidad;
-        //                         $productoTotal[$keyp]+=$valuev->cantidad;
-        //                     }
-        //                 }
-        //            }
-        //         }
-
-        //         $visita['productos'] = $producto;
-        //         $visitas[] = $visita;
-        //     }
-            
-        // }
-
-        
-    }//Fin reporteVisitasVentasDiferentes
-
-
-
     /**
      * View method
      *
@@ -513,4 +382,85 @@ class VisitasController extends AppController
         $this->set(compact('usuarios'));
 
     }//Fin reporteVisitasDiferentesAVentas
+
+
+    public function reporteVisitasVentasDiferentes(){
+
+        if($this->request->is('post')){
+
+            $this->viewBuilder()->setLayout('excel');
+
+            if($this->request->data('desde') == null){
+                $this->request->data('desde',date('Y-m-d'));
+            }
+
+            if($this->request->data('hasta') == null){
+                $this->request->data('hasta',date('Y-m-d'));
+            }
+
+            $productosTable = TableRegistry::get('Productos');
+            $productos = $productosTable->find('list')->toArray();
+            $productoTotal = [];
+            if($productos){
+                foreach ($productos as $keypp => $valuepp) {
+                    $productosAll[$keypp] = 0;
+                }
+            }
+            
+
+            $fechaFormat = new Time($this->request->data('desde'));
+            $this->request->data('desde',$fechaFormat->format('Y-m-d'));
+            $desde = $this->request->data('desde');
+
+            $fechaFormat = new Time($this->request->data('hasta'));
+            $this->request->data('hasta',$fechaFormat->format('Y-m-d'));
+            $hasta = $this->request->data('hasta');
+
+            $visitasDiferentes = $this->Visitas->Ventas->find()
+                                               ->contain(['VentaDetalles','Usuarios', 'Clientes'=>['Regiones','Comunas'],'Visitas'=>['VisitaDetalles']])
+                                               ->innerJoinWith('Visitas')
+                                               ->where([
+                                                    'Ventas.fecha >='=>$desde,
+                                                    'Ventas.fecha <='=>$hasta,
+                                                    'Visitas.monto_total !='=> false,
+                                                    'Ventas.monto_total !='=> 'Visitas.monto_total',
+                                                ])
+                                               ->toArray();
+            $ventas = [];
+            if($visitasDiferentes){
+
+                foreach ($visitasDiferentes as $key => $value) {
+
+                    $valor = [
+                                'vendedor' => $value->usuario->full_name,
+                                'cliente' => $value->cliente->nombres,
+                                'direccion' => $value->cliente->regione->nombre." ".$value->cliente->comuna->nombre." ".$value->cliente->calle." ".$value->cliente->numero_calle." ".$value->cliente->dept_casa_oficina_numero,
+                                'productos_visita' => $productosAll,
+                                'productos_venta' => $productosAll,
+                                'monto_venta' => $value->monto_total,
+                                'monto_visita' => $value->visita->monto_total,
+                            ];
+                    $valor['detalles'] = [];
+                    if($value->visita->visita_detalles){
+                        foreach ($value->visita->visita_detalles as $keyv => $valuev) {
+                            $valor['productos_visita'][$valuev->producto_id] = $valuev->cantidad;
+                        }
+                    }
+                    
+                    if($value->venta_detalles){
+                        foreach ($value->venta_detalles as $keyvv => $valuevv) {
+                            $valor['productos_venta'][$valuevv->producto_id] = $valuevv->cantidad;
+                        }
+                    }
+
+                    $ventas[] = $valor;
+                }
+
+            }
+            $excel = 1;
+            $name = 'Reporte_diferencias_visitas_ventas_'.date('Y-m-d');
+            $this->set(compact('name','excel','ventas','productos'));
+        }
+        
+    }//Fin reporteVisitasVentasDiferentes
 }

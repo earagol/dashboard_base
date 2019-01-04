@@ -83,8 +83,7 @@
                </h3>
             </div>
            
-
-            <div id="grilla" style="margin-top: 5px;max-height: 300px;">
+            <div class="row text-center col-lg-12 col-md-12 col-sm-12"  id="grilla" style="margin-top: 5px;min-height: 300px;">
 
                 <table class="table table-striped table-bordered">
                     <thead class="thead-dark">
@@ -440,7 +439,7 @@
                     return;
                 }
 
-                $('#grilla').html('<h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3>');
+                $('#grilla').html('<div class="col-lg-12 text-center"><h3 class="text-muted text-center mt-lg"><i class="fa fa-spin fa-spinner"></i> cargando...</h3></div>');
 
                 $.ajax({
                     url:url1+'visitas/detalles',
