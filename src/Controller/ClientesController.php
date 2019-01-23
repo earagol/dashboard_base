@@ -91,11 +91,10 @@ class ClientesController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($where = null)
     {
         $cliente = $this->Clientes->newEntity();
         if ($this->request->is('post')) {
-
             if(!$this->Clientes->find()->where(['rut'=>trim($this->request->data('rut'))])->first()){
                 $this->request->data('rut',trim($this->request->data('rut')));
 
@@ -116,13 +115,20 @@ class ClientesController extends AppController
 
             }else{
                 $this->Flash->error(__('El rut ya existe registrado.'));
+                // prx($this->request->data);
+                // prx($cliente);
             }
         }
         $rutas = $this->Clientes->Rutas->find('list', ['limit' => 200]);
         $clasificacions = $this->Clientes->Clasificaciones->find('list', ['limit' => 200]);
         $regions = $this->Clientes->Regiones->find('list', ['limit' => 200]);
         $comunas = $this->Clientes->Comunas->find('all', ['select'=>['id','region_id','nombre'],'limit' => 200])->toArray();
-        $this->set(compact('cliente', 'rutas', 'clasificacions', 'regions', 'comunas', 'usuarios'));
+        $comunasList = [];
+        if($this->request->data('region_id')){
+            $comunasList = $this->Clientes->Comunas->find('list')->where(['region_id'=>$this->request->data('region_id')])->toArray();
+        }
+        // prx($comunasList);
+        $this->set(compact('cliente', 'rutas', 'clasificacions', 'regions', 'comunas', 'usuarios','where','comunasList'));
     }
 
     /**

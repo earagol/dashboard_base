@@ -36,13 +36,13 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Rut</label>
-                <?php echo $this->Form->control('rut',['value' =>'','class'=>'form-control','placeholder'=>'Rut','label'=>false]); ?>
+                <?php echo $this->Form->control('rut',['class'=>'form-control','placeholder'=>'Rut','label'=>false]); ?>
                 <p><b>El formato del rut debe ser por ejemplo: 11111111-1</b></p>
             </div>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Email</label>
-                <?php echo $this->Form->control('email',['value' =>'','class'=>'form-control','placeholder'=>'Email','label'=>false]); ?>
+                <?php echo $this->Form->control('email',['class'=>'form-control','placeholder'=>'Email','label'=>false]); ?>
             </div>
 
             <div class="form-group">
@@ -52,12 +52,12 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Telefono 1</label>
-                <?php echo $this->Form->control('telefono1',['value' =>'','class'=>'form-control','placeholder'=>'Telefono 1..','label'=>false]); ?>
+                <?php echo $this->Form->control('telefono1',['class'=>'form-control','placeholder'=>'Telefono 1..','label'=>false]); ?>
             </div>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Telefono 2</label>
-                <?php echo $this->Form->control('telefono2',['value' =>'','class'=>'form-control','placeholder'=>'Telefono 2...','label'=>false]); ?>
+                <?php echo $this->Form->control('telefono2',['class'=>'form-control','placeholder'=>'Telefono 2...','label'=>false]); ?>
             </div>
 
             <div class="form-group">
@@ -72,22 +72,22 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Comuna</label>
-                <?php echo $this->Form->control('comuna_id',['options'=>[],'class'=>'form-control','empty'=>'--Seleccione la comuna--','label'=>false]); ?>
+                <?php echo $this->Form->control('comuna_id',['options'=>$comunasList,'class'=>'form-control','empty'=>'--Seleccione la comuna--','label'=>false]); ?>
             </div>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Calle/Avenida</label>
-                <?php echo $this->Form->control('calle',['value' =>'','class'=>'form-control','placeholder'=>'Calle/Avenida..','label'=>false]); ?>
+                <?php echo $this->Form->control('calle',['class'=>'form-control','placeholder'=>'Calle/Avenida..','label'=>false]); ?>
             </div>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Número</label>
-                <?php echo $this->Form->control('numero_calle',['value' =>'','type'=>'number','class'=>'form-control','placeholder'=>'Número','label'=>false]); ?>
+                <?php echo $this->Form->control('numero_calle',['type'=>'number','class'=>'form-control','placeholder'=>'Número','label'=>false]); ?>
             </div>
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Número casa/dept/oficina</label>
-                <?php echo $this->Form->control('dept_casa_oficina_numero',['value' =>'','type'=>'number','class'=>'form-control','placeholder'=>'Número casa/dept/oficina ...','label'=>false]); ?>
+                <?php echo $this->Form->control('dept_casa_oficina_numero',['type'=>'number','class'=>'form-control','placeholder'=>'Número casa/dept/oficina ...','label'=>false]); ?>
             </div>
 
             

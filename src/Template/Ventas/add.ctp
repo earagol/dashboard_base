@@ -332,6 +332,11 @@
 
     var precios = '<?php echo $precios ?>';
 
+    function nuevoCliente(){
+        document.location.href=url1+"clientes/add/venta";
+    }
+
+
 
     (function( $ ) {
 
@@ -351,6 +356,7 @@
         }
 
 
+
         $("#cliente-id").select2({
             // theme: 'bootstrap4',
             // minimumInputLength: 3,
@@ -358,7 +364,7 @@
             // matcher: matchCustom
             language: {
                 noResults: function() {
-                    return "<a href='#' class='btn btn-sm btn-success nuevoCliente' id='nuevoCliente' data-toggle='modal' data-target='#newClient' >Nuevo Cliente</a>";
+                    return "<a href='#' onclick='nuevoCliente()' class='btn btn-sm btn-success nuevoCliente' id='nuevoCliente'  >Nuevo Cliente</a>";
                 }
             },
             escapeMarkup: function (markup) {
@@ -367,7 +373,7 @@
         });
 
 
-        
+        // return "<a href='#' class='btn btn-sm btn-success nuevoCliente' id='nuevoCliente' data-toggle='modal' data-target='#newClient' >Nuevo Cliente</a>";
 
         // $("#nuevoCliente").on( "click", "a", function() {
         //   console.log('jhkjhj');
@@ -398,7 +404,7 @@
         //     });
         //   }
         // });
-
+// http://10.0.0.166/layouts/estrella/ventas/add/1
 
         $("#cliente-id").change(function(e){
             var id = $("#cliente-id").val();

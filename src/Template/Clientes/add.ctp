@@ -1,1 +1,1 @@
-<?php echo $this->cell('Clientes::add'); ?>
+<?php echo $this->cell('Clientes::add', ['where'=>$where,'comunasList'=>$comunasList]); ?>

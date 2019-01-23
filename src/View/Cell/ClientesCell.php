@@ -25,7 +25,7 @@ class ClientesCell extends Cell
      *
      * @return void
      */
-    public function add($where = null)
+    public function add($where = null,$comunasList=array())
     {
         $session = $this->request->session();
         $this->set('currentUser',$session->read('Auth.User'));
@@ -54,6 +54,6 @@ class ClientesCell extends Cell
         $clasificacions = $clientesTable->Clasificaciones->find('list', ['limit' => 200]);
         $regions = $clientesTable->Regiones->find('list', ['limit' => 200]);
         $comunas = $clientesTable->Comunas->find('all', ['select'=>['id','region_id','nombre'],'limit' => 200])->toArray();
-        $this->set(compact('cliente', 'rutas', 'clasificacions', 'regions', 'comunas', 'usuarios','where'));
+        $this->set(compact('cliente', 'rutas', 'clasificacions', 'regions', 'comunas', 'usuarios','where','comunasList'));
     }
 }
