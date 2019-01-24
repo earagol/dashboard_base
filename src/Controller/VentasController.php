@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Network\Session;
 use Cake\Event\Event;
@@ -395,7 +396,7 @@ class VentasController extends AppController
             if(isset($ventasEmbasesRetornados[$keyP])){
                 $newValor[$keyP]['nombre'] = $productos[$keyP];
                 $newValor[$keyP]['cantidad'] = $ventasEmbasesRetornados[$keyP];
-                $productoTotal[$keyP] = $productoTotal[$keyP]-$ventasEmbasesRetornados[$keyP];
+                // $productoTotal[$keyP] = $productoTotal[$keyP]-$ventasEmbasesRetornados[$keyP];
             }else{
                 $newValor[$keyP] = [
                                 'nombre' => $valueP,
@@ -882,9 +883,9 @@ class VentasController extends AppController
         }else if($tipo == 2){
 
             $detalles = $session->read('detalles');
-            pr($detalles);
+            // pr($detalles);
             unset($detalles[$this->request->data('index')]);
-            prx($detalles);
+            // prx($detalles);
             $session->write('detalles',$detalles);
 
         }else if($tipo == 3){
@@ -908,7 +909,7 @@ class VentasController extends AppController
 
 
 
-    public function verificaParametriInicial(){
+    public function verificaParametroInicial(){
 
         $padreTable = TableRegistry::get('ParametrosValoresPadre');
 
@@ -1150,7 +1151,7 @@ class VentasController extends AppController
             }
             $this->Flash->error(__('La venta no pudo ser procesada, intente nuevamente.'));
         }else{
-            $this->verificaParametriInicial();
+            $this->verificaParametroInicial();
         }
 
         //Valida Cierre de operaciones..
@@ -1174,25 +1175,13 @@ class VentasController extends AppController
             $carteraPendiente = $carteraPendiente['sum'];
         }
         
-        pr($session->read('detalles'));
+        Configure::write('debug', false);
+        echo "&nbsp;";
+        Configure::write('debug', true);
         $compruebaVisita = $this->compruebaVisita($visitaId,$productos);
-        // sleep(2);
         if($session->read('detalles')){
             $this->set('details',$session->read('detalles'));
         }
-// prx($session->read('detalles'));
-        
-        /*if($this->Auth->user('role') === 'usuario'){
-            $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
-            if($usuario){
-                $rutas = [];
-                foreach ($usuario->rutas as $key => $value) {
-                    $rutas[$value->id]=$value->id;
-                }
-            }
-        }else{
-            $rutas = array_flip($this->Ventas->Clientes->Rutas->find('list')->toArray());
-        }*/
 
         $usuario = $this->Ventas->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
         if($usuario){
@@ -1262,7 +1251,7 @@ class VentasController extends AppController
                     array_push($detalles,$detallesVentas);
                     // $session->write('detalles',$aux);
                 }
-
+                // Configure::write('debug', true);
                 $session->write('detalles',$detalles);
             }
         }

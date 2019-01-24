@@ -25,7 +25,7 @@
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Repetir Contraseña</label>
+                <label for="company" class=" form-control-label">Confirmar Contraseña</label>
                 <?php echo $this->Form->control('password2',['type'=>'password','value'=>'','class'=>'form-control','label'=>false]); ?>
             </div>
 
@@ -55,7 +55,7 @@
             </div>
 
             <div class="form-group">
-                <?php echo $this->Form->button(__('Guardar',['class'=>'btn btn-primary'])) ?>
+                <?php echo $this->Form->button('Guardar',['type'=>'button','class'=>'btn btn-primary','id' => 'save']) ?>
             </div>
 
         </div>
@@ -63,4 +63,24 @@
 </div>
 
 <?= $this->Form->end() ?>
+
+<script type="text/javascript">
+    
+    (function( $ ) {
+        $('#save').click(function(e){
+            e.preventDefault();
+            if($('#password').val() != '' && $('#password2').val() == ''){
+                alert('Debe confirmar la contraseña.');
+                return;
+            }
+
+            $('form').submit();
+
+         });
+
+        
+
+   })(jQuery);
+
+</script>
 
