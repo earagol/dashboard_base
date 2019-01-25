@@ -31,7 +31,7 @@
                 <h4 class="mb-0">
                     <span class=""><?php echo number_format($dataReal->monto_total?$dataReal->monto_total:0, 0, ",", "."); ?></span>
                 </h4>
-                <p class="text-light">Monto Venta <small><?php echo $fecha; ?></p>
+                <p class="text-light">Monto Venta <small><?php echo $fecha; ?></small></p>
 
                 <!--<div class="chart-wrapper px-0" style="height:70px;" height="70">
                     <canvas id="widgetChart1"></canvas>
@@ -44,7 +44,7 @@
 
 
     <div class="col-sm-12 col-lg-3">
-        <div class="card text-white bg-flat-color-3">
+        <div class="card text-white bg-flat-color-4">
             <div class="card-body pb-0">
                 <h4 class="mb-0">
                     <span class=""><?php echo $dataReal->total_ventas?$dataReal->total_ventas:0; ?></span>
@@ -57,6 +57,9 @@
             </div>
         </div>
     </div>
+
+
+ 
 
     <?php if($currentUser['role'] == 'admin'): ?>
 
@@ -192,7 +195,7 @@
                                                     <td><?php echo h($visita->fecha_vencimiento->format('Y-m-d')) ?></td>
                                                     <td> 
                                                         <?php if($currentUser['id'] == $visita->usuario->id): ?>
-                                                            <?php echo $this->Html->link(__('<small class="badge badge-pending">Pendiente</small>'), ['controller' => 'ventas','action' => 'add', $visita->cliente_id,$visita->id],['title'=>'Realizar Venta','escape' => false]) ?>
+                                                            <?php echo $this->Html->link(__('<small class="badge badge-warning">Pendiente</small>'), ['controller' => 'ventas','action' => 'add', $visita->cliente_id,$visita->id],['title'=>'Realizar Venta','escape' => false]) ?>
                                                         <?php endif; ?>
                                                     </td> 
                                                 </tr>

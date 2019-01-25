@@ -448,10 +448,15 @@
             });
             // return;
 
+            // }else if(!$('#totales').val() && !retorno && ($('#pagar-cartera').is(':checked') && ($('#total-pago-deuda').val() == '' || eval($('#total-pago-deuda').val()) == 0))){
+            //     alert('El monto de pago de cartera es incorrecto');
+            //     return;
+            // }
+
             if(!$('#totales').val() && !$('#pagar-cartera').is(':checked') && !retorno){
                 alert('No hay productos ingresados para la venta.');
                 return;
-            }else if(!$('#totales').val() && !retorno && ($('#pagar-cartera').is(':checked') && ($('#total-pago-deuda').val() == '' || eval($('#total-pago-deuda').val()) == 0))){
+            }else if($('#pagar-cartera').is(':checked') && ($('#total-pago-deuda').val() == '' || eval($('#total-pago-deuda').val()) == 0)){
                 alert('El monto de pago de cartera es incorrecto');
                 return;
             }else if(eval($('#cuenta-porcobrar').val()) > 0){
@@ -759,5 +764,48 @@
             });
           }
         });
+
+        var content = document.getElementById("geolocation-test");
+
+        if (navigator.geolocation)
+        {
+            navigator.geolocation.getCurrentPosition(function(objPosition)
+            {
+                var lon = objPosition.coords.longitude;
+                var lat = objPosition.coords.latitude;
+
+                console.log(lon,lat);
+
+                // content.innerHTML = "<p><strong>Latitud:</strong> " + lat + "</p><p><strong>Longitud:</strong> " + lon + "</p>";
+
+            }, function(objPositionError)
+            {
+                switch (objPositionError.code)
+                {
+                    case objPositionError.PERMISSION_DENIED:
+                        console.log("No se ha permitido el acceso a la posición del usuario.");
+                        // content.innerHTML = "No se ha permitido el acceso a la posición del usuario.";
+                    break;
+                    case objPositionError.POSITION_UNAVAILABLE:
+                        console.log("No se ha podido acceder a la información de su posición.");
+                        // content.innerHTML = "No se ha podido acceder a la información de su posición.";
+                    break;
+                    case objPositionError.TIMEOUT:
+                        console.log("El servicio ha tardado demasiado tiempo en responder.");
+                        // content.innerHTML = "El servicio ha tardado demasiado tiempo en responder.";
+                    break;
+                    default:
+                        console.log("Error desconocido.");
+                        // content.innerHTML = "Error desconocido.";
+                }
+            }, {
+                maximumAge: 75000,
+                timeout: 15000
+            });
+        }
+        else
+        {
+            content.innerHTML = "Su navegador no soporta la API de geolocalización.";
+        }
     })(jQuery);
 </script>

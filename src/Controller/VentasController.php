@@ -396,7 +396,6 @@ class VentasController extends AppController
             if(isset($ventasEmbasesRetornados[$keyP])){
                 $newValor[$keyP]['nombre'] = $productos[$keyP];
                 $newValor[$keyP]['cantidad'] = $ventasEmbasesRetornados[$keyP];
-                // $productoTotal[$keyP] = $productoTotal[$keyP]-$ventasEmbasesRetornados[$keyP];
             }else{
                 $newValor[$keyP] = [
                                 'nombre' => $valueP,
@@ -409,8 +408,6 @@ class VentasController extends AppController
                     'valores' => $newValor
                 ];
 
-        // array_push($diario,$numRetornos);
-            
         foreach ($paramsTipoGasto as $keyT => $valueT) {
             $newValor = [];
 
@@ -468,10 +465,8 @@ class VentasController extends AppController
                 $this->viewBuilder()->setLayout('excel');
                 $this->set(compact('excel'));
             }
-            // prx($retornos);
 
             $this->set(compact('header','diario','name','ventas','gasto','usuario','carteraRecogida','productoTotal','retornos'));
-
         }
 
         if($this->Auth->user('role') == 'admin'){
@@ -664,7 +659,6 @@ class VentasController extends AppController
                 $this->set(compact('excel'));
             }
             $name = 'Embases_'.$fecha;
-            // prx($productos);
             $this->set(compact('headerClientes','detallesEmbases','name','productos'));
 
         }
@@ -828,8 +822,6 @@ class VentasController extends AppController
             'contain' => ['VentaDetalles'=>['Productos']]
         ]);
 
-        // prx($venta);
-
         $this->set('venta', $venta);
     }
 
@@ -843,55 +835,62 @@ class VentasController extends AppController
     {
         extract($this->request->data);
         $session = $this->request->session();
-        // pr($session->read('detalles'));
         $mensaje = false;
         if($tipo == 1){
+            $validaProducto = $this->calculoReporteDiario($this->Auth->user('id'),date('Y-m-d'));
+            $validaProducto = $validaProducto['productoTotal'];
 
             $productosTable = TableRegistry::get('Productos');
             $productos = $productosTable->find('list')->toArray();
             $productosPrecios = $productosTable->ProductosPrecios->find('list',['keyField'=>'id','valueField'=>'precio'])->toArray();
             
-            $detallesVentas['producto_id'] = $producto;
-            $detallesVentas['producto'] = $productos[$producto];
-            $detallesVentas['precio_id'] = $precio;
-            $detallesVentas['precio'] = $productosPrecios[$precio];
-            $detallesVentas['cantidad'] = $cantidad;
-            $detallesVentas['total'] = $cantidad*$detallesVentas['precio'];
+           
 
-            $detalles[] = $detallesVentas;
+            if($cantidad <= $validaProducto[$producto]){
 
-            if(!$session->read('detalles')){
-                $session->write('detalles',$detalles);
-            }else{
-                $aux = $session->read('detalles');
-                
-                $flag = false;
-                foreach ($aux as $value) {
-                    if($value['producto_id'] == $producto){
-                        $flag = true;
-                        break;
-                    } }
-                if(!$flag){
-                    array_push($aux,$detalles[0]);
-                    $session->write('detalles',$aux);
+                $detallesVentas['producto_id'] = $producto;
+                $detallesVentas['producto'] = $productos[$producto];
+                $detallesVentas['precio_id'] = $precio;
+                $detallesVentas['precio'] = $productosPrecios[$precio];
+                $detallesVentas['cantidad'] = $cantidad;
+                $detallesVentas['total'] = $cantidad*$detallesVentas['precio'];
+
+                $detalles[] = $detallesVentas;
+
+                if(!$session->read('detalles')){
+                    $session->write('detalles',$detalles);
                 }else{
-                    $mensaje = 'El producto ya esta incluido.';
+                    $aux = $session->read('detalles');
+                    
+                    $flag = false;
+                    foreach ($aux as $value) {
+                        if($value['producto_id'] == $producto){
+                            $flag = true;
+                            break;
+                        } }
+                    if(!$flag){
+                        array_push($aux,$detalles[0]);
+                        $session->write('detalles',$aux);
+                    }else{
+                        $mensaje = 'El producto ya esta incluido.';
+                    }
+                    $detalles = $aux;
                 }
-                $detalles = $aux;
+
+            }else{
+                $mensaje = 'El producto no tiene disponibilidad en Stock para esta cantidad.';
+                $detalles = $session->read('detalles');
             }
 
         }else if($tipo == 2){
 
             $detalles = $session->read('detalles');
-            // pr($detalles);
             unset($detalles[$this->request->data('index')]);
-            // prx($detalles);
             $session->write('detalles',$detalles);
 
         }else if($tipo == 3){
 
             $aux = $session->read('detalles');
-            // prx($aux);
             $detalles = $aux;
             $detalles[$this->request->data('index')]['cantidad'] = $this->request->data('cantidad');
             $detalles[$this->request->data('index')]['total'] = $this->request->data('cantidad') * $detalles[$this->request->data('index')]['precio'];
@@ -915,7 +914,6 @@ class VentasController extends AppController
 
         if( !$padreTable->find()->where(['parametros_tipo_id'=>1,'fecha'=> date('Y-m-d'),'usuario_id'=> $this->Auth->user('id') ])->first() ){
 
-
             $last = $padreTable->find()->contain(['ParametrosValores'])->where(['parametros_tipo_id'=>1,'usuario_id'=>$this->Auth->user('id')])->order(['id'=>'desc'])->first();
             if($last){
 
@@ -930,7 +928,6 @@ class VentasController extends AppController
                     $padreValore = $padreTable->newEntity();
                     $padreValore = $padreTable->patchEntity($padreValore, $padre);
                     if($padreTable->save($padreValore)){
-
                         
                         $parametrosValoresTable = TableRegistry::get('ParametrosValores');
                         foreach ($last->parametros_valores as $key => $value) {
@@ -948,7 +945,6 @@ class VentasController extends AppController
                             }
                         }
                     }
-
 
                 }else{
 
@@ -979,7 +975,6 @@ class VentasController extends AppController
         $session = $this->request->session();
         $venta = $this->Ventas->newEntity();
         if ($this->request->is('post')) {
-            // prx($this->request->data);
             $this->request->data('usuario_id',$this->Auth->user('id'));
             $this->request->data('cuenta_porcobrar',str_replace('.','',$this->request->data('cuenta_porcobrar')));
             $this->request->data('monto_total',$this->request->data('totales'));
@@ -999,7 +994,6 @@ class VentasController extends AppController
             }else{
                 $this->request->data('efectivo',true);
             }
-
 
             if($this->request->data('monto_transferencia') == null || $this->request->data('monto_transferencia') == 0){
                 $this->request->data('transferencia',false);
@@ -1021,7 +1015,6 @@ class VentasController extends AppController
                     $this->request->data('monto_efectivo_cartera',str_replace('.','',$this->request->data('monto_efectivo_cartera')));
                     $montoCartera+= $this->request->data('monto_efectivo_cartera');
                 }
-
 
                 if($this->request->data('monto_transferencia_cartera') == null || $this->request->data('monto_transferencia_cartera') == 0){
                     $this->request->data('monto_transferencia_cartera',null);
@@ -1110,9 +1103,7 @@ class VentasController extends AppController
                 }
 
                 if($this->request->data('pago_cartera')){
-                    // $client['credito_disponible']= $this->request->data('credito')+$this->request->data('cuenta_porcobrar');
                     $client['credito_disponible']= $client['credito_disponible']+$this->request->data('monto_cartera');
-                    // $client['cuenta_porcobrar']= $this->request->data('cuenta_porcobrar_cliente')-$this->request->data('cuenta_porcobrar');
                     $client['cuenta_porcobrar']= $client['cuenta_porcobrar']-$this->request->data('monto_cartera');
                     $control['tipo'] = 'A';
                     $control['cliente_id'] = $this->request->data('cliente_id');
@@ -1144,7 +1135,6 @@ class VentasController extends AppController
                     $mensaje="Proceso de retorno de embases exitoso.";
                 }
                
-
                 $this->Flash->success(__($mensaje));
 
                 return $this->redirect(['action' => 'add']);
@@ -1174,7 +1164,7 @@ class VentasController extends AppController
             $carteraPendiente = $this->carteraPendiente($id);
             $carteraPendiente = $carteraPendiente['sum'];
         }
-        
+
         Configure::write('debug', false);
         echo "&nbsp;";
         Configure::write('debug', true);
@@ -1223,9 +1213,7 @@ class VentasController extends AppController
         $control = TableRegistry::get('ControlDeudaPagos')->find();
         $control->select(['id','sum' => $control->func()->sum('monto')])
                 ->where(['cliente_id' => $id]);
-                //->group(['id']);
         $saldo = $control->first();
-               // prx($saldo);
         return $saldo;
     }
 
@@ -1247,11 +1235,8 @@ class VentasController extends AppController
                     $detallesVentas['cantidad'] = $value->cantidad;
                     $detallesVentas['total'] = $value->cantidad*$detallesVentas['precio'];
 
-                    // $detalles[] = $detallesVentas;
                     array_push($detalles,$detallesVentas);
-                    // $session->write('detalles',$aux);
                 }
-                // Configure::write('debug', true);
                 $session->write('detalles',$detalles);
             }
         }
@@ -1292,7 +1277,6 @@ class VentasController extends AppController
      */
     public function delete()
     {
-        // prx($this->request->data);
         if($this->request->is(['post','delete'])){
 
             $id = $this->request->data('venta_id');
