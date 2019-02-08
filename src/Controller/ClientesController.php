@@ -51,7 +51,12 @@ class ClientesController extends AppController
         }
 
         if(!is_null($this->request->data('buscar'))){
-            $options['conditions'] = array_merge($options['conditions'],['Clientes.nombres LIKE' => '%'.$this->request->data('buscar').'%']);
+            $pista = trim($this->request->data('buscar'));
+            $options['conditions'] = array_merge($options['conditions'],['OR' => [
+                                                        'Clientes.nombres LIKE' => '%'.$pista.'%',
+                                                        'Clientes.rut LIKE' => '%'.$pista.'%',
+                                                    ]
+                                                 ]);
         }
         $this->paginate = $options;
         $clientes = $this->paginate($this->Clientes);

@@ -57,7 +57,7 @@ if(!isset($excel)){
     tr:nth-child(even) {background-color: #f2f2f2}
 </style>
 
-<h3><?php echo $usuario->full_name; ?></h3>
+<p><?php echo $usuario->full_name; ?></p>
 
 <table>
     <thead>
@@ -149,6 +149,12 @@ if(!isset($excel)){
                     <?php foreach ($productoTotal as $key => $value) { ?>
                         <td><?php echo $value; ?></td>
                     <?php } ?>
+                    </tr>
+                    <tr>
+                        <td>Embases</td>
+                        <?php foreach ($retornos['valores'] as $diaKeyValor => $diaValor) { ?>
+                            <td><?php echo $diaValor['cantidad']; ?></td>
+                        <?php } ?>
                     </tr>
             <?php
                 }
@@ -255,6 +261,8 @@ if(!isset($excel)){
         
     </tbody>
 </table>
+
+<h3>GRAN TOTAL : <?php echo (($ventas['monto_total'] + $granTotal)- $totalGasto)?></h3>
 
 
 <?php } ?>

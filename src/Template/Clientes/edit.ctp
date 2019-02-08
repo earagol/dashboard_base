@@ -36,7 +36,7 @@
 
             <div class="form-group">
                 <label for="company" class=" form-control-label">Rut</label>
-                <?php echo $this->Form->control('rut',['class'=>'form-control','placeholder'=>'Nombres','label'=>false]); ?>
+                <?php echo $this->Form->control('rut',['class'=>'form-control','placeholder'=>'Rut','label'=>false,'readonly']); ?>
             </div>
 
             <div class="form-group">

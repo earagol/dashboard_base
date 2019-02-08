@@ -71,7 +71,12 @@ class VentasController extends AppController
         ];
 
         if(!is_null($this->request->data('buscar'))){
-            $options['conditions'] = array_merge($options['conditions'],['nombres LIKE' => '%'.$this->request->data('buscar').'%']);
+            $pista = trim($this->request->data('buscar'));
+            $options['conditions'] = array_merge($options['conditions'],['OR' => [
+                                                        'Clientes.nombres LIKE' => '%'.$pista.'%',
+                                                        'Clientes.rut LIKE' => '%'.$pista.'%',
+                                                    ]
+                                                 ]);
         }
         $this->paginate = $options;
         $clientesTable = TableRegistry::get('Clientes');

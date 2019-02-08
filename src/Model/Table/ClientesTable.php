@@ -206,22 +206,26 @@ class ClientesTable extends Table
     //Retorna listado de clientes morosos
     public function clientesMorosos($usuarioId=null){
 
-        $clienteMorosos = $this->find()->where(['cuenta_porcobrar >'=>0]);
+        $clienteMorosos = $this->find()->where(['Clientes.cuenta_porcobrar >'=>0])->group(['Clientes.id']);
 
         if($usuarioId){
-
-            $usuario = $this->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $usuarioId ]])->first();
-
-            if($usuario->role === 'usuario'){
+            // Muestra los morosos de sus rutas asociadas
+            // $usuario = $this->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $usuarioId ]])->first();
             
-                if($usuario->rutas){
-                    $rutas = [];
-                    foreach ($usuario->rutas as $key => $value) {
-                        $rutas[$value->id]=$value->id;
-                    }
-                    $clienteMorosos->where(['Clientes.ruta_id IN' => array_keys($rutas)]);
-                }
-            }
+            // if($usuario->role === 'usuario'){
+            
+            //     if($usuario->rutas){
+            //         $rutas = [];
+            //         foreach ($usuario->rutas as $key => $value) {
+            //             $rutas[$value->id]=$value->id;
+            //         }
+            //         $clienteMorosos->where(['Clientes.ruta_id IN' => array_keys($rutas)]);
+            //     }
+            // }
+
+            $clienteMorosos->innerJoinWith('Ventas', function ($q) use ($usuarioId) {
+                return $q->where(['Ventas.usuario_id' => $usuarioId]);
+            });
 
         }
 
@@ -234,12 +238,21 @@ class ClientesTable extends Table
 
         $cxc = $this->find();
         $cxc = $cxc->select([
-                    'total_cxc' => $cxc->func()->count('id'),
-                    'monto_cxc' => $cxc->func()->sum('cuenta_porcobrar')
+                    'total_cxc' => $cxc->func()->count('Clientes.id'),
+                    'monto_cxc' => $cxc->func()->sum('Clientes.cuenta_porcobrar')
                 ])
                 ->where([
-                    'cuenta_porcobrar >'=>0
-                ])->first();
+                    'Clientes.cuenta_porcobrar >'=>0
+                ]);
+
+        if($role == 'usuario'){
+            $cxc->innerJoinWith('Ventas', function ($q) use ($usuarioId) {
+                return $q->where(['Ventas.usuario_id' => $usuarioId]);
+            });
+
+        }
+
+        $cxc = $cxc->first();
 
         return $cxc;
     }
