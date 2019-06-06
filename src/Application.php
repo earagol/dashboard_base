@@ -22,6 +22,9 @@ use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
  * Application setup class.
  *
@@ -59,6 +62,7 @@ class Application extends BaseApplication
         }
     }
 
+
     /**
      * Setup the middleware queue your application will use.
      *
@@ -83,11 +87,68 @@ class Application extends BaseApplication
             // you might want to disable this cache in case your routing is extremely simple
             ->add(new RoutingMiddleware($this, '_cake_routes_'))
 
+            // ->add(function(ServerRequestInterface $request){
+
+            //     exit('joijo');
+            // });
+
+            ->add(function (
+                ServerRequestInterface $request,
+                ResponseInterface $response,
+                callable $next
+            ) {
+                $params = $request->getAttribute('params');
+                // print_r($params);
+                if (isset($params['prefix']) && $params['prefix'] !== 'api') {
+                    $csrf = new CsrfProtectionMiddleware([
+                        'httpOnly' => true
+                    ]);
+
+                    // This will invoke the CSRF middleware's `__invoke()` handler,
+                    // just like it would when being registered via `add()`.
+                    return $csrf($request, $response, $next);
+                }
+
+                return $next($request, $response);
+            });
+
             // Add csrf middleware.
-            ->add(new CsrfProtectionMiddleware([
-                'httpOnly' => true
-            ]));
+            // ->add(new CsrfProtectionMiddleware([
+            //     'httpOnly' => true
+            // ]));
 
         return $middlewareQueue;
     }
+
+    /**
+     * Setup the middleware queue your application will use.
+     *
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to setup.
+     * @return \Cake\Http\MiddlewareQueue The updated middleware queue.
+     */
+    // public function middleware($middlewareQueue)
+    // {
+    //     $middlewareQueue
+    //         // Catch any exceptions in the lower layers,
+    //         // and make an error page/response
+    //         ->add(ErrorHandlerMiddleware::class)
+
+    //         // Handle plugin/theme assets like CakePHP normally does.
+    //         ->add(new AssetMiddleware([
+    //             'cacheTime' => Configure::read('Asset.cacheTime')
+    //         ]))
+
+    //         // Add routing middleware.
+    //         // Routes collection cache enabled by default, to disable route caching
+    //         // pass null as cacheConfig, example: `new RoutingMiddleware($this)`
+    //         // you might want to disable this cache in case your routing is extremely simple
+    //         ->add(new RoutingMiddleware($this, '_cake_routes_'))
+
+    //         // Add csrf middleware.
+    //         ->add(new CsrfProtectionMiddleware([
+    //             'httpOnly' => true
+    //         ]));
+
+    //     return $middlewareQueue;
+    // }
 }
