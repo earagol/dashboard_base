@@ -204,11 +204,11 @@ class ClientesTable extends Table
     }
 
     //Retorna listado de clientes morosos
-    public function clientesMorosos($usuarioId=null){
+    public function clientesMorosos($usuarioId=null,$role = null){
 
         $clienteMorosos = $this->find()->where(['Clientes.cuenta_porcobrar >'=>0])->group(['Clientes.id']);
 
-        if($usuarioId){
+        if($role == 'usuario'){
             // Muestra los morosos de sus rutas asociadas
             // $usuario = $this->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $usuarioId ]])->first();
             
