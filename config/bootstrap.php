@@ -198,5 +198,11 @@ Type::build('timestamp')
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
 //Inflector::rules('transliteration', ['/å/' => 'aa']);
+if (Configure::read('debug')) {
+    Plugin::load('DebugKit', ['bootstrap' => true]);
+}
+
+Plugin::load('ADmad/JwtAuth');
+Plugin::load('Crud');
 Plugin::load('Migrations');
 Plugin::load('Cors', ['bootstrap' => true, 'routes' => false]);
