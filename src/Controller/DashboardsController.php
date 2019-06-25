@@ -161,7 +161,7 @@ class DashboardsController extends AppController
 
         ///////////////////MOROSOS/////////////////////////
 
-        $clienteMorosos = $clientesTable->clientesMorosos($this->Auth->user('id'));
+        $clienteMorosos = $clientesTable->clientesMorosos($this->Auth->user('id'),$this->Auth->user('role'));
 
 
         //////////////////CXC////////////////////////////Adaptar esta funcion para pasar id del vendedor y retorne el cxc por vendedor
