@@ -128,15 +128,24 @@ class DashboardsController extends AppController
                                     'Ventas.id',
                                     'Ventas.monto_total',
                                     'Ventas.monto_transferencia',
+                                    'Ventas.monto_transferencia_cartera',
                                     'Ventas.fecha',
                                     // 'total' => $clienteTransPen->func()->count('Ventas.id')
                                 ])
                        ->innerJoinWith('Ventas', function ($q) {
                                             return $q
-                                            ->where([
-                                                    'Ventas.confirma_transferencia IS NULL',
-                                                    'Ventas.monto_transferencia IS NOT NULL'
-                                                ]);
+                                                    ->where([
+                                                            'OR' => [
+                                                                [
+                                                                    'Ventas.confirma_transferencia IS NULL',
+                                                                    'Ventas.monto_transferencia IS NOT NULL'
+                                                                ],
+                                                                [
+                                                                    'Ventas.confirma_transferencia_cartera IS NULL',
+                                                                    'Ventas.monto_transferencia_cartera IS NOT NULL'
+                                                                ]
+                                                            ]
+                                                        ]);
                                             }
                                         )
                         ->toArray();
@@ -148,13 +157,28 @@ class DashboardsController extends AppController
         $transferidas = TableRegistry::get('Ventas')->find();
         $transferidas = $transferidas->select([
                     'total_transferencia' => $transferidas->func()->count('id'),
-                    'monto_transferencia' => $transferidas->func()->sum('monto_transferencia')
+                    'monto_transferencia1' => $transferidas->func()->sum('monto_transferencia'),
+                    'monto_transferencia_cartera' => $transferidas->func()->sum('monto_transferencia_cartera')
                 ])
-                ->where([
-                    'Ventas.confirma_transferencia IS NULL',
-                    'Ventas.monto_transferencia IS NOT NULL'
-                ])->first();
+                ->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+                    return $results->map(function ($row) {
+                        $row['monto_transferencia'] = $row['monto_transferencia1'] + $row['monto_transferencia_cartera'];
 
+                        return $row;
+                    });
+                })
+                ->where([
+                    'OR' => [
+                        [
+                            'Ventas.confirma_transferencia IS NULL',
+                            'Ventas.monto_transferencia IS NOT NULL'
+                        ],
+                        [
+                            'Ventas.confirma_transferencia_cartera IS NULL',
+                            'Ventas.monto_transferencia_cartera IS NOT NULL'
+                        ]
+                    ]
+                ])->first();
 
         $clientesTable = TableRegistry::get('Clientes');
 

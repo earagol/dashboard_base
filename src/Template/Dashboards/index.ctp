@@ -127,7 +127,8 @@
                                             <th scope="col">Telefono 1</th>
                                             <th scope="col">Telefono 2</th>
                                             <th scope="col">Fecha</th>
-                                            <th scope="col">Monto</th>
+                                            <th scope="col">Monto Venta</th>
+                                            <th scope="col">Monto Cartera</th>
                                             <th scope="col">Acción</th>
                                         </tr>
                                     </thead>
@@ -142,6 +143,7 @@
                                                         <td><?php echo $value->telefono2; ?></td>
                                                         <td><?php echo $value->_matchingData['Ventas']->fecha->format('Y-m-d'); ?></td>
                                                         <td><span ><?php echo number_format($value->_matchingData['Ventas']->monto_transferencia, 0, ",", "."); ?></span></td>
+                                                        <td><span ><?php echo number_format($value->_matchingData['Ventas']->monto_transferencia_cartera, 0, ",", "."); ?></span></td>
                                                         <td> 
                                                             <button class="change badge badge-complete" data-id="<?php echo $value->_matchingData['Ventas']->id; ?>">Confirmar</button>
                                                         </td> 
