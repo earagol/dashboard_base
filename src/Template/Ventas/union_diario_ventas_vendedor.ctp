@@ -232,7 +232,7 @@ if(!isset($excel)){
                     foreach ($carteraRecogida as $carKey => $valueCartera) { 
                         $efectivoTotal+=$valueCartera->monto_efectivo_cartera;
                         $transTotal+=$valueCartera->monto_transferencia_cartera;
-                        $granTotal=$valueCartera->monto_cartera;
+                        $granTotal+=is_null($valueCartera->monto_transferencia_cartera)?$valueCartera->monto_cartera:0;
                         ?>
                         <tr>
                             <td><?php echo utf8_encode($valueCartera->cliente->nombres); ?></td>

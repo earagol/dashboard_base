@@ -170,6 +170,21 @@ class VentasController extends AppController
                                         'Ventas.monto_total IS NOT NULL'
                                     ])
                                 ->first();
+        // $transferencias =  $control->select([
+        //                         'id',
+        //                         'monto_total' => $control->func()->sum('monto_total'),
+        //                         'monto_efectivo' => $control->func()->sum('monto_efectivo'),
+        //                         'monto_transferencia_cartera' => $control->func()->sum('monto_transferencia'),
+        //                         'cuenta_porcobrar' => $control->func()->sum('cuenta_porcobrar'),
+        //                         'monto_cartera' => $control->func()->sum('monto_cartera'),
+        //                     ])
+        //                 ->where([
+        //                         'Ventas.usuario_id' => $usuario_id,
+        //                         'Ventas.fecha' => $fecha,
+        //                         'Ventas.monto_total IS NOT NULL'
+        //                     ])
+        //                 ->first();
+
         $valores = [];
         if($ventas){
             $valores['monto_total'] = $ventas->monto_total; 
@@ -253,6 +268,7 @@ class VentasController extends AppController
                                         'Ventas.monto_cartera IS NOT NULL'
                                     ])
                                 ->toArray();
+        // prx($ventas);
         return $ventas;
     }
 
