@@ -187,8 +187,14 @@ class VentasController extends AppController
         $venta = $this->Ventas->get($this->request->data('venta_id'), [
             'contain' => []
         ]);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $venta = $this->Ventas->patchEntity($venta, ['confirma_transferencia'=>true]);
+            $campo = 'confirma_transferencia';
+            if(is_null($venta->monto_transferencia)){
+                $campo = 'confirma_transferencia_cartera';
+            }
+
+            $venta = $this->Ventas->patchEntity($venta, [$campo=>true]);
             if ($this->Ventas->save($venta)) {
                 $flag = true;
             }
