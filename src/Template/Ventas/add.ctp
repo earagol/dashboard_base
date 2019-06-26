@@ -411,7 +411,7 @@
             document.location.href=url1+"ventas/add/"+id;
         });
 
-        <?php if(isset($detalles)): ?>
+        <?php if(isset($details)): ?>
             calculo();
         <?php endif; ?>
 
