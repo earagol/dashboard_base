@@ -240,7 +240,7 @@ class ClientesTable extends Table
         $cxc = $cxc->select([
                     'Clientes.id',
                     'total_cxc' => $cxc->func()->count('Clientes.id'),
-                    'monto_cxc' => $cxc->func()->sum('ControlDeudaPagos.monto')
+                    
                 ]);
                
 
@@ -248,7 +248,8 @@ class ClientesTable extends Table
             // $cxc->innerJoinWith('ControlDeudaPagos', function ($q) use ($usuarioId) {
             //     return $q->where(['ControlDeudaPagos.usuario_id' => $usuarioId]);
             // })
-            $cxc->innerJoinWith('ControlDeudaPagos')
+            $cxc->select(['monto_cxc' => $cxc->func()->sum('ControlDeudaPagos.monto')])
+            ->innerJoinWith('ControlDeudaPagos')
             ->where([
                 'Clientes.cuenta_porcobrar >'=>0,
                 'ControlDeudaPagos.tipo' => 'P',
@@ -256,7 +257,8 @@ class ClientesTable extends Table
             ]);
 
         }else{
-             $cxc->where([
+            $cxc->select(['monto_cxc' => $cxc->func()->sum('Clientes.cuenta_porcobrar')])
+                ->where([
                     'Clientes.cuenta_porcobrar >'=>0,
                 ]);
         }
