@@ -244,7 +244,7 @@ class ClientesTable extends Table
                 ]);
                
 
-        if($role == 'usuario'){
+        if($role == 'usuario'){//Con esta consulta espero solo obtener la cuenta por cobrar correspondiente a la venta de cada vendedor
             // $cxc->innerJoinWith('ControlDeudaPagos', function ($q) use ($usuarioId) {
             //     return $q->where(['ControlDeudaPagos.usuario_id' => $usuarioId]);
             // })
@@ -255,25 +255,13 @@ class ClientesTable extends Table
                 'ControlDeudaPagos.usuario_id' => $usuarioId,
             ]);
 
-
-            // ->group([
-            //     'Ventas.usuario_id'
-            // ]);
-
         }else{
              $cxc->where([
                     'Clientes.cuenta_porcobrar >'=>0,
                 ]);
         }
 
-       
-        // debug($cxc);
-
         $cxc = $cxc->first();
-
-        prx($cxc);
-        // exit('jijiji');
-
         return $cxc;
     }
 }
