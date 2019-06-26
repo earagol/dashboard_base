@@ -238,21 +238,41 @@ class ClientesTable extends Table
 
         $cxc = $this->find();
         $cxc = $cxc->select([
+                    'Clientes.id',
                     'total_cxc' => $cxc->func()->count('Clientes.id'),
-                    'monto_cxc' => $cxc->func()->sum('Clientes.cuenta_porcobrar')
-                ])
-                ->where([
-                    'Clientes.cuenta_porcobrar >'=>0
+                    'monto_cxc' => $cxc->func()->sum('ControlDeudaPagos.monto')
                 ]);
+               
 
         if($role == 'usuario'){
-            $cxc->innerJoinWith('Ventas', function ($q) use ($usuarioId) {
-                return $q->where(['Ventas.usuario_id' => $usuarioId]);
-            });
+            // $cxc->innerJoinWith('ControlDeudaPagos', function ($q) use ($usuarioId) {
+            //     return $q->where(['ControlDeudaPagos.usuario_id' => $usuarioId]);
+            // })
+            $cxc->innerJoinWith('ControlDeudaPagos')
+            ->where([
+                'Clientes.cuenta_porcobrar >'=>0,
+                'ControlDeudaPagos.tipo' => 'P',
+                'ControlDeudaPagos.usuario_id' => $usuarioId,
+            ]);
 
+
+            // ->group([
+            //     'Ventas.usuario_id'
+            // ]);
+
+        }else{
+             $cxc->where([
+                    'Clientes.cuenta_porcobrar >'=>0,
+                ]);
         }
 
+       
+        // debug($cxc);
+
         $cxc = $cxc->first();
+
+        prx($cxc);
+        // exit('jijiji');
 
         return $cxc;
     }
