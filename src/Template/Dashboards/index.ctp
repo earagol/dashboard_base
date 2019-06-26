@@ -198,6 +198,8 @@
                                                     <td> 
                                                         <?php if($currentUser['id'] == $visita->usuario->id): ?>
                                                             <?php echo $this->Html->link(__('<small class="badge badge-warning">Pendiente</small>'), ['controller' => 'ventas','action' => 'add', $visita->cliente_id,$visita->id],['title'=>'Realizar Venta','escape' => false]) ?>
+                                                        <?php else: ?>
+                                                                <small class="badge badge-warning">Pendiente</small>
                                                         <?php endif; ?>
                                                     </td> 
                                                 </tr>
