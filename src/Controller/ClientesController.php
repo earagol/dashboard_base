@@ -35,9 +35,24 @@ class ClientesController extends AppController
     public function index()
     {
         $options = [
-            'contain' => ['Rutas', 'Clasificaciones', 'Regiones', 'Comunas', 'Usuarios'],
+            'contain' => [
+                'Rutas', 
+                'Clasificaciones', 
+                'Regiones', 
+                'Comunas', 
+                'Usuarios'
+            ],
             'conditions' => []
         ];
+
+        // $query = $this->Clientes->find()
+        //                         ->contain([
+        //                             'Rutas', 
+        //                             'Clasificaciones', 
+        //                             'Regiones', 
+        //                             'Comunas', 
+        //                             'Usuarios'
+        //                         ]);
 
         if($this->Auth->user('role') === 'usuario'){
             $usuario = $this->Clientes->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
@@ -58,9 +73,15 @@ class ClientesController extends AppController
                                                     ]
                                                  ]);
         }
+
+
+   // $this->set('clientes', $this->paginate($query));
+        // pj($this->Clientes->find()->toArray());
+//         pj($options);
         $this->paginate = $options;
         $clientes = $this->paginate($this->Clientes);
-
+// pj($clientes);
+// exit;
         $this->set(compact('clientes'));
     }
 

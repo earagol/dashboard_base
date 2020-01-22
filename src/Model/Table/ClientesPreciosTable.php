@@ -31,7 +31,7 @@ use Cake\ORM\TableRegistry;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class ClientesTable extends Table
+class ClientesPreciosTable extends Table
 {
     use SoftDeleteTrait;
     /**
@@ -44,47 +44,20 @@ class ClientesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('clientes');
-        $this->setDisplayField('nombres');
+        $this->setTable('clientes_precios_productos');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Rutas', [
-            'foreignKey' => 'ruta_id',
+        $this->belongsTo('Clientes', [
+            'foreignKey' => 'cliente_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('Clasificaciones', [
-            'foreignKey' => 'clasificacion_id',
+        $this->belongsTo('ProductosPrecios', [
+            'foreignKey' => 'producto_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('Regiones', [
-            'foreignKey' => 'region_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Comunas', [
-            'foreignKey' => 'comuna_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Usuarios', [
-            'foreignKey' => 'usuario_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->hasMany('ControlDeudaPagos', [
-            'foreignKey' => 'cliente_id'
-        ]);
-        $this->hasMany('Ventas', [
-            'foreignKey' => 'cliente_id'
-        ]);
-        $this->hasMany('Visitas', [
-            'foreignKey' => 'cliente_id'
-        ]);
-        $this->hasMany('LogCreditos', [
-            'foreignKey' => 'cliente_id'
-        ]);
-        $this->hasMany('ClientesPrecios', [
-            'foreignKey' => 'cliente_id'
-        ]);
+       
     }
 
     /**
@@ -197,79 +170,13 @@ class ClientesTable extends Table
     {
         // $rules->add($rules->isUnique(['rut'],['message'=>'El RUT ya existe registrado.']));
         // $rules->add($rules->isUnique(['email'],'correo existe'));
-        $rules->add($rules->existsIn(['ruta_id'], 'Rutas'));
-        $rules->add($rules->existsIn(['clasificacion_id'], 'Clasificaciones'));
-        $rules->add($rules->existsIn(['region_id'], 'Regiones'));
-        $rules->add($rules->existsIn(['comuna_id'], 'Comunas'));
+        // $rules->add($rules->existsIn(['ruta_id'], 'Rutas'));
+        // $rules->add($rules->existsIn(['clasificacion_id'], 'Clasificaciones'));
+        // $rules->add($rules->existsIn(['region_id'], 'Regiones'));
+        // $rules->add($rules->existsIn(['comuna_id'], 'Comunas'));
         // $rules->add($rules->existsIn(['usuario_id'], 'Usuarios'));
 
         return $rules;
     }
-
-    //Retorna listado de clientes morosos
-    public function clientesMorosos($usuarioId=null,$role = null){
-
-        $clienteMorosos = $this->find()->where(['Clientes.cuenta_porcobrar >'=>0])->group(['Clientes.id']);
-
-        if($role == 'usuario'){
-            // Muestra los morosos de sus rutas asociadas
-            // $usuario = $this->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $usuarioId ]])->first();
-            
-            // if($usuario->role === 'usuario'){
-            
-            //     if($usuario->rutas){
-            //         $rutas = [];
-            //         foreach ($usuario->rutas as $key => $value) {
-            //             $rutas[$value->id]=$value->id;
-            //         }
-            //         $clienteMorosos->where(['Clientes.ruta_id IN' => array_keys($rutas)]);
-            //     }
-            // }
-
-            $clienteMorosos->innerJoinWith('Ventas', function ($q) use ($usuarioId) {
-                return $q->where(['Ventas.usuario_id' => $usuarioId]);
-            });
-
-        }
-
-        return $clienteMorosos->toArray();
-    }
-
-
-    // Adaptar esta funcion para pasar id del vendedor y retorne el cxc por vendedor
-    public function totalCXC($usuarioId=null,$role = null){
-
-        $cxc = $this->find();
-        $cxc = $cxc->select([
-                    'Clientes.id',
-                    'total_cxc' => $cxc->func()->count('DISTINCT(Clientes.id)'),
-                    
-                ]);
-               
-
-        if($role == 'usuario'){//Con esta consulta espero solo obtener la cuenta por cobrar correspondiente a la venta de cada vendedor
-            // $cxc->innerJoinWith('ControlDeudaPagos', function ($q) use ($usuarioId) {
-            //     return $q->where(['ControlDeudaPagos.usuario_id' => $usuarioId]);
-            // })
-
-            //-----------
-            $cxc->select(['monto_cxc' => $cxc->func()->sum('ControlDeudaPagos.monto')])
-            ->innerJoinWith('ControlDeudaPagos')
-            ->where([
-                'Clientes.cuenta_porcobrar >'=>0,
-                'ControlDeudaPagos.usuario_id' => $usuarioId,
-            ]);
-
-        }else{
-            $cxc->select(['monto_cxc' => $cxc->func()->sum('Clientes.cuenta_porcobrar')])
-                ->where([
-                    'Clientes.cuenta_porcobrar >'=>0,
-                ]);
-        }
-
-        // debug($cxc);
-
-        $cxc = $cxc->first();
-        return $cxc;
-    }
+  
 }

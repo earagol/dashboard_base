@@ -1186,7 +1186,15 @@ class VentasController extends AppController
         $cliente = null;
         $carteraPendiente = null;
         if($id){
-            $cliente = $this->Ventas->Clientes->find()->where(['id'=>$id])->first();
+            $cliente = $this->Ventas->Clientes->find()
+                                              ->contain('ClientesPrecios')
+                                              ->where([
+                                                'id'=>$id
+                                              ])
+                                              ->first();
+
+            // pj($cliente);
+            // exit;
 
             $carteraPendiente = $this->carteraPendiente($id);
             $carteraPendiente = $carteraPendiente['sum'];
@@ -1207,13 +1215,16 @@ class VentasController extends AppController
                 $rutas[$value->id]=$value->id;
             }
         }
-
-        $clientes = $this->Ventas->Clientes->find('list', [
+        $clientes = [];
+        if($rutas){
+            $clientes = $this->Ventas->Clientes->find('list', [
                                         'keyField' => 'id',
                                         'valueField' => 'show_select'
                                     ])
                                     ->where(['ruta_id IN'=>$rutas])
-                                    ->toArray();
+                                    ->toArray();    
+        }
+        
         
         $this->set(compact('venta', 'cliente','productos','productosPrecios','carteraPendiente','clientes','productosRetornables','visitaId'));
     }

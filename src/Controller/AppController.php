@@ -139,7 +139,8 @@ class AppController extends Controller
            $this->viewBuilder()->layout('tema2'); 
         }
 
-        
+        // pj(Configure::read('relative'));
+        // exit;
         $this->set('url',Configure::read('relative'));
 
         //prx($this->request->getParam('controller'));_

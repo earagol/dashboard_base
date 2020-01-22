@@ -316,6 +316,7 @@
 
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
+<?php $preciosClientes = json_encode($cliente->clientes_precios); ?>
 
 <?php echo $this->Html->css('../vendors/select2-bootstrap/dist/select2') ?>
 <?php echo $this->Html->css('../vendors/select2-bootstrap/dist/select2-bootstrap') ?>
@@ -331,12 +332,11 @@
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
     var precios = '<?php echo $precios ?>';
+    var preciosClientes = '<?php echo $preciosClientes ?>';
 
     function nuevoCliente(){
         document.location.href=url1+"clientes/add/venta";
     }
-
-
 
     (function( $ ) {
 
@@ -404,7 +404,6 @@
         //     });
         //   }
         // });
-// http://10.0.0.166/layouts/estrella/ventas/add/1
 
         $("#cliente-id").change(function(e){
             var id = $("#cliente-id").val();
@@ -416,6 +415,7 @@
         <?php endif; ?>
 
         var jsonPrecios = $.parseJSON(precios);
+        var jsonPreciosClientes = $.parseJSON(preciosClientes);
 
         $('#producto-id').change(function() {
             cargarPrecio($(this).val());
@@ -424,11 +424,23 @@
         function cargarPrecio(valor){
             $('#precio-id').empty();
             $('#precio-id').append('<option value="">--Seleccione el precio--</option>');
+            precioCliente = 0;
             $.each(jsonPrecios,function(i,valp){
                 if(valp.producto_id == $('#producto-id').val()){
                     $('#precio-id').append('<option value="'+valp.id+'">'+valp.precio+'</option>');
+                    if(jsonPreciosClientes){
+                        $.each(jsonPreciosClientes,function(y,pre){
+                            if(pre.producto_precio_id == valp.id){
+                                precioCliente = valp.id;
+                            }
+                        });
+                    }
                 }
             });
+
+            if(precioCliente != 0){
+                $('#precio-id').val(precioCliente);
+            }
         }
 
         $('#save').click(function(e){
