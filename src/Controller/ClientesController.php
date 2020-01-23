@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\ORM\TableRegistry;
 use Exception;
 
 
@@ -45,14 +46,6 @@ class ClientesController extends AppController
             'conditions' => []
         ];
 
-        // $query = $this->Clientes->find()
-        //                         ->contain([
-        //                             'Rutas', 
-        //                             'Clasificaciones', 
-        //                             'Regiones', 
-        //                             'Comunas', 
-        //                             'Usuarios'
-        //                         ]);
 
         if($this->Auth->user('role') === 'usuario'){
             $usuario = $this->Clientes->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
@@ -73,16 +66,65 @@ class ClientesController extends AppController
                                                     ]
                                                  ]);
         }
-
-
-   // $this->set('clientes', $this->paginate($query));
-        // pj($this->Clientes->find()->toArray());
-//         pj($options);
         $this->paginate = $options;
         $clientes = $this->paginate($this->Clientes);
-// pj($clientes);
-// exit;
         $this->set(compact('clientes'));
+    }//Fin index
+
+
+    public function precios($id = null)
+    {   
+        if($this->request->is('post')){
+           
+            if($this->request->data('producto_id') && $this->request->data('precio_id')){
+                $validar = $this->Clientes->ClientesPrecios->find()
+                                                            ->innerJoinWith('ProductosPrecios')
+                                                            ->where([
+                                                                'ClientesPrecios.cliente_id' => $this->request->data('cliente_id'),
+                                                                'ProductosPrecios.producto_id' => $this->request->data('producto_id')
+                                                            ])
+                                                            ->first();
+                if(!$validar){
+                    $value = [
+                        'cliente_id' => $this->request->data('cliente_id'),
+                        'producto_precio_id'=> $this->request->data('precio_id')
+                    ];
+                    $precio = $this->Clientes->ClientesPrecios->newEntity();
+                    $precio = $this->Clientes->ClientesPrecios->patchEntity($precio, $value);
+                    if($this->Clientes->ClientesPrecios->save($precio)){
+                        $this->Flash->success(__('Registro exitoso.'));
+                    }
+                }else{
+                    $this->Flash->error(__('El producto ya tiene un precio asociado a este cliente.'));
+                }
+                
+            }
+            $this->request->data('producto_id','');
+        }
+
+        $productosTable = TableRegistry::get('Productos');
+        $cliente = $this->Clientes->find()
+                                              ->contain(['ClientesPrecios' => ['ProductosPrecios' => 'Productos']])
+                                              ->where([
+                                                'id'=>$id
+                                              ])
+                                              ->first();
+
+        $productos = $productosTable->find('list')->toArray();
+        $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
+        $this->set(compact('cliente','productos','productosPrecios'));
+    }//Fin precios
+
+     public function deleteprecio($id = null, $cliente_id = null)
+    {
+        $cliente = $this->Clientes->ClientesPrecios->get($id);
+        if ($this->Clientes->ClientesPrecios->delete($cliente)) {
+            $this->Flash->success(__('El registro ha sido eliminado.'));
+        } else {
+            $this->Flash->error(__('El registro no pudo eliminarse, por favor intente nuevamente.'));
+        }
+
+        return $this->redirect(['action' => 'precios',$cliente_id]);
     }
 
     /**
@@ -217,7 +259,6 @@ class ClientesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
-
 
 
     public function exportarMorosos()

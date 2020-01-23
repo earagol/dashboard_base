@@ -54,7 +54,7 @@ class ClientesPreciosTable extends Table
             'joinType' => 'INNER'
         ]);
         $this->belongsTo('ProductosPrecios', [
-            'foreignKey' => 'producto_id',
+            'foreignKey' => 'producto_precio_id',
             'joinType' => 'INNER'
         ]);
        
@@ -66,117 +66,6 @@ class ClientesPreciosTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->scalar('ruta_id')
-            ->requirePresence('ruta_id', 'create')
-            ->notEmpty('ruta_id');
-
-        $validator
-            ->scalar('clasificacion_id')
-            ->requirePresence('clasificacion_id', 'create')
-            ->notEmpty('clasificacion_id');
-
-        $validator
-            ->scalar('tipo')
-            ->requirePresence('tipo', 'create')
-            ->notEmpty('tipo');
-
-        $validator
-            ->scalar('nombres')
-            ->maxLength('nombres', 50)
-            ->requirePresence('nombres', 'create')
-            ->notEmpty('nombres');
-
-        $validator
-            ->email('email')
-            ->allowEmpty('email');
-
-        $validator
-            ->scalar('sexo')
-            ->requirePresence('sexo', 'create')
-            ->notEmpty('sexo');
-
-        $validator
-            ->scalar('rut')
-            ->maxLength('rut', 10)
-            ->requirePresence('rut', 'create')
-            ->notEmpty('rut');
-
-        $validator
-            ->scalar('telefono1')
-            ->maxLength('telefono1', 12)
-            ->requirePresence('telefono1', 'create')
-            ->notEmpty('telefono1');
-
-        $validator
-            ->scalar('telefono2')
-            ->maxLength('telefono2', 12)
-            ->allowEmpty('telefono2');
-
-        $validator
-            ->scalar('observacion')
-            ->requirePresence('observacion', 'create')
-            ->notEmpty('observacion');
-
-        $validator
-            ->scalar('region_id')
-            ->requirePresence('region_id', 'create')
-            ->notEmpty('region_id');
-
-        $validator
-            ->scalar('comuna_id')
-            ->requirePresence('comuna_id', 'create')
-            ->notEmpty('comuna_id');
-
-
-        $validator
-            ->scalar('calle')
-            ->maxLength('calle', 200)
-            ->requirePresence('calle', 'create')
-            ->notEmpty('calle');
-
-        $validator
-            ->scalar('numero_calle')
-            ->maxLength('numero_calle', 15)
-            ->requirePresence('numero_calle', 'create')
-            ->notEmpty('numero_calle');
-
-        $validator
-            ->scalar('dept_casa_oficina_numero')
-            ->maxLength('dept_casa_oficina_numero', 15)
-            ->allowEmpty('dept_casa_oficina_numero');
-
-        $validator
-            ->dateTime('deleted')
-            ->allowEmpty('deleted');
-
-        return $validator;
-    }
-
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        // $rules->add($rules->isUnique(['rut'],['message'=>'El RUT ya existe registrado.']));
-        // $rules->add($rules->isUnique(['email'],'correo existe'));
-        // $rules->add($rules->existsIn(['ruta_id'], 'Rutas'));
-        // $rules->add($rules->existsIn(['clasificacion_id'], 'Clasificaciones'));
-        // $rules->add($rules->existsIn(['region_id'], 'Regiones'));
-        // $rules->add($rules->existsIn(['comuna_id'], 'Comunas'));
-        // $rules->add($rules->existsIn(['usuario_id'], 'Usuarios'));
-
-        return $rules;
-    }
+    
   
 }
