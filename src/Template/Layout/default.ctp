@@ -285,6 +285,7 @@ $cakeDescription = 'Estrella';
                                     <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Vendedor'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasUsuario'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
 
                                     <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Rutas'), ['controller'=>'Ventas','action' => 'reporteConsolidadoRutas'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
+                                    <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Rango'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasRango'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
 
                                 </ul>
                             </li>

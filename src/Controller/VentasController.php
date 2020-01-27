@@ -283,6 +283,7 @@ class VentasController extends AppController
             $this->reporteClientesVentas();
             $this->reporteDiarioVendedor();
 
+
             $excel = 1;
             $name = 'Consolidado_'.$fecha;
             $this->set(compact('header','detallesVentas','excel','name'));
@@ -296,8 +297,6 @@ class VentasController extends AppController
         }
         
         $this->set(compact('usuarios'));
-
-
     }//Fin unionDiarioVentasVendedor
 
 
@@ -465,8 +464,6 @@ class VentasController extends AppController
             'fecha' => $fechaUso,
             'retornos' => $numRetornos
         ];
-
-
     }//Fin calculoReporteDiario
 
     public function reporteDiarioVendedor(){
@@ -505,7 +502,6 @@ class VentasController extends AppController
         }
         
         $this->set(compact('usuarios','vista'));
-
     }//Fin reporteDiarioVendedor
 
 
@@ -591,7 +587,6 @@ class VentasController extends AppController
                 $this->set(compact('excel'));
             }
             $name = 'Ventas_'.$fecha;
-
             $this->set(compact('headerClientes','detallesVentas','name','productos'));
 
         }
@@ -814,6 +809,220 @@ class VentasController extends AppController
             $excel = 1;
             $name = 'Ventas_consolidados_vendedores_'.date('Y-m-d');
             $this->set(compact('consolidados','name','excel'));
+        }
+        
+        if($this->Auth->user('role') == 'admin'){
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+
+        $this->set(compact('usuarios'));
+    }
+
+    public function arreglofechas($start, $end) {
+        $range = array();
+
+        if (is_string($start) === true) $start = strtotime($start);
+        if (is_string($end) === true ) $end = strtotime($end);
+
+        if ($start > $end) return createDateRangeArray($end, $start);
+
+        do {
+            $range[] = date('Y-m-d', $start);
+            $start = strtotime("+ 1 day", $start);
+        } while($start <= $end);
+
+        return $range;
+    }
+
+    public function saber_dia($nombredia) {
+        // $dias = array('Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado');
+        $dias = array('', 'Lunes','Martes','Miercoles','Jueves','Viernes','Sabado', 'Domingo');
+
+        $fecha = $dias[date('N', strtotime($nombredia))];
+        return $fecha;
+    }
+
+
+    public function reporteConsolidadoVentasRango(){
+
+        if($this->request->is('post')){
+
+            $this->viewBuilder()->setLayout('excel');
+
+            if($this->request->data('desde') == null){
+                $this->request->data('desde',date('Y-m-d'));
+            }
+
+            if($this->request->data('hasta') == null){
+                $this->request->data('hasta',date('Y-m-d'));
+            }
+
+            $productosTable = TableRegistry::get('Productos');
+            $productos = $productosTable->find('list')->toArray();
+
+            $formatoProductos = [];
+            foreach ($productos as $keyp => $valuep) {
+               $formatoProductos[$keyp] = [
+                        'id' => $keyp,
+                        'nombre' => $valuep,
+                        'cantidad' => 0
+               ];
+            }
+
+            $paramsTipoTable = TableRegistry::get('ParametrosTipos');
+            $tiposGastos = $paramsTipoTable->find('list')->where(['tipo' => 'Gasto'])->toArray();
+
+            $formatoTiposGastos = [];
+            foreach ($tiposGastos as $keyt => $valuet) {
+               $formatoTiposGastos[$keyt] = [
+                        'id' => $keyt,
+                        'nombre' => $valuet,
+                        'cantidad' => 0
+               ];
+            }
+
+            $headers = $productos;
+            $headers = array_merge($headers,$tiposGastos);
+
+            $fechaFormat = new Time($this->request->data('desde'));
+            $this->request->data('desde',$fechaFormat->format('Y-m-d'));
+            $desde = $this->request->data('desde');
+
+            $fechaFormat = new Time($this->request->data('hasta'));
+            $this->request->data('hasta',$fechaFormat->format('Y-m-d'));
+            $hasta = $this->request->data('hasta');
+
+            $valoresPadreTable = TableRegistry::get('ParametrosValoresPadre');
+            
+
+            $valoresPadre = $valoresPadreTable->find();
+            $valoresPadre =  $valoresPadre->select([
+                                        'ParametrosValoresPadre.fecha',
+                                        'ParametrosValoresPadre.parametros_tipo_id',
+                                        'ParametrosTipos.nombre',
+                                        'monto_cantidad' => $valoresPadre->func()->sum('ParametrosValores.monto_o_cantidad'),
+                                    ])
+                                    ->innerJoinWith('ParametrosTipos')
+                                    ->innerJoinWith('ParametrosValores')
+                                    ->where([
+                                        'ParametrosValoresPadre.fecha >='=>$desde,
+                                        'ParametrosValoresPadre.fecha <='=>$hasta,
+                                        'ParametrosTipos.tipo'=>'Gasto',
+                                        ]
+                                    )
+                                    ->group([
+                                        'ParametrosValoresPadre.fecha',
+                                        'ParametrosValoresPadre.parametros_tipo_id'
+                                    ])
+                                    ->toArray();
+            $arregloGastos = [];
+            if($valoresPadre){
+                foreach ($valoresPadre as $keyg => $valueg) {
+                    $fechaGasto = $valueg->fecha->format('Y-m-d');
+                    $arregloGastos[$fechaGasto][$valueg->parametros_tipo_id] = [
+                                                            'id' => $valueg->parametros_tipo_id,
+                                                            'nombre' => $valueg->_matchingData['ParametrosTipos']->nombre,
+                                                            'cantidad' => $valueg->monto_cantidad
+                                                        ];
+                }
+            }
+
+            /////////////////////////////////////////////////////////////////////////////////////777
+
+            $consolidado = $this->Ventas->find();
+            $consolidado =  $consolidado->select([
+                                        'Ventas.fecha',
+                                        'monto_total' => $consolidado->func()->sum('monto_total'),
+                                        'monto_efectivo' => $consolidado->func()->sum('monto_efectivo'),
+                                        'monto_transferencia' => $consolidado->func()->sum('monto_transferencia'),
+                                        'cuenta_porcobrar' => $consolidado->func()->sum('cuenta_porcobrar'),
+                                        'monto_cartera' => $consolidado->func()->sum('monto_cartera'),
+                                    ])
+                                    ->where([
+                                        'Ventas.fecha >='=>$desde,
+                                        'Ventas.fecha <='=>$hasta,
+                                        'Ventas.monto_total IS NOT NULL'
+                                    ])
+                                    ->group([
+                                        'Ventas.fecha'
+                                    ])
+                                    ->toArray();
+
+            $consolidadoDetalles = $this->Ventas->VentaDetalles->find();
+            $consolidadoDetalles = $consolidadoDetalles->select([
+                                    'Ventas.fecha',
+                                    'VentaDetalles.producto_id',
+                                    'cantidad' => $consolidadoDetalles->func()->sum('VentaDetalles.cantidad')
+                                ])
+                       ->innerJoinWith('Ventas')
+                       ->where([
+                            'Ventas.fecha >='=>$desde,
+                            'Ventas.fecha <='=>$hasta,
+                            'Ventas.monto_total IS NOT NULL'
+                        ])
+                       ->group([
+                            'Ventas.fecha',
+                            'VentaDetalles.producto_id'
+                        ])
+                       ->toArray();
+
+            $arregloFechas = $this->arreglofechas($desde,$hasta);
+            $arregloVentas = [];
+            foreach ($consolidado as $key2 => $value2) {
+                $fechaVenta = $value2->fecha->format('Y-m-d');
+                $arregloVentas[$fechaVenta] = $value2->monto_total;
+            }
+
+            $arregloProductos = [];
+            foreach ($consolidadoDetalles as $key3 => $value3) {
+                $fechaProducto = $value3->_matchingData['Ventas']->fecha->format('Y-m-d');
+                $arregloProductos[$fechaProducto][$value3->producto_id] = [
+                                                            'id' => $value3->producto_id,
+                                                            'nombre' => $productos[$value3->producto_id],
+                                                            'cantidad' => $value3->cantidad
+                                                        ];
+            }
+            
+
+            $valores = [];
+            foreach ($arregloFechas as $key => $fecha) {
+               $valores[$fecha] = [
+                    'fecha_nombre_dia' => $this->saber_dia($fecha),
+                    'monto_venta' => 0,
+                    'productos' => $formatoProductos,
+                    'gastos' => $formatoTiposGastos,
+                    'unidos' => []
+               ];
+
+               if(isset($arregloVentas[$fecha])){
+                    $valores[$fecha]['monto_venta'] = $arregloVentas[$fecha];
+               }
+
+               if(isset($arregloProductos[$fecha])){
+                    foreach ($arregloProductos[$fecha] as $keyap => $valueap) {
+                       $valores[$fecha]['productos'][$keyap] = $arregloProductos[$fecha][$keyap];
+                    }
+               }
+
+               $valores[$fecha]['unidos'] = $valores[$fecha]['productos'];
+
+               if(isset($arregloGastos[$fecha])){
+                    foreach ($arregloGastos[$fecha] as $keyg => $valueg) {
+                       $valores[$fecha]['gastos'][$keyg] = $arregloGastos[$fecha][$keyg];
+                    }
+               }
+
+               $valores[$fecha]['unidos'] = array_merge($valores[$fecha]['unidos'],$valores[$fecha]['gastos']);
+            }
+
+            // pr($valores);
+            // exit('consolidadoDetalles');
+
+            $excel = 1;
+            $name = 'Ventas_consolidados_rango_'.date('Y-m-d');
+            $this->set(compact('valores','productos','headers','name','excel'));
         }
         
         if($this->Auth->user('role') == 'admin'){
