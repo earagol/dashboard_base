@@ -267,9 +267,9 @@ class ClientesTable extends Table
                 ]);
         }
 
-        // debug($cxc);
-
         $cxc = $cxc->first();
         return $cxc;
     }
+
+    
 }

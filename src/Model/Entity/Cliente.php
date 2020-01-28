@@ -2,6 +2,7 @@
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+// use Cake\ORM\TableRegistry;
 
 /**
  * Cliente Entity
@@ -92,11 +93,17 @@ class Cliente extends Entity
      * @var array
      */
 
-    protected $_virtual = ['show_select'];
+    protected $_virtual = ['show_select','full_address'];
 
     protected function _getShowSelect() {
         if(isset($this->_properties['nombres']) && isset($this->_properties['rut'])){
             return $this->_properties['nombres'] . ' - ' . $this->_properties['rut'];
         }
+    }
+
+    protected function _getFullAddress()
+    {
+        // return $this->comuna->nombre . ' ' .$this->calle . ' N° ' . $this->numero_calle . ' ' . $this->dept_casa_oficina_numero;
+        return $this->calle . ' N° ' . $this->numero_calle . ' ' . $this->dept_casa_oficina_numero;
     }
 }

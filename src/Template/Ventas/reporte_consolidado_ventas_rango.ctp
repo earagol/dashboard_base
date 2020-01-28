@@ -63,7 +63,7 @@ if(!isset($excel)){
     <thead>
          <tr>
             <th>FECHA</th>
-            <th>VTA. DÍA</th>
+            <th>VTA. D&Iacute;A</th>
             <?php foreach ($headers as $key => $value) { ?>
                     <th><?php echo $value; ?></th>
             <?php } ?>

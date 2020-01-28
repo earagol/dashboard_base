@@ -7,6 +7,12 @@
                 <div class="form-group">
                     <!-- <label for="company" class=" form-control-label">Buscar</label> -->
                     <div class="input-group">
+                      <?php echo $this->Form->control('tipo',[
+                                        'class'=>'form-control',
+                                        'placeholder'=>'Buscar...',
+                                        'options'=>['nombres' => 'Nombre','rut' => 'Rut','calle' => 'Calle'],
+                                        'label'=>false]); ?>
+                      
                       <?php echo $this->Form->control('buscar',[
                                         'class'=>'form-control',
                                         'placeholder'=>'Buscar...',
@@ -34,6 +40,7 @@
                             <th scope="col"><?php echo $this->Paginator->sort('Nombres','Razon social o Nombres <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('rut','Rut <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('ruta_id','Ruta <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th scope="col"><?php echo $this->Paginator->sort('full_address','Dirección <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th >Acciones</th>
                         </tr>
                     </thead>
@@ -48,6 +55,7 @@
                                 <td><?php echo h($cliente->nombres) ?></td>
                                 <td><?php echo $cliente->has('rut') ? $cliente->rut : '' ?></td>
                                 <td><?php echo $cliente->has('ruta') ? $cliente->ruta->nombre : '' ?></td>
+                                <td><?php echo $cliente->full_address; ?></td>
                                 <td class="text-center">
                                     <?php echo $this->Html->link(__('<i class="fa fa-money"></i>'), ['action' => 'precios', $cliente->id],['title'=>'Relacionar precios','escape' => false]) ?>
                                     &nbsp;&nbsp;&nbsp;
