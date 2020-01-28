@@ -36,7 +36,7 @@
 <div class="col-lg-12">
     <div class="card">
         <div class="card-header">
-            <strong>Precios Clientes</strong>
+            <strong>Precios Clientes (<?php echo $cliente->nombres; ?>)</strong>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
             </div>
