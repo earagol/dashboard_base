@@ -169,6 +169,7 @@
 
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
+<?php $preciosClientes = json_encode($cliente->clientes_precios); ?>
 
 <script>
 
@@ -184,6 +185,7 @@
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
     var precios = '<?php echo $precios ?>';
+    var preciosClientes = '<?php echo $preciosClientes ?>';
 
     (function( $ ) {
 
@@ -251,26 +253,50 @@
         }
 
 
-
         var jsonPrecios = $.parseJSON(precios);
-
-        $('#fecha-vencimiento').datetimepicker({
-            format: 'YYYY-MM-DD'
-        });
+        var jsonPreciosClientes = $.parseJSON(preciosClientes);
 
         $('#producto-id').change(function() {
             cargarPrecio($(this).val());
         });
 
+        $('#fecha-vencimiento').datetimepicker({
+            format: 'YYYY-MM-DD'
+        });
+
+        // function cargarPrecio(valor){
+        //     $('#precio-id').empty();
+        //     $('#precio-id').append('<option value="">--Seleccione el precio--</option>');
+        //     $.each(jsonPrecios,function(i,valp){
+        //         if(valp.producto_id == $('#producto-id').val()){
+        //             $('#precio-id').append('<option value="'+valp.id+'">'+valp.precio+'</option>');
+        //         }
+        //     });
+        // }
+
         function cargarPrecio(valor){
             $('#precio-id').empty();
             $('#precio-id').append('<option value="">--Seleccione el precio--</option>');
+            precioCliente = 0;
             $.each(jsonPrecios,function(i,valp){
                 if(valp.producto_id == $('#producto-id').val()){
                     $('#precio-id').append('<option value="'+valp.id+'">'+valp.precio+'</option>');
+                    if(jsonPreciosClientes){
+                        $.each(jsonPreciosClientes,function(y,pre){
+                            if(pre.producto_precio_id == valp.id){
+                                precioCliente = valp.id;
+                            }
+                        });
+                    }
                 }
             });
+
+            if(precioCliente != 0){
+                $('#precio-id').val(precioCliente);
+            }
         }
+
+
 
         $('#save').click(function(e) {
             e.preventDefault();

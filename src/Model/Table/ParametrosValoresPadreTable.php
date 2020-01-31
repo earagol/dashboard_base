@@ -51,6 +51,11 @@ class ParametrosValoresPadreTable extends Table
             'foreignKey' => 'padre_id',
             'joinType' => 'INNER'
         ]);
+
+         $this->belongsTo('UsuariosRutas', [
+            'foreignKey' => 'usuario_id',
+            'joinType' => 'INNER'
+        ]);
     }
 
     /**

@@ -15,6 +15,10 @@ if(!isset($excel)){
             </div>
         </div>
         <div class="card-body card-block">
+            <div class="form-group">
+                <label for="company" class=" form-control-label">Rutas</label>
+                <?php echo $this->Form->control('ruta_id',['class'=>'form-control','empty'=>'--Seleccione--','label'=>false]); ?>
+            </div>
             
             <div class="form-group">
                 <label for="company" class=" form-control-label">Fecha Desde</label>

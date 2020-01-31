@@ -52,6 +52,11 @@ class UsuariosRutasTable extends Table
             'foreignKey' => 'ruta_id',
             'joinType' => 'INNER'
         ]);
+
+        $this->belongsTo('ParametrosValores', [
+            'foreignKey' => 'usuario_id',
+            'joinType' => 'INNER'
+        ]);
     }
 
     /**

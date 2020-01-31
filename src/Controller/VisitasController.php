@@ -36,17 +36,65 @@ class VisitasController extends AppController
      */
     public function index()
     {
-        $options = [
-            'contain' => ['Usuarios', 'Clientes', 'Usuarios'],
-            'order' => ['id' => 'DESC']
-        ];
+        // $options = [
+        //     'select' => [
+        //         'Clientes.nombres'
+        //     ],
+        //     'contain' => ['Usuarios', 'Usuarios'],
+        //     'join' => [
+        //         'Clientes' => [
+        //             'table' => 'Clientes',
+        //             'type' => 'INNER',
+        //             'conditions' => 'Visitas.cliente_id = Clientes.id'
+        //         ]
+        //     ],
+        //     'order' => ['id' => 'DESC']
+        // ];
+
+        $query = $this->Visitas->find()
+                               ->select([
+                                    'Clientes.nombres',
+                                    'Clientes.calle',
+                                    'Clientes.numero_calle',
+                                    'Clientes.dept_casa_oficina_numero',
+                                    'Visitas.fecha_vencimiento',
+                                    'Visitas.status',
+                                    'Visitas.id',
+                                    'Usuarios.nombres',
+                                    'Usuarios.apellidos'
+                               ])
+                               ->innerJoinWith('Clientes')
+                               ->innerJoinWith('Usuarios')
+                               ->contain([
+                                    'Usuarios',
+                               ])
+                               ->order([
+                                    'Visitas.id' => 'DESC'
+                               ]);
 
         if($this->Auth->user('role') === 'usuario'){
-            $options = array_merge($options,['conditions'=>['Visitas.usuario_id'=>$this->Auth->user('id')]]);
+            $query->where([
+                    'Visitas.usuario_id'=>$this->Auth->user('id')
+                ]);
+            // $options = array_merge($options,['conditions'=>['Visitas.usuario_id'=>$this->Auth->user('id')]]);
         }
 
-        $this->paginate = $options;
-        $visitas = $this->paginate($this->Visitas);
+        if(!is_null($this->request->data('buscar'))){
+            $formato = function ($pista = null) {
+                $array = explode(' ',$pista);
+                $pista = '%'.implode('%',$array).'%';
+                return $pista;
+            };
+            $pista = $formato($this->request->data('buscar'));
+            $query->where([
+                    'Clientes.'.$this->request->data('tipo').' LIKE' => $pista
+                ]);
+            // $options['conditions'] = array_merge($options['conditions'],['Clientes.'.$this->request->data('tipo').' LIKE' => $pista]);
+        }
+
+        $visitas = $this->paginate($query);
+        // pr($visitas);
+        // exit;
 
         $this->set(compact('visitas'));
     }

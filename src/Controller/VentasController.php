@@ -846,7 +846,7 @@ class VentasController extends AppController
 
 
     public function reporteConsolidadoVentasRango(){
-
+        $rutas = TableRegistry::get('Rutas')->find('list', ['limit' => 200]);
         if($this->request->is('post')){
 
             $this->viewBuilder()->setLayout('excel');
@@ -857,6 +857,11 @@ class VentasController extends AppController
 
             if($this->request->data('hasta') == null){
                 $this->request->data('hasta',date('Y-m-d'));
+            }
+
+            $ruta = null;
+            if($this->request->data('ruta_id') !== null){
+                $ruta = $this->request->data('ruta_id');
             }
 
             $productosTable = TableRegistry::get('Productos');
@@ -915,8 +920,15 @@ class VentasController extends AppController
                                     ->group([
                                         'ParametrosValoresPadre.fecha',
                                         'ParametrosValoresPadre.parametros_tipo_id'
-                                    ])
-                                    ->toArray();
+                                    ]);
+
+            // $ruta = 2;
+            if($ruta){
+                $valoresPadre->innerJoinWith('UsuariosRutas')
+                             ->where(['UsuariosRutas.ruta_id' => $ruta]);
+            }
+            $valoresPadre = $valoresPadre->toArray();
+
             $arregloGastos = [];
             if($valoresPadre){
                 foreach ($valoresPadre as $keyg => $valueg) {
@@ -934,11 +946,11 @@ class VentasController extends AppController
             $consolidado = $this->Ventas->find();
             $consolidado =  $consolidado->select([
                                         'Ventas.fecha',
-                                        'monto_total' => $consolidado->func()->sum('monto_total'),
-                                        'monto_efectivo' => $consolidado->func()->sum('monto_efectivo'),
-                                        'monto_transferencia' => $consolidado->func()->sum('monto_transferencia'),
-                                        'cuenta_porcobrar' => $consolidado->func()->sum('cuenta_porcobrar'),
-                                        'monto_cartera' => $consolidado->func()->sum('monto_cartera'),
+                                        'monto_total' => $consolidado->func()->sum('Ventas.monto_total'),
+                                        'monto_efectivo' => $consolidado->func()->sum('Ventas.monto_efectivo'),
+                                        'monto_transferencia' => $consolidado->func()->sum('Ventas.monto_transferencia'),
+                                        'cuenta_porcobrar' => $consolidado->func()->sum('Ventas.cuenta_porcobrar'),
+                                        'monto_cartera' => $consolidado->func()->sum('Ventas.monto_cartera'),
                                     ])
                                     ->where([
                                         'Ventas.fecha >='=>$desde,
@@ -947,8 +959,14 @@ class VentasController extends AppController
                                     ])
                                     ->group([
                                         'Ventas.fecha'
-                                    ])
-                                    ->toArray();
+                                    ]);
+
+            if($ruta){
+                $consolidado->innerJoinWith('Clientes')
+                             ->where(['Clientes.ruta_id' => $ruta]);
+            }
+
+            $consolidado = $consolidado->toArray();
 
             $consolidadoDetalles = $this->Ventas->VentaDetalles->find();
             $consolidadoDetalles = $consolidadoDetalles->select([
@@ -956,7 +974,6 @@ class VentasController extends AppController
                                     'VentaDetalles.producto_id',
                                     'cantidad' => $consolidadoDetalles->func()->sum('VentaDetalles.cantidad')
                                 ])
-                       ->innerJoinWith('Ventas')
                        ->where([
                             'Ventas.fecha >='=>$desde,
                             'Ventas.fecha <='=>$hasta,
@@ -965,19 +982,49 @@ class VentasController extends AppController
                        ->group([
                             'Ventas.fecha',
                             'VentaDetalles.producto_id'
-                        ])
-                       ->toArray();
+                        ]);
+
+            if($ruta){
+                // $consolidadoDetalles->innerJoinWith(['Ventas.Clientes'])
+                //                     ->where(['Clientes.ruta_id' => $ruta]);
+                $consolidadoDetalles->join([
+                                        'Ventas' => [
+                                            'table' => 'Ventas',
+                                            'type' => 'INNER',
+                                            'conditions' => 'VentaDetalles.venta_id = Ventas.id'
+                                        ],
+                                        'Clientes' => [
+                                            'table' => 'Clientes',
+                                            'type' => 'INNER',
+                                            'conditions' => 'Ventas.cliente_id = Clientes.id'
+                                        ]
+                                    ])
+                                    ->where(['Clientes.ruta_id' => $ruta]);
+            }else{
+                // $consolidadoDetalles->innerJoinWith('Ventas');
+                $consolidadoDetalles->join([
+                                        'Ventas' => [
+                                            'table' => 'Ventas',
+                                            'type' => 'INNER',
+                                            'conditions' => 'VentaDetalles.venta_id = Ventas.id'
+                                        ]
+                                    ]);
+            }
+            
+            $consolidadoDetalles = $consolidadoDetalles->toArray();
 
             $arregloFechas = $this->arreglofechas($desde,$hasta);
             $arregloVentas = [];
             foreach ($consolidado as $key2 => $value2) {
                 $fechaVenta = $value2->fecha->format('Y-m-d');
+                // $fechaVenta = $value2->fecha;
                 $arregloVentas[$fechaVenta] = $value2->monto_total;
             }
 
             $arregloProductos = [];
             foreach ($consolidadoDetalles as $key3 => $value3) {
-                $fechaProducto = $value3->_matchingData['Ventas']->fecha->format('Y-m-d');
+                // $fechaProducto = $value3->_matchingData['Ventas']->fecha->format('Y-m-d');
+                $fechaProducto = $value3->Ventas['fecha'];
                 $arregloProductos[$fechaProducto][$value3->producto_id] = [
                                                             'id' => $value3->producto_id,
                                                             'nombre' => $productos[$value3->producto_id],
@@ -1017,11 +1064,13 @@ class VentasController extends AppController
                $valores[$fecha]['unidos'] = array_merge($valores[$fecha]['unidos'],$valores[$fecha]['gastos']);
             }
 
-            // pr($valores);
-            // exit('consolidadoDetalles');
-
             $excel = 1;
             $name = 'Ventas_consolidados_rango_'.date('Y-m-d');
+            if($ruta){
+
+                $name = 'Ventas_consolidados_rango_'.$rutas->toArray()[$ruta].'_'.date('Y-m-d');
+            }
+            
             $this->set(compact('valores','productos','headers','name','excel'));
         }
         
@@ -1031,7 +1080,8 @@ class VentasController extends AppController
             $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
         }
 
-        $this->set(compact('usuarios'));
+        
+        $this->set(compact('usuarios','rutas'));
     }
 
     /**
@@ -1401,9 +1451,6 @@ class VentasController extends AppController
                                                 'id'=>$id
                                               ])
                                               ->first();
-
-            // pj($cliente);
-            // exit;
 
             $carteraPendiente = $this->carteraPendiente($id);
             $carteraPendiente = $carteraPendiente['sum'];
