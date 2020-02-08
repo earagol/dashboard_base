@@ -15,7 +15,7 @@
         </div>
         <div class="card-body card-block">
             <div class="form-group">
-                <label for="company" class=" form-control-label">Asignar a ruta</label>
+                <label for="company" class=" form-control-label">Asignar a ruta</label><span class="text-danger">*</span>
                 <?php echo $this->Form->control('ruta_id',[['options' => $rutas],'class'=>'form-control','empty'=>'--Seleccione--','label'=>false]); ?>
             </div>
 
@@ -30,7 +30,7 @@
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Nombres</label>
+                <label for="company" class=" form-control-label">Nombres</label><span class="text-danger">*</span>
                 <?php echo $this->Form->control('nombres',['class'=>'form-control','placeholder'=>'Nombres','label'=>false]); ?>
             </div>
 
@@ -51,7 +51,7 @@
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Telefono 1</label>
+                <label for="company" class=" form-control-label">Telefono 1</label><span class="text-danger">*</span>
                 <?php echo $this->Form->control('telefono1',['class'=>'form-control','placeholder'=>'Telefono 1..','label'=>false]); ?>
             </div>
 
@@ -66,22 +66,22 @@
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Región</label>
+                <label for="company" class=" form-control-label">Región</label><span class="text-danger">*</span>
                 <?php echo $this->Form->control('region_id',['class'=>'form-control','empty'=>'--Seleccione la región--','label'=>false]); ?>
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Comuna</label>
+                <label for="company" class=" form-control-label">Comuna</label><span class="text-danger">*</span>
                 <?php echo $this->Form->control('comuna_id',['options'=>$comunasList,'class'=>'form-control','empty'=>'--Seleccione la comuna--','label'=>false]); ?>
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Calle/Avenida</label>
+                <label for="company" class=" form-control-label">Calle/Avenida</label><span class="text-danger">*</span>
                 <?php echo $this->Form->control('calle',['class'=>'form-control','placeholder'=>'Calle/Avenida..','label'=>false]); ?>
             </div>
 
             <div class="form-group">
-                <label for="company" class=" form-control-label">Número</label>
+                <label for="company" class=" form-control-label">Número</label><span class="text-danger">*</span>
                 <?php echo $this->Form->control('numero_calle',['type'=>'number','class'=>'form-control','placeholder'=>'Número','label'=>false]); ?>
             </div>
 
@@ -140,13 +140,16 @@
         event.preventDefault();
 
         var rut = $('#rut').val();
-        // var rut = "25525331-5";
-        console.log(rut);
 
-        if(rut == ''){
-            alert('Debe ingresar el rut.');
-            return;
-        }else if(!validadorDeRut(rut)){
+        // if(rut == ''){
+        //     alert('Debe ingresar el rut.');
+        //     return;
+        // }else if(!validadorDeRut(rut)){
+        //     alert('Debe ingrasar un formato de rut valido. Ej: 11111111-1');
+        //     return;
+        // }
+
+        if(rut && !validadorDeRut(rut)){
             alert('Debe ingrasar un formato de rut valido. Ej: 11111111-1');
             return;
         }

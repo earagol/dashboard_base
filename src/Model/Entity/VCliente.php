@@ -42,7 +42,7 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\Venta[] $ventas
  * @property \App\Model\Entity\Visita[] $visitas
  */
-class Cliente extends Entity
+class VCliente extends Entity
 {
 
     /**
@@ -97,7 +97,7 @@ class Cliente extends Entity
 
     protected function _getShowSelect() {
         if(isset($this->_properties['nombres']) && isset($this->_properties['rut'])){
-            return $this->_properties['nombres'] . ' - ' . $this->full_address . ' - (' . $this->_properties['rut'] .')';
+            return $this->_properties['nombres'] . ' - ' . $this->_properties['rut'];
         }
     }
 

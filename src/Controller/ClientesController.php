@@ -35,6 +35,7 @@ class ClientesController extends AppController
      */
     public function index()
     {
+        $ClientesView = TableRegistry::get('VClientes');
         $options = [
             'contain' => [
                 'Rutas', 
@@ -46,15 +47,14 @@ class ClientesController extends AppController
             'conditions' => []
         ];
 
-
         if($this->Auth->user('role') === 'usuario'){
             $usuario = $this->Clientes->Usuarios->find('all', ['contain'=>['Rutas'],'conditions' => ['id' => $this->Auth->user('id') ]])->first();
             if($usuario->rutas){
                 $rutas = [];
                 foreach ($usuario->rutas as $key => $value) {
-                    $rutas[$value->id]=$value->id;
+                    $rutas[$value->id] = $value->id;
                 }
-                $options['conditions'] = array_merge($options['conditions'],['Clientes.ruta_id IN' => array_keys($rutas)]);
+                $options['conditions'] = array_merge($options['conditions'],['VClientes.ruta_id IN' => array_keys($rutas)]);
             }
         }
 
@@ -65,19 +65,14 @@ class ClientesController extends AppController
                 return $pista;
             };
             $pista = $formato($this->request->data('buscar'));
-            
-            // $pista = trim($this->request->data('buscar'));
-            $options['conditions'] = array_merge($options['conditions'],['Clientes.'.$this->request->data('tipo').' LIKE' => $pista]);
-
-            
-
-            // pr($options['conditions']);
-            // exit;
+            $options['conditions'] = array_merge($options['conditions'],['VClientes.'.$this->request->data('tipo').' LIKE' => $pista]);
         }
         $this->paginate = $options;
-        $clientes = $this->paginate($this->Clientes);
+
+        // $clientes = $this->paginate($this->Clientes);
+        $clientes = $this->paginate($ClientesView);
         // pr($clientes);
-        // exit('si');
+        // exit;
         $this->set(compact('clientes'));
     }//Fin index
 
@@ -179,7 +174,7 @@ class ClientesController extends AppController
                 $this->request->data('credito_disponible',str_replace('.','',$this->request->data('credito_disponible')));
                 $this->request->data('usuario_id',$this->Auth->user('id'));
                 $cliente = $this->Clientes->patchEntity($cliente, $this->request->getData());
-                if ($this->Clientes->save($cliente)) {
+                if ($a = $this->Clientes->save($cliente)) {
                     if($this->request->data('credito_disponible') != null || $this->request->data('credito_disponible') !=0){
                         $this->logCreditos($cliente->id,$this->request->data('credito_disponible'));
                     }
@@ -193,8 +188,6 @@ class ClientesController extends AppController
 
             }else{
                 $this->Flash->error(__('El rut ya existe registrado.'));
-                // prx($this->request->data);
-                // prx($cliente);
             }
         }
         $rutas = $this->Clientes->Rutas->find('list', ['limit' => 200]);
@@ -205,7 +198,6 @@ class ClientesController extends AppController
         if($this->request->data('region_id')){
             $comunasList = $this->Clientes->Comunas->find('list')->where(['region_id'=>$this->request->data('region_id')])->toArray();
         }
-        // prx($comunasList);
         $this->set(compact('cliente', 'rutas', 'clasificacions', 'regions', 'comunas', 'usuarios','where','comunasList'));
     }
 

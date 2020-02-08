@@ -47,8 +47,6 @@
                     </thead>
                     <tbody>
                         <?php foreach ($visitas as $visita): 
-                            // pr($visita);
-                            // exit;
                             if($visita->status == 'P'){
                                 $status = 'Pendiente';
                             }else if($visita->status == 'V'){

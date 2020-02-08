@@ -106,13 +106,15 @@ class ClientesTable extends Table
 
         $validator
             ->scalar('clasificacion_id')
-            ->requirePresence('clasificacion_id', 'create')
-            ->notEmpty('clasificacion_id');
+            // ->requirePresence('clasificacion_id', 'create')
+            ->allowEmpty('clasificacion_id');
+            // ->notEmpty('clasificacion_id');
 
         $validator
             ->scalar('tipo')
-            ->requirePresence('tipo', 'create')
-            ->notEmpty('tipo');
+            // ->requirePresence('tipo', 'create')
+            ->allowEmpty('tipo');
+            // ->notEmpty('tipo');
 
         $validator
             ->scalar('nombres')
@@ -126,14 +128,16 @@ class ClientesTable extends Table
 
         $validator
             ->scalar('sexo')
-            ->requirePresence('sexo', 'create')
-            ->notEmpty('sexo');
+            // ->requirePresence('sexo', 'create')
+            ->allowEmpty('sexo');
+            // ->notEmpty('sexo');
 
         $validator
             ->scalar('rut')
             ->maxLength('rut', 10)
-            ->requirePresence('rut', 'create')
-            ->notEmpty('rut');
+            // ->requirePresence('rut', 'create')
+            ->allowEmpty('rut');
+            // ->notEmpty('rut');
 
         $validator
             ->scalar('telefono1')
@@ -148,8 +152,9 @@ class ClientesTable extends Table
 
         $validator
             ->scalar('observacion')
-            ->requirePresence('observacion', 'create')
-            ->notEmpty('observacion');
+            // ->requirePresence('observacion', 'create')
+            ->allowEmpty('observacion');
+            // ->notEmpty('observacion');
 
         $validator
             ->scalar('region_id')

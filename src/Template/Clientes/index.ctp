@@ -10,7 +10,8 @@
                       <?php echo $this->Form->control('tipo',[
                                         'class'=>'form-control',
                                         'placeholder'=>'Buscar...',
-                                        'options'=>['nombres' => 'Nombre','rut' => 'Rut','calle' => 'Calle'],
+                                        'options'=>['nombres' => 'Nombre','rut' => 'Rut','direccion' => 'Dirección'],
+                                        'value' => 'direccion',
                                         'label'=>false]); ?>
                       
                       <?php echo $this->Form->control('buscar',[
@@ -50,7 +51,7 @@
                             ?>
                             <tr>
                                 <td><?php echo $cliente->id ?></td>
-                                <td><?php echo h($cliente->clasificacione->nombre) ?></td>
+                                <td><?php echo isset($cliente->clasificacione->nombre) ? h($cliente->clasificacione->nombre) : ''; ?></td>
                                 <td><?php echo h($tipo) ?></td>
                                 <td><?php echo h($cliente->nombres) ?></td>
                                 <td><?php echo $cliente->has('rut') ? $cliente->rut : '' ?></td>

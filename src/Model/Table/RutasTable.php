@@ -51,6 +51,11 @@ class RutasTable extends Table
         $this->hasMany('Clientes', [
             'foreignKey' => 'ruta_id'
         ]);
+
+        $this->hasMany('VClientes', [
+            'foreignKey' => 'ruta_id'
+        ]);
+        
         $this->belongsToMany('Usuarios', [
             'foreignKey' => 'ruta_id',
             'targetForeignKey' => 'usuario_id',
