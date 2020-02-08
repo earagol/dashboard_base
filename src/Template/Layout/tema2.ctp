@@ -170,7 +170,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-inbox"></i>Reportes</a>
                             <ul class="sub-menu children dropdown-menu">
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Diario'), ['controller'=>'Ventas','action' => 'reporteDiarioVendedor'],['title'=>'Reporte Diario','escape' => false]) ?></li>
+                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Diario del vendedor'), ['controller'=>'Ventas','action' => 'reporteDiarioVendedor'],['title'=>'Reporte Diario','escape' => false]) ?></li>
 
                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Clientes'), ['controller'=>'Ventas','action' => 'reporteClientesVentas'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
 
@@ -183,6 +183,7 @@
                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Ventas Rutas'), ['controller'=>'Ventas','action' => 'reporteConsolidadoRutas'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
                                 
                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado Ventas Rango'), ['controller'=>'Ventas','action' => 'reporteConsolidadoVentasRango'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
+                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte de ventas por rangos del vendedor'), ['controller'=>'Ventas','action' => 'reporteRangoVendedor'],['title'=>'Reporte Rutas Ventas','escape' => false]) ?></li>
 
                             </ul>
                         </li>

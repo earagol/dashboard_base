@@ -154,7 +154,7 @@ class VentasController extends AppController
         $this->set(compact('ventas'));
     }
 
-    public function getVentas($usuario_id,$fecha){
+    public function getVentas($usuario_id,$fecha,$fecha_hasta = null){
         $control = $this->Ventas->find();
         $ventas =  $control->select([
                                         'id',
@@ -163,13 +163,23 @@ class VentasController extends AppController
                                         'monto_transferencia' => $control->func()->sum('monto_transferencia'),
                                         'cuenta_porcobrar' => $control->func()->sum('cuenta_porcobrar'),
                                         'monto_cartera' => $control->func()->sum('monto_cartera'),
-                                    ])
-                                ->where([
-                                        'Ventas.usuario_id' => $usuario_id,
-                                        'Ventas.fecha' => $fecha,
-                                        'Ventas.monto_total IS NOT NULL'
-                                    ])
-                                ->first();
+                                    ]);
+        if($fecha_hasta){
+            $ventas->where([
+                        'Ventas.usuario_id' => $usuario_id,
+                        'Ventas.fecha >=' => $fecha,
+                        'Ventas.fecha <=' => $fecha_hasta,
+                        'Ventas.monto_total IS NOT NULL'
+                    ]);
+        }else{
+            $ventas->where([
+                        'Ventas.usuario_id' => $usuario_id,
+                        'Ventas.fecha' => $fecha,
+                        'Ventas.monto_total IS NOT NULL'
+                    ]);
+        }
+                               
+            $ventas = $ventas->first();
         // $transferencias =  $control->select([
         //                         'id',
         //                         'monto_total' => $control->func()->sum('monto_total'),
@@ -219,17 +229,30 @@ class VentasController extends AppController
     }
 
 
-    public function cantidadVentaPorProducto($usuarioId=null,$fecha=null){
+    public function cantidadVentaPorProducto($usuarioId=null,$fecha=null,$fecha_hasta = null){
         $producto = [];
         $consolidado = $this->Ventas->VentaDetalles->find();
         $consolidados = $consolidado->select([
                                 'VentaDetalles.producto_id',
                                 'total' => $consolidado->func()->sum('VentaDetalles.cantidad')
                             ])
-                   ->innerJoinWith('Ventas')
-                   ->where(['Ventas.fecha'=>$fecha,'Ventas.usuario_id'=>$usuarioId])
-                   ->group(['VentaDetalles.producto_id'])
-                   ->toArray();
+                   ->innerJoinWith('Ventas');
+        if($fecha_hasta){
+            $consolidados->where([
+                        'Ventas.fecha >=' => $fecha,
+                        'Ventas.fecha <=' => $fecha_hasta,
+                        'Ventas.usuario_id' => $usuarioId
+                    ]);
+        }else{
+            $consolidados->where([
+                        'Ventas.fecha'=>$fecha,
+                        'Ventas.usuario_id'=>$usuarioId
+                    ]);
+        }
+
+                   
+       $consolidados = $consolidados->group(['VentaDetalles.producto_id'])
+                                    ->toArray();
         if($consolidados){
             foreach ($consolidados as $key => $value) {
                 $producto[$value->producto_id] = $value->total;
@@ -239,17 +262,30 @@ class VentasController extends AppController
     }
 
 
-    public function cantidadEmbasesRetornados($usuarioId=null,$fecha=null){
+    public function cantidadEmbasesRetornados($usuarioId=null,$fecha=null,$fecha_hasta = null){
         $producto = [];
         $consolidado = $this->Ventas->EmbasesRetornados->find();
         $consolidados = $consolidado->select([
                                 'EmbasesRetornados.producto_id',
                                 'total' => $consolidado->func()->sum('EmbasesRetornados.cantidad')
                             ])
-                   ->innerJoinWith('Ventas')
-                   ->where(['Ventas.fecha'=>$fecha,'Ventas.usuario_id'=>$usuarioId])
-                   ->group(['EmbasesRetornados.producto_id'])
-                   ->toArray();
+                   ->innerJoinWith('Ventas');
+
+        if($fecha_hasta){
+            $consolidados->where([
+                        'Ventas.fecha >=' => $fecha,
+                        'Ventas.fecha <=' => $fecha_hasta,
+                        'Ventas.usuario_id' => $usuarioId
+                    ]);
+        }else{
+            $consolidados->where([
+                        'Ventas.fecha' => $fecha,
+                        'Ventas.usuario_id' => $usuarioId
+                    ]);
+        }
+
+        $consolidados = $consolidados->group(['EmbasesRetornados.producto_id'])
+                                     ->toArray();
         if($consolidados){
             foreach ($consolidados as $key => $value) {
                 $producto[$value->producto_id] = $value->total;
@@ -268,7 +304,6 @@ class VentasController extends AppController
                                         'Ventas.monto_cartera IS NOT NULL'
                                     ])
                                 ->toArray();
-        // prx($ventas);
         return $ventas;
     }
 
@@ -301,7 +336,7 @@ class VentasController extends AppController
 
 
 
-    public function calculoReporteDiario($usuarioId = null, $fecha = null){
+    public function calculoReporteDiario($usuarioId = null, $fecha = null, $fecha_hasta = null){
 
         $valoresPadreTable = TableRegistry::get('ParametrosValoresPadre');
         $paramsTipoTable = TableRegistry::get('ParametrosTipos');
@@ -314,31 +349,53 @@ class VentasController extends AppController
 
         $fechaFormat = new Time($fecha);
         $fechaUso = $fechaFormat->format('Y-m-d');
+        if($fecha_hasta){
+            $fechaFormatHasta = new Time($fecha_hasta);
+            $fecha_hasta = $fechaFormatHasta->format('Y-m-d');
+        }
+        
 
-        $ventas = $this->getVentas($usuarioId,$fechaUso);
+        $ventas = $this->getVentas($usuarioId,$fechaUso,$fecha_hasta);
         
 
         $resultados = $valoresPadreTable->find('all')
-                                        ->contain(['ParametrosValores','ParametrosTipos'])
-                                        ->where([
-                                            'ParametrosValoresPadre.fecha' => $fechaUso,
-                                            'ParametrosValoresPadre.usuario_id' => $usuarioId
-                                            ]
-                                        );
+                                        ->contain(['ParametrosValores','ParametrosTipos']);
+        if($fecha_hasta){
+            $resultados->where([
+                            'ParametrosValoresPadre.fecha >=' => $fechaUso,
+                            'ParametrosValoresPadre.fecha <=' => $fecha_hasta,
+                            'ParametrosValoresPadre.usuario_id' => $usuarioId
+                            ]
+                        );
+            // pr($fechaUso);
+            // pr($fecha_hasta);
+            // exit('AA');
+        }else{
+            $resultados->where([
+                            'ParametrosValoresPadre.fecha' => $fechaUso,
+                            'ParametrosValoresPadre.usuario_id' => $usuarioId
+                            ]
+                        );
+            // exit('BB');
+        }
+                                        
 
         $resultados = $resultados->toArray();
+       
         $valores = $diario = $gasto = [];
 
         if($resultados){
                 
             foreach ($resultados as $key => $value) {
                 $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['nombre'] = $value->parametros_tipo->nombre;
-                $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'] = [];
+                if(!isset($valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'])){
+                    $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'] = [];
+                }
 
                 foreach ($value->parametros_valores as $key2 => $value2) {
                     if($value->parametros_tipo->tipo == 'Diario'){
 
-                        if(!isset($valores[$value->parametros_tipo_id]['valores'][$value2->producto_id])){
+                        if(!isset($valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id])){
 
                             $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['cantidad'] = $value2->monto_o_cantidad;
                             $valores[$value->parametros_tipo->tipo][$value->parametros_tipo_id]['valores'][$value2->producto_id]['nombre'] = $productos[$value2->producto_id];
@@ -363,7 +420,6 @@ class VentasController extends AppController
             
             
         }
-
 
         $productoTotal = [];
         if($productos){
@@ -392,7 +448,7 @@ class VentasController extends AppController
 
 
         ////Cantidad de Ventas//////
-        $ventasCantidadProducto = $this->cantidadVentaPorProducto($usuarioId,$fechaUso);
+        $ventasCantidadProducto = $this->cantidadVentaPorProducto($usuarioId,$fechaUso,$fecha_hasta);
         foreach ($productos as $keyP => $valueP) {
 
             if(isset($ventasCantidadProducto[$keyP])){
@@ -416,7 +472,7 @@ class VentasController extends AppController
         ////Cantidad embases retornados//////
         
 
-        $ventasEmbasesRetornados = $this->cantidadEmbasesRetornados($usuarioId,$fechaUso);
+        $ventasEmbasesRetornados = $this->cantidadEmbasesRetornados($usuarioId,$fechaUso,$fecha_hasta);
         foreach ($productos as $keyP => $valueP) {
 
             if(isset($ventasEmbasesRetornados[$keyP])){
@@ -503,6 +559,49 @@ class VentasController extends AppController
         
         $this->set(compact('usuarios','vista'));
     }//Fin reporteDiarioVendedor
+
+
+    public function reporteRangoVendedor(){
+
+        if($this->request->is('post')){
+
+            if($this->request->data('usuario_id') == null){
+                $this->request->data('usuario_id',$this->Auth->user('id'));
+            }
+            
+
+            if($this->request->data('desde') == null){
+                $this->request->data('desde',date('Y-m-d'));
+            }
+
+            if($this->request->data('hasta') == null){
+                $this->request->data('hasta',date('Y-m-d'));
+            }
+
+            $calculo = $this->calculoReporteDiario($this->request->data('usuario_id'),$this->request->data('desde'),$this->request->data('hasta'));
+            extract($calculo);  
+
+            $excel = 1;
+            $name = 'Reporte_ventas_por_rango_vendedor_'.$fecha;
+
+            if($this->Auth->user('role') == 'admin'){
+                $this->viewBuilder()->setLayout('excel');
+                $this->set(compact('excel'));
+            }
+
+            $this->set(compact('header','diario','name','ventas','gasto','usuario','carteraRecogida','productoTotal','retornos'));
+        }
+
+        if($this->Auth->user('role') == 'admin'){
+            $vista = 1;
+            $usuarios = $this->Ventas->Usuarios->find('list', ['limit' => 200]);
+        }else{
+            $vista = 2;
+            $usuarios = $this->Ventas->Usuarios->find('list', ['conditions' => ['Usuarios.id' => $this->Auth->user('id')] ,'limit' => 200]);
+        }
+        
+        $this->set(compact('usuarios','vista'));
+    }//Fin reporteRangoVendedor
 
 
     public function reporteClientesVentas(){
