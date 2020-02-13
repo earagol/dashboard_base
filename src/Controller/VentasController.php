@@ -577,6 +577,8 @@ class VentasController extends AppController
             if($this->request->data('hasta') == null){
                 $this->request->data('hasta',date('Y-m-d'));
             }
+            $desde = $this->request->data('desde');
+            $hasta = $this->request->data('hasta');
 
             $calculo = $this->calculoReporteDiario($this->request->data('usuario_id'),$this->request->data('desde'),$this->request->data('hasta'));
             extract($calculo);  
@@ -589,7 +591,7 @@ class VentasController extends AppController
                 $this->set(compact('excel'));
             }
 
-            $this->set(compact('header','diario','name','ventas','gasto','usuario','carteraRecogida','productoTotal','retornos'));
+            $this->set(compact('header','diario','name','ventas','gasto','usuario','carteraRecogida','productoTotal','retornos','desde','hasta'));
         }
 
         if($this->Auth->user('role') == 'admin'){
