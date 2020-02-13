@@ -1088,12 +1088,12 @@ class VentasController extends AppController
                 //                     ->where(['Clientes.ruta_id' => $ruta]);
                 $consolidadoDetalles->join([
                                         'Ventas' => [
-                                            'table' => 'Ventas',
+                                            'table' => 'ventas',
                                             'type' => 'INNER',
                                             'conditions' => 'VentaDetalles.venta_id = Ventas.id'
                                         ],
                                         'Clientes' => [
-                                            'table' => 'Clientes',
+                                            'table' => 'clientes',
                                             'type' => 'INNER',
                                             'conditions' => 'Ventas.cliente_id = Clientes.id'
                                         ]
@@ -1103,7 +1103,7 @@ class VentasController extends AppController
                 // $consolidadoDetalles->innerJoinWith('Ventas');
                 $consolidadoDetalles->join([
                                         'Ventas' => [
-                                            'table' => 'Ventas',
+                                            'table' => 'ventas',
                                             'type' => 'INNER',
                                             'conditions' => 'VentaDetalles.venta_id = Ventas.id'
                                         ]
