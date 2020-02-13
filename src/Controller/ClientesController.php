@@ -168,6 +168,9 @@ class ClientesController extends AppController
     {
         $cliente = $this->Clientes->newEntity();
         if ($this->request->is('post')) {
+            if(is_null($this->request->data('tipo')) || $this->request->data('tipo') == ''){
+                $this->request->data('tipo',2);
+            }
             if(!$this->Clientes->find()->where(['rut'=>trim($this->request->data('rut'))])->first()){
                 $this->request->data('rut',trim($this->request->data('rut')));
 
