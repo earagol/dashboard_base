@@ -30,7 +30,8 @@
             </div>
 
             <div class="form-group form-check">
-                <?php echo $this->Form->control('retorna_embase',['type'=>'checkbox','class'=>'form-check-input']); ?>
+                <label for="company" class=" form-control-label">Retorna envase</label>
+                <?php echo $this->Form->control('retorna_embase',['type'=>'checkbox','class'=>'form-check-input','label'=>false]); ?>
             </div>
 
             <div class="form-group">

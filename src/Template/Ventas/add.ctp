@@ -248,7 +248,7 @@
 
                      <div class = "page-header text-center col-lg-4 col-lg-offset-3 col-xs-12 col-sm-12">
                        <h3>
-                          Retorno de Embases
+                          Retorno de Envases
                        </h3>
                     </div>
 

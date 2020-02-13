@@ -9,7 +9,7 @@ if(!isset($excel)){
  <div class="col-lg-12 ">
     <div class="card">
         <div class="card-header">
-            <strong>Reporte Clientes Embases</strong>
+            <strong>Reporte Clientes Envases</strong>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
             </div>

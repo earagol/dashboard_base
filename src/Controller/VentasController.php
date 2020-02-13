@@ -35,7 +35,7 @@ class VentasController extends AppController
     public function isAuthorized($user){
 
         if(isset($user['role']) && $user['role'] === 'usuario'){
-            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','reporteClientesEmbases','detalles','ventas','detalleListadoVentas'])){
+            if(in_array($this->request->action, ['index','add','reporteDiarioVendedor','reporteClientesVentas','reporteClientesEnvases','detalles','ventas','detalleListadoVentas'])){
                 return true;
             }
         }
@@ -262,7 +262,7 @@ class VentasController extends AppController
     }
 
 
-    public function cantidadEmbasesRetornados($usuarioId=null,$fecha=null,$fecha_hasta = null){
+    public function cantidadEnvasesRetornados($usuarioId=null,$fecha=null,$fecha_hasta = null){
         $producto = [];
         $consolidado = $this->Ventas->EmbasesRetornados->find();
         $consolidados = $consolidado->select([
@@ -472,7 +472,7 @@ class VentasController extends AppController
         ////Cantidad embases retornados//////
         
 
-        $ventasEmbasesRetornados = $this->cantidadEmbasesRetornados($usuarioId,$fechaUso,$fecha_hasta);
+        $ventasEmbasesRetornados = $this->cantidadEnvasesRetornados($usuarioId,$fechaUso,$fecha_hasta);
         foreach ($productos as $keyP => $valueP) {
 
             if(isset($ventasEmbasesRetornados[$keyP])){
@@ -704,7 +704,7 @@ class VentasController extends AppController
     }
 
 
-    public function reporteClientesEmbases(){
+    public function reporteClientesEnvases(){
 
 
         if($this->request->is('post')){
@@ -781,7 +781,7 @@ class VentasController extends AppController
                 $this->viewBuilder()->setLayout('excel');
                 $this->set(compact('excel'));
             }
-            $name = 'Embases_'.$fecha;
+            $name = 'Envases_'.$fecha;
             $this->set(compact('headerClientes','detallesEmbases','name','productos'));
 
         }
@@ -1519,7 +1519,7 @@ class VentasController extends AppController
                 }else if($this->request->data('pago_cartera')){
                     $mensaje="Pago de cartera exitoso.";
                 }else if($this->request->data('tiene_retorno')){
-                    $mensaje="Proceso de retorno de embases exitoso.";
+                    $mensaje="Proceso de retorno de envases exitoso.";
                 }
                
                 $this->Flash->success(__($mensaje));

@@ -69,7 +69,7 @@ if(!isset($excel)){
                                             <?php } ?>
                                             </tr>
                                             <tr>
-                                                <td>Embases</td>
+                                                <td>Envases</td>
                                                 <?php foreach ($retornos['valores'] as $diaKeyValor => $diaValor) { ?>
                                                     <td><?php echo $diaValor['cantidad']?$diaValor['cantidad']:'&nbsp;'; ?></td>
                                                 <?php } ?>
@@ -250,7 +250,7 @@ if(!isset($excel)){
                     <?php } ?>
                     </tr>
                     <tr>
-                        <td>Embases</td>
+                        <td>Envases</td>
                         <?php foreach ($retornos['valores'] as $diaKeyValor => $diaValor) { ?>
                             <td><?php echo $diaValor['cantidad']; ?></td>
                         <?php } ?>

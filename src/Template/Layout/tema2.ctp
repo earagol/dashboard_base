@@ -174,7 +174,7 @@
 
                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Clientes'), ['controller'=>'Ventas','action' => 'reporteClientesVentas'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Embases'), ['controller'=>'Ventas','action' => 'reporteClientesEmbases'],['title'=>'Reporte Clientes Embases','escape' => false]) ?></li>
+                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Envases'), ['controller'=>'Ventas','action' => 'reporteClientesEnvases'],['title'=>'Reporte Clientes Envases','escape' => false]) ?></li>
 
                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Consolidado'), ['controller'=>'Ventas','action' => 'unionDiarioVentasVendedor'],['title'=>'Reporte Consolidado','escape' => false]) ?></li>
 
@@ -255,7 +255,7 @@
 
                                 <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Clientes'), ['controller'=>'Ventas','action' => 'reporteClientesVentas'],['title'=>'Reporte Clientes Ventas','escape' => false]) ?></li>
 
-                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Embases'), ['controller'=>'Ventas','action' => 'reporteClientesEmbases'],['title'=>'Reporte Clientes Embases','escape' => false]) ?></li>
+                                <li><i class="fa fa-inbox"></i><?php echo $this->Html->link(__('Reporte Envases'), ['controller'=>'Ventas','action' => 'reporteClientesEnvases'],['title'=>'Reporte Clientes Envases','escape' => false]) ?></li>
 
                             </ul>
                         </li>
