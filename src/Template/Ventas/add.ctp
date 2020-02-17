@@ -61,6 +61,19 @@
                 <?php echo $this->Form->control('credito',['readonly'=>'readonly','class'=>'form-control','value'=>$cliente? number_format($cliente->credito_disponible, 0, ",", "."):0,'label'=>false]); ?>
             </div>
 
+            <div class="form-group">
+                <label for="company" class=" form-control-label">Fecha Venta</label>
+                 <?php echo $this->Form->control('fecha',[
+                                                    'value'=>date('Y-m-d'),
+                                                    'type'=>'text',
+                                                    'class'=>'form-control',
+                                                    'placeholder'=>'Fecha venta',
+                                                    'label'=>false,
+                                                    'data-toggle'=>'datetimepicker', 
+                                                    'data-target'=>'#fecha'
+                                                ]); ?>
+            </div>
+
             <?php echo $this->Form->control('cuenta_porcobrar_cliente',['type'=>'hidden','class'=>'form-control','value'=>$cliente?$cliente->cuenta_porcobrar:0,'label'=>false]); ?>
 
             <hr class="my-4">
@@ -311,9 +324,6 @@
     </div>
 </div>
 
-
-<?php //prx($_SESSION['detalles']); ?>
-
 <?php $productos = json_encode($productos); ?>
 <?php $precios = json_encode($productosPrecios); ?>
 <?php $preciosClientes = json_encode($cliente->clientes_precios); ?>
@@ -339,6 +349,9 @@
     }
 
     (function( $ ) {
+        $('#fecha').datetimepicker({
+            format: 'YYYY-MM-DD'
+        });
 
         function matchCustom(params, data) {
 

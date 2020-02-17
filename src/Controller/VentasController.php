@@ -1372,8 +1372,12 @@ class VentasController extends AppController
             $this->request->data('ano',date('Y'));
             $this->request->data('mes',date('m'));
             $this->request->data('dia',date('d'));
-            $this->request->data('fecha',date('Y-m-d'));
+            
             $this->request->data('created',date('Y-m-d H:i:s'));
+
+            if(!$this->request->data('fecha')){
+                $this->request->data('fecha',date('Y-m-d'));
+            }
 
             if($this->request->data('monto_efectivo') == null || $this->request->data('monto_efectivo') == 0){
                 $this->request->data('efectivo',false);
