@@ -93,7 +93,7 @@
             <?php if($currentUser['role'] == 'admin') : ?>
                  <div class="form-group">
                     <label for="company" class=" form-control-label">Credito disponible</label>
-                    <?php echo $this->Form->control('credito_disponible',['class'=>'form-control','placeholder'=>'Credito...','label'=>false,'value'=>number_format($cliente->credito_disponible, 0, ",", ".")]); ?>
+                    <?php echo $this->Form->control('credito_disponible', ['type'=>'text','class'=>'form-control','placeholder'=>'Credito...','value' => number_format($cliente->credito_disponible, 0, "", "."),'label'=>false]); ?>
                 </div>
             <?php endif; ?>
 

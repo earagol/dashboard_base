@@ -94,7 +94,7 @@
             <?php if($currentUser['role'] == 'admin') : ?>
                 <div class="form-group">
                     <label for="company" class=" form-control-label">Credito disponible</label>
-                    <?php echo $this->Form->control('credito_disponible',['class'=>'form-control','placeholder'=>'Credito...','label'=>false]); ?>
+                    <?php echo $this->Form->control('credito_disponible', ['type'=>'text','class'=>'form-control','placeholder'=>'Credito...','value' => 0,'label'=>false]); ?>
                 </div>
             <?php endif; ?>
 
@@ -170,6 +170,7 @@
         });
       }
     });
+
 
 })(jQuery);
     

@@ -149,7 +149,7 @@
     (function( $ ) {
 
             $('.cancelar').on("click", function() {
-
+                var id = $(this).data('id');
                 $.ajax({
                     url:url1+'ventas/validaAnulacion',
                     dataType: 'json',
@@ -164,7 +164,7 @@
                         if(response.success){
 
                             $('#anularVenta').modal('show');
-                            var id = $(this).data('id');
+                            
 
                             $('#venta-id').val(id);
                             $('#observacion-anulacion').val('');
