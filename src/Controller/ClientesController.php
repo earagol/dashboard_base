@@ -44,7 +44,7 @@ class ClientesController extends AppController
                 'Comunas', 
                 'Usuarios'
             ],
-            'conditions' => []
+            'conditions' => ['VClientes.deleted IS NULL']
         ];
 
         if($this->Auth->user('role') === 'usuario'){
@@ -171,7 +171,7 @@ class ClientesController extends AppController
             if(is_null($this->request->data('tipo')) || $this->request->data('tipo') == ''){
                 $this->request->data('tipo',2);
             }
-            if(!$this->Clientes->find()->where(['rut'=>trim($this->request->data('rut'))])->first()){
+            if(empty($this->request->data('rut')) || (!empty($this->request->data('rut')) && !$this->Clientes->find()->where(['rut'=>trim($this->request->data('rut'))])->first())){
                 $this->request->data('rut',trim($this->request->data('rut')));
 
                 $this->request->data('credito_disponible',str_replace('.','',$this->request->data('credito_disponible')));
