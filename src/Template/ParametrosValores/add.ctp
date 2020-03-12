@@ -8,7 +8,7 @@
  <div class="col-lg-12">
     <div class="card">
         <div class="card-header">
-            <strong>Agregar Parametro Diario (fecha: <?php echo date('Y-m-d'); ?>)</strong>
+            <strong>Agregar Parametro Diario</strong>
             <div class="pull-right">
                 <?php echo $this->Html->link(__('Volver',['class'=>'btn btn-default']), ['action' => 'index']) ?></li>
             </div>
@@ -17,6 +17,20 @@
             <div class="form-group">
                 <label for="company" class=" form-control-label">Tipo</label>
                 <?php echo $this->Form->control('parametros_tipo_id',['empty'=> '--Seleccione el tipo--','class'=>'form-control','label'=>false]); ?>
+            </div>
+
+            <div class="form-group">
+                <label for="company" class=" form-control-label">Fecha</label>
+                <?php echo $this->Form->control('fecha',[
+                                'value'=>date('Y-m-d'),
+                                'type'=> 'text',
+                                'class'=>'form-control',
+                                'placeholder'=>'Fecha venta',
+                                'label'=>false,
+                                'data-toggle'=>'datetimepicker', 
+                                'data-target'=>'#fecha',
+                                'readonly' => ($currentUser['role'] == 'admin') ? '' : 'readonly'
+                            ]);  ?>
             </div>
 
             <div id="data"></div>
@@ -41,6 +55,10 @@
     var csrfToken = <?php echo json_encode($this->request->getParam('_csrfToken')) ?>;
 
     (function( $ ) {
+        $('#fecha').datetimepicker({
+            format: 'YYYY-MM-DD'
+        });
+        
         $('#parametros-tipo-id').change(function() {
             if($('#parametros-tipo-id').val() == ''){
                 return;

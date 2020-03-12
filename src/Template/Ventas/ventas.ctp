@@ -32,7 +32,8 @@
                             <th scope="col"><?php echo $this->Paginator->sort('CXC','CXC <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('Monto Cartera','Pago Cartera <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th scope="col"><?php echo $this->Paginator->sort('tiene_retorno','Retorno embases <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
-                            <th scope="col"><?php echo $this->Paginator->sort('fecha','Fecha <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th scope="col"><?php echo $this->Paginator->sort('fecha','Fecha venta <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
+                            <th scope="col"><?php echo $this->Paginator->sort('created','Fecha registro <i class="fa fa-sort"></i>',array('escape' => false)) ?></th>
                             <th >Acciones</th>
                         </tr>
                     </thead>
@@ -56,6 +57,7 @@
                                 <td><?php echo $this->Number->format($venta->cuenta_porcobrar) ?></td>
                                 <td><?php echo $this->Number->format($venta->monto_cartera) ?></td>
                                 <td><?php echo $retorno ?></td>
+                                <td><?php echo $venta->fecha->format('Y-m-d') ?></td>
                                 <td><?php echo $venta->created->format('Y-m-d H:i:s') ?></td>
                                 <td class="text-center">
                                     <button data-id="<?php echo $venta->id; ?>" type="button" class="btn btn-info detalle" <?php echo $disabled; ?> title="Detalles"><i class="fa fa-eye"></i></button>

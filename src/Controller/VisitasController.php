@@ -248,7 +248,11 @@ class VisitasController extends AppController
 
         $productosTable = TableRegistry::get('Productos');
         $productos = $productosTable->find('list')->toArray();
-        $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
+        $productosPrecios = $productosTable->ProductosPrecios->find('all')
+                                                             ->order([
+                                                                'producto_id,precio' => 'ASC'
+                                                             ])
+                                                             ->toArray();
 
         $this->set(compact('visita', 'usuarios', 'usuarios','productos','productosPrecios'));
     }

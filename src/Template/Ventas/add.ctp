@@ -61,18 +61,31 @@
                 <?php echo $this->Form->control('credito',['readonly'=>'readonly','class'=>'form-control','value'=>$cliente? number_format($cliente->credito_disponible, 0, ",", "."):0,'label'=>false]); ?>
             </div>
 
-            <div class="form-group">
-                <label for="company" class=" form-control-label">Fecha Venta</label>
-                 <?php echo $this->Form->control('fecha',[
-                                                    'value'=>date('Y-m-d'),
-                                                    'type'=>'text',
-                                                    'class'=>'form-control',
-                                                    'placeholder'=>'Fecha venta',
-                                                    'label'=>false,
-                                                    'data-toggle'=>'datetimepicker', 
-                                                    'data-target'=>'#fecha'
-                                                ]); ?>
-            </div>
+            <?php if($currentUser['role'] == 'admin'): ?>
+                <div class="form-group">
+                    <label for="company" class=" form-control-label">Fecha Venta</label>
+                    <?php echo $this->Form->control('fecha',[
+                                                        'value'=>date('Y-m-d'),
+                                                        'type'=> 'text',
+                                                        'class'=>'form-control',
+                                                        'placeholder'=>'Fecha venta',
+                                                        'label'=>false,
+                                                        'data-toggle'=>'datetimepicker', 
+                                                        'data-target'=>'#fecha'
+                                                    ]); ?>
+                </div>
+            <?php else: ?>
+                <?php echo $this->Form->control('fecha',[
+                                                        'value'=>date('Y-m-d'),
+                                                        'type'=> 'hidden',
+                                                        'class'=>'form-control',
+                                                        'placeholder'=>'Fecha venta',
+                                                        'label'=>false,
+                                                        'data-toggle'=>'datetimepicker', 
+                                                        'data-target'=>'#fecha'
+                                                    ]); ?>
+
+            <?php endif; ?>
 
             <?php echo $this->Form->control('cuenta_porcobrar_cliente',['type'=>'hidden','class'=>'form-control','value'=>$cliente?$cliente->cuenta_porcobrar:0,'label'=>false]); ?>
 

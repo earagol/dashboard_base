@@ -131,16 +131,23 @@ class VentasController extends AppController
                      ->order(['Ventas.id'=>'DESC']);
 
         if(!is_null($this->request->data('buscar'))){
+            $query->where([
+                'OR' => [
+                    ['Clientes.nombres LIKE' => '%'.$this->request->data('buscar').'%'], 
+                    ['Usuarios.nombres LIKE' => '%'.$this->request->data('buscar').'%'],
+                    ['Usuarios.apellidos LIKE' => '%'.$this->request->data('buscar').'%']
+                ],
+            ]);
 
-            $query->where(function (QueryExpression $exp) {
-                    $orConditions = $exp->or_([
-                            'Clientes.nombres LIKE' => '%'.$this->request->data('buscar').'%',
-                            'Usuarios.nombres LIKE' => '%'.$this->request->data('buscar').'%',
-                            'Usuarios.apellidos LIKE' => '%'.$this->request->data('buscar').'%'
-                        ]);
-                    return $exp
-                        ->add($orConditions);
-                });
+            // $query->where(function (QueryExpression $exp) {
+            //         $orConditions = $exp->or_([
+            //                 'Clientes.nombres LIKE' => '%'.$this->request->data('buscar').'%',
+            //                 'Usuarios.nombres LIKE' => '%'.$this->request->data('buscar').'%',
+            //                 'Usuarios.apellidos LIKE' => '%'.$this->request->data('buscar').'%'
+            //             ]);
+            //         return $exp
+            //             ->add($orConditions);
+            //     });
 
         }
 
@@ -151,6 +158,7 @@ class VentasController extends AppController
         }
 
         $ventas = $this->paginate($query);
+        // prx($ventas);
         $this->set(compact('ventas'));
     }
 
@@ -1369,14 +1377,20 @@ class VentasController extends AppController
             $this->request->data('credito',str_replace('.','',$this->request->data('credito')));
             $this->request->data('monto_efectivo',str_replace('.','',$this->request->data('monto_efectivo')));
             $this->request->data('monto_transferencia',str_replace('.','',$this->request->data('monto_transferencia')));
-            $this->request->data('ano',date('Y'));
-            $this->request->data('mes',date('m'));
-            $this->request->data('dia',date('d'));
+            
             
             $this->request->data('created',date('Y-m-d H:i:s'));
 
             if(!$this->request->data('fecha')){
                 $this->request->data('fecha',date('Y-m-d'));
+                $this->request->data('ano',date('Y'));
+                $this->request->data('mes',date('m'));
+                $this->request->data('dia',date('d'));
+            }else{
+                $this->request->data('fecha',date("Y-m-d", strtotime($this->request->data('fecha'))));
+                $this->request->data('ano',date("Y", strtotime($this->request->data('fecha'))));
+                $this->request->data('mes',date("m", strtotime($this->request->data('fecha'))));
+                $this->request->data('dia',date("d", strtotime($this->request->data('fecha'))));
             }
 
             if($this->request->data('monto_efectivo') == null || $this->request->data('monto_efectivo') == 0){
@@ -1545,7 +1559,11 @@ class VentasController extends AppController
         $session->delete('detalles');
        
         $productos = $productosTable->find('list')->toArray();
-        $productosPrecios = $productosTable->ProductosPrecios->find('all')->toArray();
+        $productosPrecios = $productosTable->ProductosPrecios->find('all')
+                                                             ->order([
+                                                                'producto_id,precio' => 'ASC'
+                                                             ])
+                                                             ->toArray();
 
         $cliente = null;
         $carteraPendiente = null;

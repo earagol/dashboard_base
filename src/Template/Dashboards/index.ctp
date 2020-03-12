@@ -237,9 +237,11 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Nombre</th>
-                                            <th>Email</th>
-                                            <th>Telefono 1</th>
-                                            <th>Telefono 2</th>
+                                            <?php if($currentUser['role'] == 'admin'): ?>
+                                                <th>Email</th>
+                                                <th>Telefono 1</th>
+                                                <th>Telefono 2</th>
+                                            <?php endif; ?>
                                             <th>Monto</th>
                                         </tr>
                                     </thead>
@@ -253,21 +255,25 @@
                                                     <tr>
                                                         <td ><?php echo $value->id; ?></td>
                                                         <td> <?php echo $value->nombres; ?> </td>
-                                                        <td> <span class="name"><?php echo $value->email; ?></span> </td> 
-                                                        <td><span class="product"><?php echo $value->telefono1; ?></span> </td>
-                                                        <td><?php echo $value->telefono2; ?></td>
+                                                        <?php if($currentUser['role'] == 'admin'): ?>
+                                                            <td> <span class="name"><?php echo $value->email; ?></span> </td> 
+                                                            <td><span class="product"><?php echo $value->telefono1; ?></span> </td>
+                                                            <td><?php echo $value->telefono2; ?></td>
+                                                        <?php endif; ?>
                                                         <td><?php echo number_format($value->cuenta_porcobrar, 0, ",", "."); ?></td> 
                                                     </tr>
                                             <?php endforeach; ?>
                                                 <tr class="pb-0">
-                                                    <td class="text-right" colspan="5"><b>Total:</b></td>
+                                                    <td class="text-right" colspan="<?php echo ($currentUser['role'] == 'admin')? 5 : 3; ?>"><b>Total:</b></td>
                                                     <td><?php echo number_format($morosoTotal, 0, ",", "."); ?></td>
                                                 </tr>
                                         <?php else: ?>
                                                 <tr class="pb-0">
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td> </td> 
+                                                    <?php if($currentUser['role'] == 'admin'): ?>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td> </td> 
+                                                    <?php endif; ?>
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
