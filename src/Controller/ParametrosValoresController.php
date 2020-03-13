@@ -40,10 +40,17 @@ class ParametrosValoresController extends AppController
 
         $fecha = date('Y-m-d');
 
-        $this->paginate = [
+        $options = [
             'contain' => ['ParametrosValores','ParametrosTipos'],
-            'conditions' => ['ParametrosValoresPadre.fecha' => $fecha,'ParametrosValoresPadre.usuario_id'=>$this->Auth->user('id')]
+            // 'conditions' => ['ParametrosValoresPadre.fecha' => $fecha,'ParametrosValoresPadre.usuario_id'=>$this->Auth->user('id')]
+            'conditions' => ['ParametrosValoresPadre.usuario_id'=>$this->Auth->user('id')],
+            'order' => ['fecha' => 'DESC']
         ];
+
+        if(isset($this->request->data['fecha']) && (!is_null($this->request->data['fecha']) && $this->request->data['fecha'] != '')){
+            $options['conditions'] = array_merge($options['conditions'],['ParametrosValoresPadre.fecha' => $this->request->data('fecha')]);
+        }
+        $this->paginate = $options;
 
         $parametrosValores = $this->paginate(TableRegistry::get('ParametrosValoresPadre'));
         $this->set(compact('parametrosValores','fecha'));
